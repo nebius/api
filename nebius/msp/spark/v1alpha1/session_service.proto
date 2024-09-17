@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package nebius.msp.spark.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/annotations.proto";
+import "nebius/msp/spark/v1alpha1/session.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/spark/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "SessionServiceProto";
+option java_package = "ai.nebius.pub.msp.spark.v1alpha1";
+
+service SessionService {
+  option (api_service_name) = "spark.msp";
+
+  // Returns the specified session.
+  rpc Get(GetSessionRequest) returns (Session);
+
+  // Returns the specified session by name.
+  rpc GetByName(GetSessionByNameRequest) returns (Session);
+
+  // Retrieves a list of sessions.
+  rpc List(ListSessionsRequest) returns (ListSessionsResponse);
+
+  // Creates a session.
+  rpc Create(CreateSessionRequest) returns (common.v1.Operation);
+
+  // Deletes a session.
+  rpc Delete(DeleteSessionRequest) returns (common.v1.Operation);
+}
+
+message GetSessionRequest {
+  // ID of the session to retrieve.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message GetSessionByNameRequest {
+  // Parent ID of the session to retrieve.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Name of the session to retrieve.
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListSessionsRequest {
+  // Identifier of IAM container to list sessions from.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Specifies the maximum number of items to return in the response. Default value is 100.
+  int64 page_size = 2 [(buf.validate.field) = { int64: { gte: 0 } }];
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+}
+
+message ListSessionsResponse {
+  // List of sessions.
+  repeated Session items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  optional string next_page_token = 2;
+}
+
+message CreateSessionRequest {
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "create_session.metadata",
+        message: "'metadata' must have 'parent_id' and 'name'",
+        expression: "has(this.metadata.parent_id) && has(this.metadata.name)"
+      }
+    ]
+  };
+
+  // Metadata associated with the new session. Must include parent_id - ID of the cluster to create session in.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // Specification for the new session.
+  SessionSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message DeleteSessionRequest {
+  // ID of the session to delete.
+  string id = 1 [(buf.validate.field).required = true];
+}

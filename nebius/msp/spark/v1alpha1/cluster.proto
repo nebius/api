@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package nebius.msp.spark.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/annotations.proto";
+import "nebius/msp/v1alpha1/cluster.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/spark/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "ClusterProto";
+option java_package = "ai.nebius.pub.msp.spark.v1alpha1";
+
+message Cluster {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  ClusterSpec spec = 2 [(buf.validate.field).required = true];
+
+  ClusterStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+// Cluster specification
+message ClusterSpec {
+  // Description of the cluster.
+  optional string description = 1;
+
+  // Backbone ID of the cluster.
+  string backbone_id = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+
+  // Limits for the cluster
+  Limits limits = 3 [(buf.validate.field).required = true];
+
+  // Password for Spark History server and Sessions.
+  Password authorization = 4 [(field_behavior) = INPUT_ONLY];
+
+  // ID of the user service account for accessing
+  // S3 buckets in the user project
+  string service_account_id = 5 [(buf.validate.field).required = true];
+}
+
+message ClusterStatus {
+  // Current phase (or stage) of the cluster.
+  nebius.msp.v1alpha1.ClusterStatus.Phase phase = 1;
+
+  // State reflects substatus of the stage to define whether it's healthy or not.
+  nebius.msp.v1alpha1.ClusterStatus.State state = 2;
+
+  // History Server WebUI endpoint
+  optional string history_server_endpoint = 3;
+}
+
+message Limits {
+  int64 cpu = 1 [(buf.validate.field) = { int64: { lte: 1280, gt: 0 }, required: true }];
+
+  int64 memory_gibibytes = 2 [(buf.validate.field) = { int64: { lte: 10240, gt: 0 }, required: true }];
+}
+
+message Password {
+  string password = 1 [
+    (sensitive) = true,
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "password.min_length",
+          message: "The password must be at least 8 characters long.",
+          expression: "size(this) >= 8"
+        },
+        {
+          id: "password.max_length",
+          message: "The password must not exceed 64 characters.",
+          expression: "size(this) <= 64"
+        },
+        {
+          id: "password.ascii_only",
+          message: "The password must contain only visible ASCII characters.",
+          expression: "matches(this, '^[!-~]+$')"
+        },
+        {
+          id: "password.min_lower_case",
+          message: "The password must include at least one lowercase letter.",
+          expression: "this.matches('[a-z]')"
+        },
+        {
+          id: "password.min_upper_case",
+          message: "The password must include at least one uppercase letter.",
+          expression: "this.matches('[A-Z]')"
+        },
+        {
+          id: "password.min_digits",
+          message: "The password must include at least one digit.",
+          expression: "this.matches('[0-9]')"
+        },
+        {
+          id: "password.min_special",
+          message: "The password must include at least one special character: !@#$%^&*()_+-=[]{}<>;:'\"\\|,./?`~",
+          expression: "this.matches('[!-/]|[:-@]|[[-`]|[{-~]')"
+        }
+      ],
+      required: true
+    }
+  ];
+}

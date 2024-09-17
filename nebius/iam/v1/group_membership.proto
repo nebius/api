@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "GroupMembershipProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+message GroupMembership {
+  option (resource_behavior) = UNNAMED;
+
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  GroupMembershipSpec spec = 2 [(buf.validate.field).required = true];
+
+  GroupMembershipStatus status = 3 [(field_behavior) = OUTPUT_ONLY]; // Dummy field for compliance with terraform resource generator.
+
+  google.protobuf.Timestamp revoke_at = 4 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message GroupMembershipSpec {
+  // Member of the group. Can be tenant user account id or service account id.
+  string member_id = 1 [(field_behavior) = IMMUTABLE];
+}
+
+message GroupMembershipStatus {
+}

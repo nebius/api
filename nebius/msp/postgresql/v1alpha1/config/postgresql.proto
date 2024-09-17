@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package nebius.msp.postgresql.v1alpha1.config;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/postgresql/v1alpha1/config";
+option java_multiple_files = true;
+option java_outer_classname = "PostgresqlProto";
+option java_package = "ai.nebius.pub.msp.postgresql.v1alpha1.config";
+
+message PostgresqlConfig16 {
+  optional int64 autovacuum_work_mem = 1; // in bytes.
+
+  optional int64 statement_timeout = 2; // in milliseconds.
+
+  optional int64 idle_in_transaction_session_timeout = 3; // in milliseconds.
+
+  optional int64 autovacuum_vacuum_cost_delay = 4;
+
+  optional int64 autovacuum_vacuum_cost_limit = 5;
+
+  optional int64 autovacuum_naptime = 6; // in milliseconds.
+
+  optional double autovacuum_vacuum_scale_factor = 7;
+
+  optional double autovacuum_analyze_scale_factor = 8;
+
+  optional bool default_transaction_read_only = 9;
+
+  optional string search_path = 10;
+}

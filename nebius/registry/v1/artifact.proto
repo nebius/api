@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package nebius.registry.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/registry/v1";
+option java_multiple_files = true;
+option java_outer_classname = "ArtifactProto";
+option java_package = "ai.nebius.pub.registry.v1";
+
+message Artifact {
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+
+    ACTIVE = 1;
+
+    DELETING = 2;
+  }
+
+  enum Type {
+    BLOB = 0;
+
+    MANIFEST = 1;
+
+    DEB_PACKAGE = 2;
+
+    MANIFEST_LIST = 3;
+
+    RELEASE_INDEX = 4;
+
+    PACKAGE_INDEX = 5;
+
+    GZIPPED_PACKAGE_INDEX = 6;
+  }
+
+  string id = 1;
+
+  string name = 2;
+
+  string media_type = 3;
+
+  string digest = 4;
+
+  int64 size = 5;
+
+  Status status = 6;
+
+  Type type = 7;
+
+  google.protobuf.Timestamp created_at = 8;
+
+  google.protobuf.Timestamp updated_at = 9;
+}

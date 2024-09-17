@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package nebius.common.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/operation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1";
+option java_multiple_files = true;
+option java_outer_classname = "OperationServiceProto";
+option java_package = "ai.nebius.pub.common.v1";
+
+service OperationService {
+  rpc Get(GetOperationRequest) returns (Operation);
+
+  rpc List(ListOperationsRequest) returns (ListOperationsResponse);
+}
+
+message GetOperationRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message ListOperationsRequest {
+  // ID of the Resource to list operations for.
+  string resource_id = 1 [(buf.validate.field).required = true];
+
+  // Page size. [1...1000]. Optional, if not specified, a reasonable default will be chosen by the service.
+  int64 page_size = 2;
+
+  // Listing continuation token. Empty to start listing from the first page.
+  string page_token = 3;
+}
+
+message ListOperationsResponse {
+  repeated Operation operations = 1;
+
+  string next_page_token = 2;
+}

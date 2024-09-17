@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/annotations.proto";
+import "nebius/iam/v1/access.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "AuthPublicKeyProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+message AuthPublicKey {
+  option (resource_behavior) = UNNAMED;
+
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  AuthPublicKeySpec spec = 2 [(buf.validate.field).required = true];
+
+  AuthPublicKeyStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message AuthPublicKeySpec {
+  Account account = 1 [(field_behavior) = IMMUTABLE];
+
+  google.protobuf.Timestamp expires_at = 2 [(field_behavior) = IMMUTABLE];
+
+  string description = 3;
+
+  string data = 4 [(field_behavior) = IMMUTABLE];
+}
+
+message AuthPublicKeyStatus {
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    ACTIVE = 1;
+
+    INACTIVE = 2;
+
+    EXPIRED = 3;
+
+    DELETING = 4;
+
+    DELETED = 5;
+  }
+
+  State state = 1;
+
+  string fingerprint = 2;
+
+  string algorithm = 3;
+
+  int32 key_size = 4;
+}

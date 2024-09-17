@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package nebius.compute.v1;
+
+import "nebius/common/v1/metadata.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
+option java_multiple_files = true;
+option java_outer_classname = "ImageProto";
+option java_package = "ai.nebius.pub.compute.v1";
+
+message Image {
+  common.v1.ResourceMetadata metadata = 1;
+
+  ImageSpec spec = 2;
+
+  ImageStatus status = 3;
+}
+
+message ImageSpec {
+  optional string description = 1 [(field_behavior) = IMMUTABLE];
+
+  string image_family = 2 [(field_behavior) = IMMUTABLE];
+
+  string version = 3 [(field_behavior) = IMMUTABLE];
+}
+
+message ImageStatus {
+  enum State {
+    UNSPECIFIED = 0;
+
+    CREATING = 1;
+
+    READY = 2;
+
+    UPDATING = 3;
+
+    DELETING = 4;
+
+    ERROR = 5;
+  }
+
+  State state = 1;
+
+  string state_description = 2;
+
+  int64 storage_size_bytes = 3;
+
+  int64 min_disk_size_bytes = 4;
+}

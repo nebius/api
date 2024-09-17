@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/iam/v1/state.proto";
+import "nebius/iam/v1/suspension_state.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "ContainerProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+message Container {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  ContainerSpec spec = 2 [(buf.validate.field).required = true];
+
+  ContainerStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message ContainerSpec {
+}
+
+message ContainerStatus {
+  SuspensionState suspension_state = 2;
+
+  State container_state = 3;
+}

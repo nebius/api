@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package nebius.registry.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/registry/v1";
+option java_multiple_files = true;
+option java_outer_classname = "RegistryProto";
+option java_package = "ai.nebius.pub.registry.v1";
+
+message Registry {
+  // This is metadata about the resource, such as its id, name, labels, etc.
+  // This contains fields that may be updated both by the end user and the system.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // This is defined by the user and describes the desired state of system.
+  // Fill this in when creating or updating an object.
+  RegistrySpec spec = 2 [(buf.validate.field).required = true];
+
+  // This is filled in by the server and reports the current state of the system.
+  RegistryStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message RegistrySpec {
+  string description = 1; //  Registry.Type type = 2;
+}
+
+message RegistryStatus {
+  enum State {
+    CREATING = 0;
+
+    ACTIVE = 1;
+
+    DELETING = 2;
+  }
+
+  State state = 10;
+}

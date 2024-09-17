@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package nebius.vpc.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "NetworkProto";
+option java_package = "ai.nebius.pub.vpc.v1alpha1";
+
+// Defines a Network, which serves as a virtual representation of a traditional LAN
+// within a cloud environment.
+// Networks facilitate communication between subnets.
+message Network {
+  // Metadata for the network resource.
+  // `metadata.parent_id` represents IAM container
+  common.v1.ResourceMetadata metadata = 1;
+
+  // Specification of the network.
+  NetworkSpec spec = 2;
+
+  // Status of the network.
+  NetworkStatus status = 3;
+}
+
+message NetworkSpec {
+  // Pools for addresses
+  repeated NetworkPool pools = 1;
+}
+
+message NetworkPool {
+  string pool_id = 1 [(buf.validate.field).required = true];
+}
+
+message NetworkStatus {
+  // Enumeration of possible states of the network.
+  enum State {
+    STATE_UNSPECIFIED = 0; // Default state, unspecified.
+
+    CREATING = 1; // Network is being created.
+
+    READY = 2; // Network is ready for use.
+
+    DELETING = 3; // Network is being deleted.
+  }
+
+  // Current state of the network.
+  State state = 1;
+
+  // Scope ID of all pools
+  string scope_id = 2;
+}

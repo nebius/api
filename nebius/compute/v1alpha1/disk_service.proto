@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package nebius.compute.v1alpha1;
+
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1alpha1/operation.proto";
+import "nebius/common/v1alpha1/operation_service.proto";
+import "nebius/compute/v1alpha1/disk.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1alpha1";
+
+// Migrate to compute/v1.
+option deprecated = true;
+option java_multiple_files = true;
+option java_outer_classname = "DiskServiceProto";
+option java_package = "ai.nebius.pub.compute.v1alpha1";
+
+service DiskService {
+  // Migrate to compute/v1.
+  option deprecated = true;
+
+  rpc Get(GetDiskRequest) returns (Disk);
+
+  rpc GetByName(common.v1.GetByNameRequest) returns (Disk);
+
+  rpc List(ListDisksRequest) returns (ListDisksResponse);
+
+  rpc Create(CreateDiskRequest) returns (common.v1alpha1.Operation);
+
+  rpc Update(UpdateDiskRequest) returns (common.v1alpha1.Operation);
+
+  rpc Delete(DeleteDiskRequest) returns (common.v1alpha1.Operation);
+
+  rpc ListOperationsByParent(common.v1alpha1.ListOperationsByParentRequest) returns (common.v1alpha1.ListOperationsResponse);
+}
+
+message GetDiskRequest {
+  string id = 1;
+}
+
+message ListDisksRequest {
+  string parent_id = 1;
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+
+  string filter = 4;
+}
+
+message CreateDiskRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  DiskSpec spec = 2;
+}
+
+message UpdateDiskRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  DiskSpec spec = 2;
+}
+
+message DeleteDiskRequest {
+  string id = 1;
+}
+
+message ListDisksResponse {
+  repeated Disk items = 1;
+
+  string next_page_token = 2;
+}

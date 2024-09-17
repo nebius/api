@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package nebius.common.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1alpha1/operation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1alpha1";
+
+// Migrate to common/v1.
+option deprecated = true;
+option java_multiple_files = true;
+option java_outer_classname = "OperationServiceProto";
+option java_package = "ai.nebius.pub.common.v1alpha1";
+
+service OperationService {
+  // Migrate to common/v1.
+  option deprecated = true;
+
+  // Returns the latest state of the specified operation.
+  rpc Get(GetOperationRequest) returns (Operation);
+
+  // Lists operations for the specified resource.
+  rpc List(ListOperationsRequest) returns (ListOperationsResponse);
+}
+
+message GetOperationRequest {
+  // Migrate to common/v1.
+  option deprecated = true;
+
+  // Operation ID.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message ListOperationsRequest {
+  // Migrate to common/v1.
+  option deprecated = true;
+
+  // ID of the Resource to list operations for.
+  string resource_id = 1 [(buf.validate.field).required = true];
+
+  // Page size. [1...1000]. Optional, if not specified, a reasonable default will be chosen by the service.
+  int64 page_size = 2;
+
+  // Listing continuation token. Empty to start listing from the first page.
+  string page_token = 3;
+
+  // Filter expression for the listing results. Optional.
+  // Filter expression format: TBD.
+  string filter = 4;
+}
+
+message ListOperationsResponse {
+  // Migrate to common/v1.
+  option deprecated = true;
+
+  // List of operations on this result page.
+  repeated Operation operations = 1;
+
+  // Listing continuation token for the next page of results.
+  string next_page_token = 2;
+}
+
+message ListOperationsByParentRequest {
+  // Migrate to common/v1.
+  option deprecated = true;
+
+  // ID of the parent to list operations for resource type at.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Page size. [1...1000]. Optional, if not specified, a reasonable default will be chosen by the service.
+  int64 page_size = 2;
+
+  // Listing continuation token. Empty to start listing from the first page.
+  string page_token = 3;
+
+  // Filter expression for the listing results. Optional.
+  // Filter expression format: TBD.
+  string filter = 4;
+}

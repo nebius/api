@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/iam/v1/auth_public_key.proto";
+import "nebius/iam/v1/access.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "AuthPublicKeyServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+service AuthPublicKeyService {
+  option (api_service_name) = "cpl.iam";
+
+  rpc Create(CreateAuthPublicKeyRequest) returns (common.v1.Operation);
+
+  rpc Get(GetAuthPublicKeyRequest) returns (AuthPublicKey);
+
+  rpc List(ListAuthPublicKeyRequest) returns (ListAuthPublicKeyResponse);
+
+  rpc ListByAccount(ListAuthPublicKeyByAccountRequest) returns (ListAuthPublicKeyResponse);
+
+  rpc Update(UpdateAuthPublicKeyRequest) returns (common.v1.Operation);
+
+  rpc Activate(ActivateAuthPublicKeyRequest) returns (common.v1.Operation);
+
+  rpc Deactivate(DeactivateAuthPublicKeyRequest) returns (common.v1.Operation);
+
+  rpc Delete(DeleteAuthPublicKeyRequest) returns (common.v1.Operation);
+}
+
+message CreateAuthPublicKeyRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  AuthPublicKeySpec spec = 2;
+}
+
+message GetAuthPublicKeyRequest {
+  string id = 1;
+}
+
+message ListAuthPublicKeyRequest {
+  // Represents the container ID.
+  string parent_id = 1;
+
+  // Specifies the maximum number of items to return in the response.
+  // Default value: 10
+  optional int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+
+  // A filter to narrow down the results based on specific criteria.
+  string filter = 4;
+}
+
+message ListAuthPublicKeyByAccountRequest {
+  // Represents the parent account ID.
+  Account account = 1;
+
+  // Specifies the maximum number of items to return in the response.
+  // Default value: 10
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+
+  // A filter to narrow down the results based on specific criteria.
+  string filter = 4;
+}
+
+message UpdateAuthPublicKeyRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  AuthPublicKeySpec spec = 2;
+}
+
+message ActivateAuthPublicKeyRequest {
+  string id = 1;
+}
+
+message DeactivateAuthPublicKeyRequest {
+  string id = 1;
+}
+
+message DeleteAuthPublicKeyRequest {
+  string id = 1;
+}
+
+message ListAuthPublicKeyResponse {
+  // List of auth public keys returned in the response. The field should be named as `items` for consistency.
+  repeated AuthPublicKey items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}

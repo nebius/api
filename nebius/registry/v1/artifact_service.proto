@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package nebius.registry.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/registry/v1/artifact.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/registry/v1";
+option java_multiple_files = true;
+option java_outer_classname = "ArtifactServiceProto";
+option java_package = "ai.nebius.pub.registry.v1";
+
+service ArtifactService {
+  rpc Get(GetArtifactRequest) returns (Artifact);
+
+  rpc List(ListArtifactsRequest) returns (ListArtifactsResponse);
+
+  rpc Delete(DeleteArtifactRequest) returns (common.v1.Operation);
+}
+
+message GetArtifactRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message ListArtifactsRequest {
+  string parent_id = 1;
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+
+  string filter = 4;
+}
+
+message ListArtifactsResponse {
+  repeated Artifact items = 1;
+
+  string next_page_token = 2;
+}
+
+message DeleteArtifactRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}

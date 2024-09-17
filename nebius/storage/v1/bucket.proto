@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package nebius.storage.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/storage/v1/base.proto";
+import "nebius/storage/v1/bucket_counters.proto";
+import "nebius/storage/v1/lifecycle.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
+option java_multiple_files = true;
+option java_outer_classname = "BucketProto";
+option java_package = "ai.nebius.pub.storage.v1";
+
+message Bucket {
+  option (resource_behavior) = IMMUTABLE_NAME;
+
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  BucketSpec spec = 2 [(buf.validate.field).required = true];
+
+  BucketStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message BucketSpec {
+  // Supports transitions:
+  //  * disabled -> enabled
+  //  * disabled -> suspended
+  //  * enabled <-> suspended
+  VersioningPolicy versioning_policy = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
+
+  // Maximum bucket size.
+  // Zero means unlimited.
+  // Actual limit can be lower if customer doesn't have enough quota.
+  // Real bucket size can go a little higher if customer writes too fast.
+  int64 max_size_bytes = 4;
+
+  LifecycleConfiguration lifecycle_configuration = 5;
+}
+
+message BucketStatus {
+  repeated BucketCounters counters = 1;
+
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    // Bucket is under creation and cannot be used yet.
+    CREATING = 1;
+
+    // Bucket is ready for usage.
+    READY = 2;
+
+    // Bucket is being updated.
+    // It can be used, but some settings are being modified and you can observe their inconsistency.
+    UPDATING = 3;
+
+    // Bucket is being deleted.
+    // It cannot be used anymore.
+    DELETING = 4;
+  }
+
+  State state = 2;
+}

@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package nebius.compute.v1alpha1;
+
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1alpha1/operation.proto";
+import "nebius/common/v1alpha1/operation_service.proto";
+import "nebius/compute/v1alpha1/instance.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1alpha1";
+
+// Migrate to compute/v1.
+option deprecated = true;
+option java_multiple_files = true;
+option java_outer_classname = "InstanceServiceProto";
+option java_package = "ai.nebius.pub.compute.v1alpha1";
+
+service InstanceService {
+  // Migrate to compute/v1.
+  option deprecated = true;
+
+  rpc Get(GetInstanceRequest) returns (Instance);
+
+  rpc GetByName(common.v1.GetByNameRequest) returns (Instance);
+
+  rpc List(ListInstancesRequest) returns (ListInstancesResponse);
+
+  rpc Create(CreateInstanceRequest) returns (common.v1alpha1.Operation);
+
+  rpc Update(UpdateInstanceRequest) returns (common.v1alpha1.Operation);
+
+  rpc Delete(DeleteInstanceRequest) returns (common.v1alpha1.Operation);
+
+  rpc Start(StartInstanceRequest) returns (common.v1alpha1.Operation);
+
+  rpc Stop(StopInstanceRequest) returns (common.v1alpha1.Operation);
+
+  rpc ListOperationsByParent(common.v1alpha1.ListOperationsByParentRequest) returns (common.v1alpha1.ListOperationsResponse);
+}
+
+message GetInstanceRequest {
+  string id = 1;
+}
+
+message ListInstancesRequest {
+  string parent_id = 1;
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
+message CreateInstanceRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  InstanceSpec spec = 2;
+}
+
+message UpdateInstanceRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  InstanceSpec spec = 2;
+}
+
+message DeleteInstanceRequest {
+  string id = 1;
+}
+
+message ListInstancesResponse {
+  repeated Instance items = 1;
+
+  string next_page_token = 2;
+}
+
+message StartInstanceRequest {
+  string id = 1;
+}
+
+message StopInstanceRequest {
+  string id = 1;
+}

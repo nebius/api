@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package nebius.common.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1";
+option java_multiple_files = true;
+option java_outer_classname = "MetadataProto";
+option java_package = "ai.nebius.pub.common.v1";
+
+// Common resource metadata.
+message ResourceMetadata {
+  // Identifier for the resource, unique for its resource type.
+  string id = 1 [(field_behavior) = IDENTIFIER];
+
+  // Identifier of the parent resource to which the resource belongs.
+  string parent_id = 2 [(buf.validate.field).required = true];
+
+  // Human readable name for the resource.
+  string name = 3;
+
+  // Version of the resource for safe concurrent modifications and consistent reads.
+  // Positive and monotonically increases on each resource spec change (but *not* on each change of the
+  // resource's container(s) or status).
+  // Service allows zero value or current.
+  //
+  int64 resource_version = 4 [(buf.validate.field) = { int64: { gte: 0 } }];
+
+  // Timestamp indicating when the resource was created.
+  google.protobuf.Timestamp created_at = 5 [(field_behavior) = OUTPUT_ONLY];
+
+  // Timestamp indicating when the resource was last updated.
+  google.protobuf.Timestamp updated_at = 6 [(field_behavior) = OUTPUT_ONLY];
+
+  // Labels associated with the resource.
+  map<string, string> labels = 7;
+}
+
+// if service supports uniqueness of ResourceMetadata.name within tuple (scope) <resource_type, parent_id>
+// it also must have grpc method GetByName
+message GetByNameRequest {
+  string parent_id = 1;
+
+  string name = 2;
+}

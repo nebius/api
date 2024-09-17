@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package nebius.vpc.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1alpha1/operation.proto";
+import "nebius/vpc/v1alpha1/allocation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "AllocationServiceProto";
+option java_package = "ai.nebius.pub.vpc.v1alpha1";
+
+service AllocationService {
+  rpc Get(GetAllocationRequest) returns (Allocation);
+
+  rpc GetByName(GetAllocationByNameRequest) returns (Allocation);
+
+  rpc List(ListAllocationsRequest) returns (ListAllocationsResponse);
+
+  rpc Create(CreateAllocationRequest) returns (common.v1alpha1.Operation);
+
+  rpc Update(UpdateAllocationRequest) returns (common.v1alpha1.Operation);
+
+  rpc Delete(DeleteAllocationRequest) returns (common.v1alpha1.Operation);
+}
+
+message GetAllocationRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message GetAllocationByNameRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListAllocationsRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+
+  string filter = 4;
+}
+
+message ListAllocationsResponse {
+  repeated Allocation items = 1;
+
+  string next_page_token = 2;
+}
+
+message CreateAllocationRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  AllocationSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message UpdateAllocationRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  AllocationSpec spec = 2;
+}
+
+message DeleteAllocationRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}

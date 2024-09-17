@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "nebius/annotations.proto";
+import "nebius/iam/v1/token_service.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "TokenExchangeServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+service TokenExchangeService {
+  option (api_service_name) = "tokens.iam";
+
+  rpc Exchange(ExchangeTokenRequest) returns (CreateTokenResponse);
+}

@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package nebius.compute.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1alpha1";
+
+// Migrate to compute/v1.
+option deprecated = true;
+option java_multiple_files = true;
+option java_outer_classname = "FilesystemProto";
+option java_package = "ai.nebius.pub.compute.v1alpha1";
+
+message Filesystem {
+  common.v1.ResourceMetadata metadata = 1;
+
+  FilesystemSpec spec = 2;
+
+  FilesystemStatus status = 3;
+}
+
+message FilesystemSpec {
+  enum FilesystemType {
+    UNSPECIFIED = 0;
+
+    // the list of available types will be clarified later, it is not final version
+    NETWORK_SSD = 1;
+
+    NETWORK_HDD = 2;
+  }
+
+  oneof size {
+    option (buf.validate.oneof).required = true;
+
+    int64 size_bytes = 1 [(field_behavior) = IMMUTABLE];
+
+    int64 size_kibibytes = 2 [(field_behavior) = IMMUTABLE];
+
+    int64 size_mebibytes = 3 [(field_behavior) = IMMUTABLE];
+
+    int64 size_gibibytes = 4 [(field_behavior) = IMMUTABLE];
+  }
+
+  int64 block_size_bytes = 5 [(field_behavior) = IMMUTABLE];
+
+  FilesystemType type = 6 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+}
+
+message FilesystemStatus {
+  enum State {
+    UNSPECIFIED = 0;
+
+    CREATING = 1;
+
+    READY = 2;
+
+    UPDATING = 3;
+
+    DELETING = 4;
+
+    ERROR = 5;
+  }
+
+  State state = 1;
+
+  string state_description = 2;
+
+  repeated string read_write_attachments = 3;
+
+  repeated string read_only_attachments = 4;
+
+  int64 size_bytes = 5;
+}

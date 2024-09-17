@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package nebius.vpc.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "NetworkInterfaceProto";
+option java_package = "ai.nebius.pub.vpc.v1alpha1";
+
+// Describes the specification of a network interface.
+message NetworkInterfaceSpec {
+  // Subnet ID
+  string subnet_id = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+
+  // Name for interface.
+  // Must be unique within instance's network interfaces
+  string name = 2 [
+    (buf.validate.field) = {
+      string: {
+        min_len: 1,
+        max_len: 60,
+        pattern: "^[0-9a-z][0-9a-z-]*$"
+      },
+      required: true
+    }
+  ];
+
+  // Private IPv4 address associated with the interface.
+  IPAddress ip_address = 3 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+  // Public IPv4 address associated with the interface.
+  PublicIPAddress public_ip_address = 4 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+}
+
+// Describes an IPv4 address.
+message IPAddress {
+  // Allocation identifier if it was created before.
+  string allocation_id = 1;
+}
+
+// Describes a public IP address.
+message PublicIPAddress {
+  // Describes different methods of public IP address allocation.
+  oneof allocation {
+    // Allocation identifier if it was created before.
+    string allocation_id = 1;
+  }
+
+  // If false - Lifecycle of allocation depends on NetworkInterface.Allocate/NetworkInterface.Deallocate
+  // If true  - Lifecycle of allocation depends on NetworkInterface.Create/NetworkInterface.Delete
+  // False by default
+  bool static = 3;
+}
+
+// Describes the status of a network interface.
+message NetworkInterfaceStatus {
+  // The index of the network interface
+  int32 index = 1;
+
+  // Name for interface.
+  // Unique within instance's network interfaces
+  string name = 2;
+
+  // Effective Private IPv4 address
+  IPAddressStatus ip_address = 3;
+
+  // Effective Public IPv4 address
+  PublicIPAddressStatus public_ip_address = 4;
+
+  // MAC address
+  string mac_address = 7;
+}
+
+message IPAddressStatus {
+  // Effective private IPv4 address assigned to the interface.
+  string address = 1;
+
+  // Allocation identifier.
+  string allocation_id = 2;
+}
+
+message PublicIPAddressStatus {
+  // Effective public IPv4 address assigned to the interface.
+  string address = 1;
+
+  // Allocation identifier.
+  string allocation_id = 2;
+}

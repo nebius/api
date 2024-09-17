@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+import "google/protobuf/duration.proto";
+import "nebius/annotations.proto";
+
+package nebius.logging.agentmanager.v1;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/logging/v1/agentmanager";
+option java_multiple_files = true;
+option java_outer_classname = "VersionServiceProto";
+option java_package = "ai.nebius.pub.logging.v1.agentmanager";
+
+service VersionService {
+  option (api_service_name) = "logging.agent.manager";
+
+  rpc GetVersion(GetVersionRequest) returns (GetVersionResponse);
+}
+
+enum AgentType {
+  AGENT_UNDEFINED = 0;
+
+  O11Y_AGENT = 1;
+}
+
+enum AgentState {
+  STATE_UNDEFINED = 0;
+
+  STATE_HEALTHY = 1;
+
+  STATE_ERROR = 2;
+}
+
+message GetVersionRequest {
+  AgentType type = 1;
+
+  string agent_version = 2;
+
+  string updater_version = 3;
+
+  string parent_id = 4;
+
+  string instance_id = 5;
+
+  OSInfo os_info = 6;
+
+  AgentState agent_state = 7;
+
+  google.protobuf.Duration agent_uptime = 8;
+
+  google.protobuf.Duration system_uptime = 9;
+
+  google.protobuf.Duration updater_uptime = 10;
+}
+
+message OSInfo {
+  // Example: "Ubuntu 22.04.4 LTS"
+  string name = 1;
+
+  // Example: "Linux computeimage-abcdef 6.5.0-44-generic #44~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Jun 18 14:36:16 UTC 2 x86_64 x86_64 x86_64 GNU/Linux"
+  string uname = 2;
+
+  string architecture = 3;
+}
+
+enum Action {
+  ACTION_UNDEFINED = 0;
+
+  NOP = 1;
+
+  UPDATE = 2;
+
+  RESTART = 3;
+}
+
+message GetVersionResponse {
+  Action action = 1;
+
+  oneof response {
+    NopActionParams nop = 2;
+
+    UpdateActionParams update = 3;
+
+    RestartActionParams restart = 4;
+  }
+}
+
+message NopActionParams {
+}
+
+message UpdateActionParams {
+  string version = 1;
+
+  string repo_url = 2;
+}
+
+message RestartActionParams {
+}

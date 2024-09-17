@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package nebius.vpc.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/vpc/v1/pool.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
+option java_multiple_files = true;
+option java_outer_classname = "SubnetProto";
+option java_package = "ai.nebius.pub.vpc.v1";
+
+// Defines a Subnet, a segment of a network used for more granular control and management.
+// Subnet uses pools to organize address space.
+message Subnet {
+  // Metadata for the subnet resource.
+  // `metadata.parent_id` represents IAM container
+  common.v1.ResourceMetadata metadata = 1;
+
+  // Specification of the subnet.
+  SubnetSpec spec = 2;
+
+  // Status of the subnet.
+  SubnetStatus status = 3;
+}
+
+message SubnetSpec {
+  // Network ID.
+  string network_id = 1 [(buf.validate.field).required = true];
+
+  // Pools for private ipv4 addresses.
+  // Default is 'use_network_pools = true'
+  IPv4PrivateSubnetPools ipv4_private_pools = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
+
+  // Pools for public ipv4 addresses.
+  // Default is 'use_network_pools = true'
+  IPv4PublicSubnetPools ipv4_public_pools = 3 [(field_behavior) = NON_EMPTY_DEFAULT];
+}
+
+message IPv4PrivateSubnetPools {
+  // Pools for private ipv4 allocations in subnet
+  // Must be empty if 'use_network_pools = true'
+  repeated SubnetPool pools = 1;
+
+  // Allow using of private ipv4 pools which are specified in network
+  // Must be false if 'pools' is not empty
+  bool use_network_pools = 2;
+}
+
+message IPv4PublicSubnetPools {
+  // Pools for public ipv4 allocations in subnet
+  // Must be empty if 'use_network_pools = true'
+  repeated SubnetPool pools = 1;
+
+  // Allow using of public ipv4 pools which are specified in network
+  // Must be false if 'pools' is not empty
+  bool use_network_pools = 2;
+}
+
+message SubnetPool {
+  oneof pool {
+    option (buf.validate.oneof).required = true;
+
+    SubnetPoolSpec spec = 1;
+  }
+}
+
+message SubnetPoolSpec {
+  repeated SubnetCidr cidrs = 2;
+}
+
+message SubnetCidr {
+  // CIDR block.
+  // May be a prefix length (such as /24) or a CIDR-formatted string (such as 10.1.2.0/24).
+  string cidr = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "string.valid_cidr",
+          message: "value must be a valid IP address, CIDR or mask",
+          expression: "this == '' || this.matches('^/([0-9]|[1-9][0-9]|1[0-2][0-8])$') || this.isIp() || this.isIpPrefix(true)"
+        },
+        {
+          id: "string.ip_empty",
+          message: "value is empty, which is not a valid IP address",
+          expression: "this != ''"
+        }
+      ],
+      required: true
+    }
+  ];
+
+  // State of the Cidr.
+  // Default state is AVAILABLE
+  AddressBlockState state = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
+
+  // Maximum mask length for allocation from this cidr
+  // Default max_mask_length is 32 for IPv4 and 128 for IPv6
+  int64 max_mask_length = 3 [
+    (field_behavior) = NON_EMPTY_DEFAULT,
+    (buf.validate.field) = { int64: { lte: 128, gte: 0 } }
+  ];
+}
+
+message SubnetStatus {
+  // Enumeration of possible states of the subnet.
+  enum State {
+    STATE_UNSPECIFIED = 0; // Default state, unspecified.
+
+    CREATING = 1; // Subnet is being created.
+
+    READY = 2; // Subnet is ready for use.
+
+    DELETING = 3; // Subnet is being deleted.
+  }
+
+  // Current state of the subnet.
+  State state = 1;
+
+  // CIDR blocks.
+  repeated string ipv4_private_cidrs = 2;
+
+  // CIDR blocks.
+  repeated string ipv4_public_cidrs = 3;
+}

@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package nebius.mk8s.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1";
+option java_multiple_files = true;
+option java_outer_classname = "InstanceTemplateProto";
+option java_package = "ai.nebius.pub.mk8s.v1";
+
+message DiskSpec {
+  enum DiskType {
+    UNSPECIFIED = 0;
+
+    // the list of available types will be clarified later, it is not final version
+    NETWORK_SSD = 1;
+
+    NETWORK_HDD = 2;
+
+    NETWORK_SSD_IO_M3 = 3;
+  }
+
+  oneof size {
+    option (buf.validate.oneof).required = true;
+
+    int64 size_bytes = 1;
+
+    int64 size_kibibytes = 2;
+
+    int64 size_mebibytes = 3;
+
+    int64 size_gibibytes = 4;
+  }
+
+  int64 block_size_bytes = 5;
+
+  DiskType type = 6 [(field_behavior) = NON_EMPTY_DEFAULT];
+}
+
+message ResourcesSpec {
+  string platform = 1 [(buf.validate.field).required = true];
+
+  oneof size {
+    option (buf.validate.oneof).required = true;
+
+    string preset = 2;
+  }
+}

@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/iam/v1/container.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "ProjectServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+service ProjectService {
+  option (api_service_name) = "cpl.iam";
+
+  rpc Get(GetProjectRequest) returns (Container);
+
+  rpc GetByName(GetProjectByNameRequest) returns (Container);
+
+  rpc List(ListProjectsRequest) returns (ListProjectsResponse);
+}
+
+message GetProjectRequest {
+  string id = 1;
+}
+
+message GetProjectByNameRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListProjectsRequest {
+  // Represents the container ID.
+  string parent_id = 1;
+
+  // Specifies the maximum number of items to return in the response.
+  // Default value: 10
+  optional int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+
+  // A filter to narrow down the results based on specific criteria.
+  string filter = 4;
+}
+
+message ListProjectsResponse {
+  repeated Container items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}

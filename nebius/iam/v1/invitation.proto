@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "InvitationProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+message Invitation {
+  option (resource_behavior) = UNNAMED;
+
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  InvitationSpec spec = 2 [(buf.validate.field).required = true];
+
+  InvitationStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message InvitationSpec {
+  string description = 1;
+
+  oneof contact {
+    string email = 11;
+  }
+}
+
+message InvitationStatus {
+  enum State {
+    UNSPECIFIED = 0;
+
+    CREATING = 4; // contacts data is not stored in pds yet. probably will GC it later
+
+    CREATED = 5; // notification is not sent yet
+
+    PENDING = 1; // notification is sent, we are waiting for the user to approve the notification
+
+    EXPIRED = 2; // notification is expired, accept is no longer possible
+
+    ACCEPTED = 3; // notification is accepted
+  }
+
+  string tenant_user_account_id = 1;
+
+  google.protobuf.Timestamp expires_at = 2;
+
+  State state = 3;
+}

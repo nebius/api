@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package nebius.msp.postgresql.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/msp/v1alpha1/resource/preset.proto";
+import "nebius/msp/v1alpha1/resource/template.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/postgresql/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "PresetProto";
+option java_package = "ai.nebius.pub.msp.postgresql.v1alpha1";
+
+message PresetSpec {
+  // reduced msp.v1alpha1.resource.PresetSpec
+  nebius.msp.v1alpha1.resource.FlavorSpec flavor = 1 [(buf.validate.field).required = true];
+
+  nebius.msp.v1alpha1.resource.HostSpec hosts = 2 [(buf.validate.field).required = true];
+
+  nebius.msp.v1alpha1.resource.DiskSpec disk = 3 [(buf.validate.field).required = true];
+}

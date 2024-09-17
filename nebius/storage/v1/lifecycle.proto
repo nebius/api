@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package nebius.storage.v1;
+
+import "nebius/annotations.proto";
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
+option java_multiple_files = true;
+option java_outer_classname = "LifecycleProto";
+option java_package = "ai.nebius.pub.storage.v1";
+
+// The lifecycle configuration consists of one or more rules.
+// An Lifecycle configuration can have up to 1,000 rules.
+// Each rule consists of the following:
+// - A filter identifying a subset of objects to which the rule applies.
+//   The filter can be based on a key name prefix, object size, or any combination of these.
+// - A status indicating whether the rule is currently active.
+// - One or more lifecycle expiration actions that you want to be performed on the objects
+//   identified by the filter. If the state of your bucket is versioning-enabled or versioning-suspended
+//   (bucket.spec.versioning_policy equals to ENABLED or SUSPENDED) you can have many versions of the same
+//   object (one current version and zero or more noncurrent versions). The system provides predefined actions
+//   that you can specify for current and noncurrent object versions.
+message LifecycleConfiguration {
+  repeated LifecycleRule rules = 1;
+}
+
+message LifecycleRule {
+  // Unique identifier for the rule per configuration.
+  // The value cannot be longer than 255 characters.
+  string id = 1 [(buf.validate.field).required = true];
+
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+
+    ENABLED = 1;
+
+    DISABLED = 2;
+  }
+
+  Status status = 2 [(buf.validate.field).required = true];
+
+  // The Filter is used to identify objects that a Lifecycle Rule applies to.
+  // The Lifecycle Rule will apply to any object matching all of the predicates
+  // configured inside (using logical AND).
+  LifecycleFilter filter = 3 [(field_behavior) = NON_EMPTY_DEFAULT];
+
+  // Specifies the expiration for the lifecycle of the object in the form of date, days and,
+  // whether the object has a delete marker.
+  LifecycleExpiration expiration = 4;
+
+  // Specifies when noncurrent object versions expire.
+  // It works only on a bucket that has versioning enabled (or suspended).
+  LifecycleNoncurrentVersionExpiration noncurrent_version_expiration = 5;
+
+  // Specifies the days since the initiation of an incomplete multipart upload that
+  // the system will wait before permanently removing all parts of the upload.
+  LifecycleAbortIncompleteMultipartUpload abort_incomplete_multipart_upload = 6;
+}
+
+message LifecycleFilter {
+  // Prefix identifying one or more objects to which the rule applies.
+  // If prefix is empty, the rule applies to all objects in the bucket.
+  string prefix = 1;
+
+  // Minimum object size to which the rule applies.
+  int64 object_size_greater_than_bytes = 2;
+
+  // Maximum object size to which the rule applies.
+  int64 object_size_less_than_bytes = 3;
+}
+
+message LifecycleExpiration {
+  oneof expired_with {
+    // Indicates at what date the object will be deleted. The time is always midnight UTC.
+    google.protobuf.Timestamp date = 1;
+
+    // Indicates the lifetime, in days, of the objects that are subject to the rule.
+    // The value must be a non-zero positive integer.
+    int32 days = 2;
+  }
+
+  // Indicates whether the system will remove a "delete marker" with no noncurrent versions.
+  // If set to true, the "delete marker" will be permanently removed.
+  // If set to false the policy takes no action.
+  // This cannot be specified with Days or Date in a LifecycleExpiration Policy.
+  bool expired_object_delete_marker = 3;
+}
+
+message LifecycleNoncurrentVersionExpiration {
+  // Specifies how many noncurrent versions the system will retain.
+  optional int32 newer_noncurrent_versions = 1;
+
+  // Specifies the number of days an object is noncurrent before the system will expire it.
+  int32 noncurrent_days = 2;
+}
+
+message LifecycleAbortIncompleteMultipartUpload {
+  // Specifies the days since the initiation of an incomplete multipart upload that
+  // the system will wait before permanently removing all parts of the upload.
+  int32 days_after_initiation = 1;
+}

@@ -1,0 +1,149 @@
+syntax = "proto3";
+
+package nebius.common.v1;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1";
+option java_multiple_files = true;
+option java_outer_classname = "ErrorProto";
+option java_package = "ai.nebius.pub.common.v1";
+
+message ServiceError {
+  // ID of Service which the error originated in. E.g. "dns".
+  string service = 1;
+
+  // Detailed error code, service-specific. E.g. "DnsZoneNotEmpty".
+  // Name of the exception, without Exception suffix if not set.
+  // Example: for PermissionDeniedException -> code == PermissionDenied.
+  string code = 2;
+
+  // Additional message describing the error, if any.
+  oneof details {
+    BadRequest bad_request = 100;
+
+    BadResourceState bad_resource_state = 110;
+
+    ResourceNotFound resource_not_found = 111;
+
+    ResourceAlreadyExists resource_already_exists = 112;
+
+    OutOfRange out_of_range = 113;
+
+    PermissionDenied permission_denied = 120;
+
+    ResourceConflict resource_conflict = 130;
+
+    OperationAborted operation_aborted = 131;
+
+    TooManyRequests too_many_requests = 140;
+
+    QuotaFailure quota_failure = 141;
+
+    InternalError internal_error = 999;
+  }
+}
+
+// The request is invalid.
+message BadRequest {
+  // Describes all violations.
+  repeated Violation violations = 1;
+
+  message Violation {
+    // What field value is invalid.
+    string field = 1;
+
+    // Description why the value is invalid, in English.
+    string message = 2;
+  }
+}
+
+// The resource we are trying to use, create, change or delete is in a bad state and cannot be used.
+message BadResourceState {
+  // ID of the resource which is bad.
+  string resource_id = 1;
+
+  // The reason why this state is bad and cannot be used.
+  string message = 2;
+}
+
+// Resource we are trying to interact with does not exist.
+message ResourceNotFound {
+  // ID of the requested resource.
+  string resource_id = 1;
+}
+
+// Resource we are trying to create already exists.
+message ResourceAlreadyExists {
+  // ID of the existing resource.
+  string resource_id = 1;
+}
+
+// There is a difference between the actual resource state and the expected one.
+message ResourceConflict {
+  // ID of conflicting resource.
+  string resource_id = 1;
+
+  // Detailed info about conflict.
+  string message = 2;
+}
+
+// Operation on the resource has been aborted by a subsequent operation.
+message OperationAborted {
+  // ID of the aborted operation.
+  string operation_id = 1;
+
+  // ID of the subsequent operation.
+  string aborted_by_operation_id = 2;
+
+  // Resource ID corresponding to both of the operations.
+  string resource_id = 3;
+}
+
+// Indicates that element with requested parameters is exceeding the particular range.
+message OutOfRange {
+  // Requested value.
+  string requested = 1;
+
+  // Available limit.
+  string limit = 2;
+}
+
+// Indicates that the action cannot be performed because there are insufficient access rights to a resource.
+message PermissionDenied {
+  // ID of the resource that cannot be accessed.
+  string resource_id = 1;
+}
+
+// Generic internal error.
+message InternalError {
+  // Error request ID.
+  string request_id = 1;
+
+  // Trace ID for the failing request.
+  string trace_id = 2;
+}
+
+// You initiated too many requests to the service at once. Enhance your calm.
+message TooManyRequests {
+  // What request limit is exceeded (service-dependent).
+  string violation = 1;
+}
+
+// Indicates a failure due to exceeding specified limits or allocations in a system or service.
+message QuotaFailure {
+  // Describes all quota violations.
+  repeated Violation violations = 1;
+
+  message Violation {
+    // Which quota check failed.
+    string quota = 1;
+
+    // A description of how the quota check failed.
+    string message = 2;
+
+    // Maximum permissible value.
+    string limit = 3;
+
+    // Requested value.
+    string requested = 4;
+  }
+}

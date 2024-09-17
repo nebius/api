@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package nebius.vpc.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/vpc/v1alpha1/network.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "NetworkServiceProto";
+option java_package = "ai.nebius.pub.vpc.v1alpha1";
+
+service NetworkService {
+  rpc Get(GetNetworkRequest) returns (Network);
+
+  rpc GetByName(GetNetworkByNameRequest) returns (Network);
+
+  rpc List(ListNetworksRequest) returns (ListNetworksResponse);
+}
+
+message GetNetworkRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message GetNetworkByNameRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListNetworksRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+
+  string filter = 4;
+}
+
+message ListNetworksResponse {
+  repeated Network items = 1;
+
+  string next_page_token = 2;
+}

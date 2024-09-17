@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/iam/v1/access_key.proto";
+import "nebius/iam/v1/access.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "AccessKeyServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+service AccessKeyService {
+  option (api_service_name) = "cpl.iam";
+
+  rpc Create(CreateAccessKeyRequest) returns (common.v1.Operation);
+
+  rpc List(ListAccessKeysRequest) returns (ListAccessKeysResponse);
+
+  rpc ListByAccount(ListAccessKeysByAccountRequest) returns (ListAccessKeysResponse);
+
+  rpc Update(UpdateAccessKeyRequest) returns (common.v1.Operation);
+
+  rpc GetById(GetAccessKeyByIdRequest) returns (AccessKey);
+
+  rpc GetByAwsId(GetAccessKeyByAwsIdRequest) returns (AccessKey);
+
+  rpc GetSecretOnce(GetAccessKeySecretOnceRequest) returns (GetAccessKeySecretOnceResponse);
+
+  rpc Activate(ActivateAccessKeyRequest) returns (common.v1.Operation);
+
+  rpc Deactivate(DeactivateAccessKeyRequest) returns (common.v1.Operation);
+
+  rpc Delete(DeleteAccessKeyRequest) returns (common.v1.Operation);
+}
+
+message CreateAccessKeyRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  AccessKeySpec spec = 2;
+}
+
+message KeyIdentity {
+  oneof identity {
+    string id = 1;
+
+    string aws_access_key_id = 2;
+  }
+}
+
+message GetAccessKeySecretOnceRequest {
+  string id = 1;
+}
+
+message GetAccessKeyByIdRequest {
+  string id = 1;
+}
+
+message GetAccessKeyByAwsIdRequest {
+  string aws_access_key_id = 1;
+}
+
+message ListAccessKeysRequest {
+  // Represents the container ID.
+  string parent_id = 1;
+
+  // Specifies the maximum number of items to return in the response.
+  // Default value: 10
+  optional int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+
+  // A filter to narrow down the results based on specific criteria.
+  string filter = 4;
+}
+
+message ListAccessKeysByAccountRequest {
+  // Represents the parent account ID.
+  Account account = 1;
+
+  // Specifies the maximum number of items to return in the response.
+  // Default value: 10
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+
+  // A filter to narrow down the results based on specific criteria.
+  string filter = 4;
+}
+
+message UpdateAccessKeyRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  AccessKeySpec spec = 2;
+}
+
+message ActivateAccessKeyRequest {
+  KeyIdentity id = 1;
+}
+
+message DeactivateAccessKeyRequest {
+  KeyIdentity id = 1;
+}
+
+message DeleteAccessKeyRequest {
+  KeyIdentity id = 1;
+}
+
+message GetAccessKeySecretOnceResponse {
+  string secret = 1 [(sensitive) = true];
+}
+
+message ListAccessKeysResponse {
+  // List of access keys returned in the response. The field should be named as `items` for consistency.
+  repeated AccessKey items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}

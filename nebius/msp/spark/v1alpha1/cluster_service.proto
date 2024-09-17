@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package nebius.msp.spark.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/annotations.proto";
+import "nebius/msp/spark/v1alpha1/cluster.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/spark/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "ClusterServiceProto";
+option java_package = "ai.nebius.pub.msp.spark.v1alpha1";
+
+service ClusterService {
+  option (api_service_name) = "spark.msp";
+
+  // Returns the specified cluster.
+  rpc Get(GetClusterRequest) returns (Cluster);
+
+  // Returns the specified cluster by name.
+  rpc GetByName(GetClusterByNameRequest) returns (Cluster);
+
+  // Retrieves a list of clusters.
+  rpc List(ListClustersRequest) returns (ListClustersResponse);
+
+  // Creates a cluster.
+  rpc Create(CreateClusterRequest) returns (common.v1.Operation);
+
+  // Updates a cluster.
+  rpc Update(UpdateClusterRequest) returns (common.v1.Operation);
+
+  // Delete a cluster.
+  rpc Delete(DeleteClusterRequest) returns (common.v1.Operation);
+}
+
+message GetClusterRequest {
+  // ID of the cluster to retrieve.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message GetClusterByNameRequest {
+  // Parent ID of the cluster to retrieve.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Name of the cluster to retrieve.
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListClustersRequest {
+  // Identifier of IAM container to list clusters from.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Specifies the maximum number of items to return in the response. Default value is 100.
+  int64 page_size = 2 [(buf.validate.field) = { int64: { gte: 0 } }];
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+}
+
+message ListClustersResponse {
+  // List of clusters.
+  repeated Cluster items = 1 [(buf.validate.field).required = true];
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  optional string next_page_token = 2;
+}
+
+message CreateClusterRequest {
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "create_cluster.metadata",
+        message: "'metadata' must have 'parent_id' and 'name'",
+        expression: "has(this.metadata.parent_id) && has(this.metadata.name)"
+      },
+      {
+        id: "create_cluster.spec",
+        message: "'spec' must have 'authorization'",
+        expression: "has(this.spec.authorization)"
+      }
+    ]
+  };
+
+  // Metadata associated with the new cluster. Must include parent_id in which we create the cluster.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // Specification for the new cluster.
+  ClusterSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message UpdateClusterRequest {
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "update_cluster.metadata",
+        message: "'metadata' must have 'id'",
+        expression: "has(this.metadata.id)"
+      }
+    ]
+  };
+
+  // Metadata associated with the cluster. Must include id of the cluster we are going to update.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // Updated specification for the cluster.
+  ClusterSpec spec = 2;
+}
+
+message DeleteClusterRequest {
+  // ID of the cluster to delete.
+  string id = 1 [(buf.validate.field).required = true];
+}

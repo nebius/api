@@ -1,0 +1,134 @@
+syntax = "proto3";
+
+package nebius.compute.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/annotations.proto";
+import "nebius/vpc/v1alpha1/network_interface.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1alpha1";
+
+// Migrate to compute/v1.
+option deprecated = true;
+option java_multiple_files = true;
+option java_outer_classname = "InstanceProto";
+option java_package = "ai.nebius.pub.compute.v1alpha1";
+
+message Instance {
+  common.v1.ResourceMetadata metadata = 1;
+
+  InstanceSpec spec = 2;
+
+  InstanceStatus status = 3;
+}
+
+message InstanceSpec {
+  reserved 11;
+
+  string service_account_id = 1 [(field_behavior) = IMMUTABLE];
+
+  ResourcesSpec resources = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+
+  InstanceGpuClusterSpec gpu_cluster = 3 [(field_behavior) = IMMUTABLE];
+
+  repeated nebius.vpc.v1alpha1.NetworkInterfaceSpec network_interfaces = 4 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+
+  AttachedDiskSpec boot_disk = 5 [(field_behavior) = IMMUTABLE];
+
+  repeated AttachedDiskSpec secondary_disks = 6;
+
+  repeated AttachedFilesystemSpec filesystems = 7 [(field_behavior) = IMMUTABLE];
+
+  string cloud_init_user_data = 8 [(field_behavior) = IMMUTABLE, (sensitive) = true];
+
+  bool stopped = 13;
+}
+
+message ResourcesSpec {
+  string platform = 1;
+
+  oneof size {
+    string preset = 2;
+  }
+}
+
+message InstanceGpuClusterSpec {
+  string id = 1;
+}
+
+message AttachedDiskSpec {
+  enum AttachMode {
+    UNSPECIFIED = 0;
+
+    READ_ONLY = 1;
+
+    READ_WRITE = 2;
+  }
+
+  AttachMode attach_mode = 1 [(buf.validate.field).required = true];
+
+  oneof type {
+    option (buf.validate.oneof).required = true;
+
+    ExistingDisk existing_disk = 2;
+  }
+
+  // Specifies the user-defined identifier, allowing to use '/dev/disk/by-id/virtio-{device_name}' as a device path in mount command.
+  string device_name = 3 [(buf.validate.field) = { string: { max_len: 20 } }];
+}
+
+message ExistingDisk {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message ExistingFilesystem {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message AttachedFilesystemSpec {
+  enum AttachMode {
+    UNSPECIFIED = 0;
+
+    READ_ONLY = 1;
+
+    READ_WRITE = 2;
+  }
+
+  AttachMode attach_mode = 1 [(buf.validate.field).required = true];
+
+  // Specifies the user-defined identifier, allowing to use it as a device in mount command.
+  string device_name = 2 [(buf.validate.field).required = true];
+
+  oneof type {
+    option (buf.validate.oneof).required = true;
+
+    ExistingFilesystem existing_filesystem = 3;
+  }
+}
+
+message InstanceStatus {
+  enum InstanceState {
+    UNSPECIFIED = 0;
+
+    CREATING = 1;
+
+    UPDATING = 2;
+
+    STARTING = 3;
+
+    RUNNING = 4;
+
+    STOPPING = 5;
+
+    STOPPED = 6;
+
+    DELETING = 7;
+
+    ERROR = 8;
+  }
+
+  InstanceState state = 1;
+
+  repeated nebius.vpc.v1alpha1.NetworkInterfaceStatus network_interfaces = 2;
+}

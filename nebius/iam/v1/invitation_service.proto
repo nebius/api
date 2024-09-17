@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/iam/v1/invitation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "InvitationServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+service InvitationService {
+  option (api_service_name) = "cpl.iam";
+
+  rpc Create(CreateInvitationRequest) returns (common.v1.Operation);
+
+  rpc Get(GetInvitationRequest) returns (Invitation);
+
+  rpc List(ListInvitationsRequest) returns (ListInvitationsResponse);
+
+  rpc Delete(DeleteInvitationRequest) returns (common.v1.Operation);
+
+  rpc Update(UpdateInvitationRequest) returns (common.v1.Operation);
+
+  rpc Resend(ResendInvitationRequest) returns (common.v1.Operation);
+}
+
+message CreateInvitationRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  InvitationSpec spec = 2;
+
+  bool no_send = 3; // if set, no sending is attempted (it's supposed that later a Resend method is called)
+}
+
+message GetInvitationRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message ListInvitationsRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+
+  string filter = 4;
+}
+
+message ListInvitationsResponse {
+  repeated Invitation items = 1;
+
+  string next_page_token = 2;
+}
+
+message DeleteInvitationRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message UpdateInvitationRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  InvitationSpec spec = 2;
+}
+
+message ResendInvitationRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}

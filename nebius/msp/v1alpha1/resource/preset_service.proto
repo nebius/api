@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package nebius.msp.v1alpha1.resource;
+
+import "nebius/msp/v1alpha1/resource/preset.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/v1alpha1/resource";
+option java_multiple_files = true;
+option java_outer_classname = "PresetServiceProto";
+option java_package = "ai.nebius.pub.msp.v1alpha1.resource";
+
+service PresetService {
+  rpc List(ListPresetsRequest) returns (ListPresetsResponse);
+}
+
+message ListPresetsRequest {
+  int64 page_size = 1;
+
+  string page_token = 2;
+}
+
+message ListPresetsResponse {
+  repeated Preset items = 1;
+
+  string next_page_token = 2;
+}

@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package nebius;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius";
+option java_multiple_files = true;
+option java_outer_classname = "AnnotationsProto";
+option java_package = "ai.nebius.pub";
+
+extend google.protobuf.MessageOptions {
+  repeated ResourceBehavior resource_behavior = 1191;
+}
+
+enum ResourceBehavior {
+  // The behavior of the resource is unspecified.
+  // Avoid using this default value.
+  RESOURCE_BEHAVIOR_UNSPECIFIED = 0;
+
+  // Indicates that the resource can be moved to another parent, typically an
+  // IAM container, though not necessarily limited to this.
+  // This behavior suggests that the `metadata.parent_id` attribute could be modified.
+  MOVABLE = 1;
+
+  // Indicates that the resource name can be unspecified or does not follow
+  // uniqueness requirement within parent_id and resource type.
+  UNNAMED = 2;
+
+  // Indicates that the resource is named, and the name cannot be changed after
+  // it is created. It is strongly recommended to do srvices with renaming
+  // capability, as the guidelines suggest.
+  IMMUTABLE_NAME = 3;
+}
+
+extend google.protobuf.ServiceOptions {
+  // by default API tools assume that every service is configured with address
+  //    in a format: <first-part-after-nebius-in-grpc-path>.<domain>
+  //    example: nebius.dns.v1alpha1.ZoneService => dns.<domain>
+  // this option is used to override the default behavior for private api domains
+  //    example for iam access: option (api_service_name) = "access-service.iam";
+  //    that leads to access-service.iam.<domain>
+  string api_service_name = 1191;
+}
+
+extend google.protobuf.FieldOptions {
+  // Sensitive field is masked/removed from the message while logging, storing in DB and
+  // on all others persistent layers (except specialized storage like PDS).
+  bool sensitive = 1192;
+}
+
+extend google.protobuf.FieldOptions {
+  // Field behavior describes how the field behaves on input or output.
+  repeated FieldBehavior field_behavior = 1191;
+}
+
+extend google.protobuf.OneofOptions {
+  // Field behavior describes how oneof behaves on input or output.
+  repeated FieldBehavior oneof_behavior = 1191;
+}
+
+enum FieldBehavior {
+  FIELD_BEHAVIOR_UNSPECIFIED = 0;
+
+  // This indicates that the field can't be changed during a resource update.
+  // Changing the field value will cause an `INVALID_ARGUMENT` error.
+  // Resource recreate requires a change of the field value.
+  IMMUTABLE = 2;
+
+  // Indicates field is a resource ID, so it MUST be present on a resource
+  // update, but MUST NOT be set on create.
+  // Otherwise, RPC will fail with the `INVALID_ARGUMENT` error
+  IDENTIFIER = 3;
+
+  // Indicates field is not present in output.
+  INPUT_ONLY = 4;
+
+  // Indicates field can't be set on create or changed on update.
+  // Otherwise, RPC will fail with the `INVALID_ARGUMENT` error
+  OUTPUT_ONLY = 5;
+
+  // Indicates that an empty message and a null have different semantics.
+  // Usually, that field is a feature spec message: its empty message enables
+  // that feature, and null disables it. Such a message is different from `bool`
+  // because it already has some feature parameters, or they can be added later
+  // in a backward-compatible way.
+  // IMPORTANT: if the message itself is recursive, this behavior is forced.
+  MEANINGFUL_EMPTY_VALUE = 6;
+
+  // Indicates that an empty (default) value will be filled by the server.
+  // Usually, that field is a feature spec value, which by default is computed.
+  // Values marked with this annotation won't raise error if they are not set
+  // and the returned value is not equal to protobuf default.
+  NON_EMPTY_DEFAULT = 7;
+}

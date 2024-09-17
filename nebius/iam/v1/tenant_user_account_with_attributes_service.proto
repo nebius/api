@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "nebius/annotations.proto";
+import "nebius/iam/v1/tenant_user_account.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "TenantUserAccountWithAttributesServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+service TenantUserAccountWithAttributesService {
+  option (api_service_name) = "cpl.iam";
+
+  rpc Get(GetTenantUserAccountWithAttributesRequest) returns (TenantUserAccountWithAttributes);
+
+  rpc List(ListTenantUserAccountsWithAttributesRequest) returns (ListTenantUserAccountsWithAttributesResponse);
+}
+
+message GetTenantUserAccountWithAttributesRequest {
+  string id = 1; // tenant user account id like 'tenantuseraccount-{region}someuniquesuffix'
+}
+
+message ListTenantUserAccountsWithAttributesRequest {
+  // Represents the tenant ID like 'tenant-{region}someuniquesuffix'
+  string parent_id = 1;
+
+  // Specifies the maximum number of items to return in the response.
+  // Default value: 10
+  optional int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+}
+
+message ListTenantUserAccountsWithAttributesResponse {
+  // List of user accounts returned in the response. The field should be named as `items` for consistency.
+  repeated TenantUserAccountWithAttributes items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}

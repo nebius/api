@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package nebius.compute.v1alpha1;
+
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1alpha1/operation_service.proto";
+import "nebius/compute/v1alpha1/image.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1alpha1";
+
+// Migrate to compute/v1.
+option deprecated = true;
+option java_multiple_files = true;
+option java_outer_classname = "ImageServiceProto";
+option java_package = "ai.nebius.pub.compute.v1alpha1";
+
+service ImageService {
+  // Migrate to compute/v1.
+  option deprecated = true;
+
+  rpc Get(GetImageRequest) returns (Image);
+
+  rpc GetByName(common.v1.GetByNameRequest) returns (Image);
+
+  rpc GetLatestByFamily(GetImageLatestByFamilyRequest) returns (Image);
+
+  rpc List(ListImagesRequest) returns (ListImagesResponse);
+
+  rpc ListOperationsByParent(common.v1alpha1.ListOperationsByParentRequest) returns (common.v1alpha1.ListOperationsResponse);
+}
+
+message GetImageRequest {
+  string id = 1;
+}
+
+message GetImageLatestByFamilyRequest {
+  string image_family = 1;
+
+  string parent_id = 2; // default 'project-{region}public-images'
+}
+
+message ListImagesRequest {
+  string parent_id = 1;
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+
+  string filter = 4;
+}
+
+message ListImagesResponse {
+  repeated Image items = 1;
+
+  string next_page_token = 2;
+}

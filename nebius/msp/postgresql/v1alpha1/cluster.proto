@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package nebius.msp.postgresql.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/msp/v1alpha1/cluster.proto";
+import "nebius/msp/postgresql/v1alpha1/config/postgresql.proto";
+import "nebius/msp/postgresql/v1alpha1/preset.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/postgresql/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "ClusterProto";
+option java_package = "ai.nebius.pub.msp.postgresql.v1alpha1";
+
+message Cluster {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  ClusterSpec spec = 2 [(buf.validate.field).required = true];
+
+  ClusterStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message ConnectionPoolerConfig {
+  enum PoolingMode {
+    POOLING_MODE_UNSPECIFIED = 0;
+
+    // Session pooling mode.
+    SESSION = 1;
+
+    // Transaction pooling mode.
+    TRANSACTION = 2;
+  }
+
+  // Mode that the connection pooler is working in.
+  PoolingMode pooling_mode = 1;
+}
+
+message ClusterSpec {
+  // Description of the PostgreSQL cluster.
+  string description = 1;
+
+  // ID of the backbone in which the cluster is created
+  string backbone_id = 2 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+
+  ConfigSpec config = 3 [(buf.validate.field).required = true];
+
+  BootstrapSpec bootstrap = 4 [(buf.validate.field).required = true];
+
+  BackupSpec backup = 5;
+}
+
+message ClusterStatus {
+  // Current phase of the cluster.
+  nebius.msp.v1alpha1.ClusterStatus.Phase phase = 1 [(field_behavior) = OUTPUT_ONLY];
+
+  // State reflects substatus of the phase to define whether it's healthy or not.
+  nebius.msp.v1alpha1.ClusterStatus.State state = 2 [(field_behavior) = OUTPUT_ONLY];
+
+  // Endpoints of the PostgreSQL cluster.
+  EndpointsSpec endpoints = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message EndpointsSpec {
+  string read_write_endpoint = 1 [(field_behavior) = OUTPUT_ONLY];
+
+  optional string read_only_endpoint = 2 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message ConfigSpec {
+  // Version of PostgreSQL used in the cluster.
+  // Possible values: `16`
+  string version = 1 [(buf.validate.field).required = true];
+
+  // Configuration of the connection pooler.
+  ConnectionPoolerConfig pooler_config = 2;
+
+  // Resources allocated to PostgreSQL hosts.
+  PresetSpec resources = 3 [(buf.validate.field).required = true];
+
+  // Config of the PostgreSQL cluster.
+  oneof config {
+    // Configuration parameters for postgres
+    config.PostgresqlConfig16 postgresql_config_16 = 4;
+  }
+}
+
+message BootstrapSpec {
+  // Name of the bootstrap PostgreSQL user.
+  string user_name = 1 [(buf.validate.field).required = true];
+
+  // Password of the bootstrap PostgreSQL user.
+  string user_password = 2 [(field_behavior) = INPUT_ONLY, (sensitive) = true];
+
+  // Name of the PostgreSQL database. 1-63 characters long.
+  string db_name = 3 [(buf.validate.field).required = true];
+
+  // POSIX locale for string sorting order.
+  // Can only be set at creation time.
+  string db_lc_collate = 4;
+
+  // POSIX locale for character classification.
+  // Can only be set at creation time.
+  string db_lc_ctype = 5;
+}
+
+message BackupSpec {
+  // Backup window start in "HH:MM:SS" format (UTC Time)
+  string backup_window_start = 1;
+
+  // Retention policy to be used for backups and WALs (i.e. '7d')
+  string retention_policy = 2;
+}

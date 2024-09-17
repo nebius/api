@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "TokenServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+// https://www.rfc-editor.org/rfc/rfc8693.html
+message ExchangeTokenRequest {
+  string grant_type = 1; // required - urn:ietf:params:oauth:grant-type:token-exchange
+
+  string requested_token_type = 2; // optional type of requested token, default is urn:ietf:params:oauth:token-type:access_token
+
+  string subject_token = 3 [(sensitive) = true]; // required - could be self signed JWT token
+
+  string subject_token_type = 4; // required, in case of jwt - urn:ietf:params:oauth:token-type:jwt
+
+  repeated string scopes = 5; // optional (scopes of the token)
+
+  string audience = 6; // optional, name of the oauth client id on which this token will be used
+
+  string actor_token = 7 [(sensitive) = true]; // optional, subject token for impersonation/delegation (who want to impersonate/delegate) in subject_token.
+
+  string actor_token_type = 8; // optional, token type for the impersonation/delegation (who want to impersonate/delegate). Usually it's urn:ietf:params:oauth:token-type:access_token
+
+  repeated string resource = 9; // optional, list of resources approved to use by token, if applicable
+}
+
+message CreateTokenResponse {
+  string access_token = 1 [(sensitive) = true]; // required
+
+  string issued_token_type = 2; // required
+
+  string token_type = 3; // required - Bearer
+
+  int64 expires_in = 4;
+
+  repeated string scopes = 5;
+}

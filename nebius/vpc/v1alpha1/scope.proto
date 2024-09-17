@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package nebius.vpc.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "ScopeProto";
+option java_package = "ai.nebius.pub.vpc.v1alpha1";
+
+message Scope {
+  // Metadata associated with the Scope.
+  // `metadata.parent_id` represents the parent IAM container.
+  common.v1.ResourceMetadata metadata = 1;
+
+  // Specification of the Scope.
+  ScopeSpec spec = 2;
+
+  // Status information for the Scope.
+  ScopeStatus status = 3;
+}
+
+message ScopeSpec {
+  // Type of scope.
+  enum Type {
+    SCOPE_TYPE_UNSPECIFIED = 0; // Default, unspecified scope type.
+
+    PUBLIC = 1; // Public scope.
+
+    PRIVATE = 2; // Private scope.
+  }
+
+  // Type of the Scope (Private or Public).
+  Type type = 1 [(buf.validate.field).required = true];
+}
+
+message ScopeStatus {
+  // Possible states of the Scope.
+  enum State {
+    STATE_UNSPECIFIED = 0; // Default, unspecified state.
+
+    CREATING = 1; // Scope is being created.
+
+    READY = 2; // Scope is ready for use.
+
+    DELETING = 3; // Scope is being deleted.
+  }
+
+  // Current state of the Scope.
+  State state = 1;
+}

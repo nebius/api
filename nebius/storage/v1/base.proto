@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package nebius.storage.v1;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
+option java_multiple_files = true;
+option java_outer_classname = "BaseProto";
+option java_package = "ai.nebius.pub.storage.v1";
+
+enum StorageClass {
+  STORAGE_CLASS_UNSPECIFIED = 0;
+
+  STANDARD = 1;
+}
+
+enum VersioningPolicy {
+  VERSIONING_POLICY_UNSPECIFIED = 0;
+
+  DISABLED = 1;
+
+  ENABLED = 2;
+
+  SUSPENDED = 3;
+}

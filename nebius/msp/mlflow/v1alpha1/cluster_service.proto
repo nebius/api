@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package nebius.msp.mlflow.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/msp/mlflow/v1alpha1/cluster.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1alpha1/operation.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/mlflow/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "ClusterServiceProto";
+option java_package = "ai.nebius.pub.msp.mlflow.v1alpha1";
+
+service ClusterService {
+  option (api_service_name) = "mlflow.msp";
+
+  // Returns the specified cluster.
+  rpc Get(GetClusterRequest) returns (Cluster);
+
+  // Returns the specified cluster.
+  rpc GetByName(GetClusterByNameRequest) returns (Cluster);
+
+  // Retrieves a list of clusters.
+  rpc List(ListClustersRequest) returns (ListClustersResponse);
+
+  // Creates a cluster.
+  rpc Create(CreateClusterRequest) returns (common.v1alpha1.Operation);
+
+  // Delete a cluster.
+  rpc Delete(DeleteClusterRequest) returns (common.v1alpha1.Operation);
+}
+
+message GetClusterRequest {
+  // ID of the cluster to retrieve.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message GetClusterByNameRequest {
+  // Identifier of IAM container to get cluster from.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Name of the cluster.
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListClustersRequest {
+  // Identifier of IAM container to list clusters from.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Specifies the maximum number of items to return in the response. Default value is 100.
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+}
+
+message ListClustersResponse {
+  // List of clusters.
+  repeated Cluster items = 1 [(buf.validate.field).required = true];
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}
+
+message CreateClusterRequest {
+  // Metadata associated with the new cluster. Must include parent_id in which we create the cluster.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // Specification for the new cluster.
+  ClusterSpec spec = 2 [(buf.validate.field).required = true];
+
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "metadata.parent_id",
+        message: "metadata.parent_id should not be empty",
+        expression: "has(this.metadata.parent_id)"
+      },
+      {
+        id: "metadata.name",
+        message: "metadata.name should not be empty",
+        expression: "has(this.metadata.name)"
+      }
+    ]
+  };
+}
+
+message DeleteClusterRequest {
+  // ID of the cluster to delete.
+  string id = 1 [(buf.validate.field).required = true];
+}

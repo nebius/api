@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package nebius.mk8s.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/mk8s/v1/cluster.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1";
+option java_multiple_files = true;
+option java_outer_classname = "ClusterServiceProto";
+option java_package = "ai.nebius.pub.mk8s.v1";
+
+service ClusterService {
+  rpc Get(GetClusterRequest) returns (Cluster);
+
+  rpc GetByName(common.v1.GetByNameRequest) returns (Cluster);
+
+  rpc List(ListClustersRequest) returns (ListClustersResponse);
+
+  rpc Create(CreateClusterRequest) returns (common.v1.Operation);
+
+  rpc Update(UpdateClusterRequest) returns (common.v1.Operation);
+
+  rpc Delete(DeleteClusterRequest) returns (common.v1.Operation);
+}
+
+message CreateClusterRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  ClusterSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message GetClusterRequest {
+  string id = 1 [(buf.validate.field).required = true];
+
+  string resource_version = 2;
+}
+
+message ListClustersRequest {
+  // ID of the IAM container we are listing the resources in.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Specifies the maximum number of items to return in the response.
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+}
+
+message ListClustersResponse {
+  repeated Cluster items = 1;
+
+  string next_page_token = 2;
+}
+
+message UpdateClusterRequest {
+  // Metadata associated with the instance.
+  // Includes ID of the instance to update.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // Updated specifications for the instance.
+  ClusterSpec spec = 2;
+}
+
+message DeleteClusterRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}

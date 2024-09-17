@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package nebius.mk8s.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/empty.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1alpha1/operation.proto";
+import "nebius/mk8s/v1alpha1/node_group.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "NodeGroupServiceProto";
+option java_package = "ai.nebius.pub.mk8s.v1alpha1";
+
+service NodeGroupService {
+  rpc Get(GetNodeGroupRequest) returns (NodeGroup);
+
+  rpc GetByName(GetNodeGroupByNameRequest) returns (NodeGroup);
+
+  rpc List(ListNodeGroupsRequest) returns (ListNodeGroupsResponse);
+
+  rpc Create(CreateNodeGroupRequest) returns (common.v1alpha1.Operation);
+
+  rpc Update(UpdateNodeGroupRequest) returns (common.v1alpha1.Operation);
+
+  rpc Delete(DeleteNodeGroupRequest) returns (common.v1alpha1.Operation);
+
+  rpc Upgrade(UpgradeNodeGroupRequest) returns (common.v1alpha1.Operation);
+}
+
+message CreateNodeGroupRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  NodeGroupSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message GetNodeGroupRequest {
+  string id = 1 [(buf.validate.field).required = true];
+
+  string resource_version = 2;
+}
+
+message GetNodeGroupByNameRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListNodeGroupsRequest {
+  // ID of the parent Cluster.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Specifies the maximum number of items to return in the response.
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+}
+
+message ListNodeGroupsResponse {
+  repeated NodeGroup items = 1;
+
+  string next_page_token = 2;
+}
+
+message UpdateNodeGroupRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  NodeGroupSpec spec = 2;
+}
+
+message DeleteNodeGroupRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message UpgradeNodeGroupRequest {
+  string id = 1 [(buf.validate.field).required = true];
+
+  oneof upgrade_type {
+    option (buf.validate.oneof).required = true;
+
+    // Upgrades to the latest infra version, which includes latest supported kubernetes patch version. Kubernetes minor version remain the same.
+    google.protobuf.Empty latest_infra_version = 2 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+  }
+}

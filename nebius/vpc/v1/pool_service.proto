@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package nebius.vpc.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/vpc/v1/pool.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
+option java_multiple_files = true;
+option java_outer_classname = "PoolServiceProto";
+option java_package = "ai.nebius.pub.vpc.v1";
+
+service PoolService {
+  rpc Get(GetPoolRequest) returns (Pool);
+
+  rpc GetByName(GetPoolByNameRequest) returns (Pool);
+
+  rpc List(ListPoolsRequest) returns (ListPoolsResponse);
+}
+
+message GetPoolRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message GetPoolByNameRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListPoolsRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
+message ListPoolsResponse {
+  repeated Pool items = 1;
+
+  string next_page_token = 2;
+}

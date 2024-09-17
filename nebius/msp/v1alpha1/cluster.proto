@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package nebius.msp.v1alpha1;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "ClusterProto";
+option java_package = "ai.nebius.pub.msp.v1alpha1";
+
+message ClusterStatus {
+  enum Phase {
+    PHASE_UNSPECIFIED = 0;
+
+    PHASE_PROVISIONING = 1;
+
+    PHASE_RUNNING = 2;
+
+    PHASE_UPDATING = 3;
+
+    PHASE_DELETING = 4;
+
+    PHASE_DELETED = 5 [deprecated = true];
+
+    PHASE_PURGING = 6;
+
+    PHASE_STOPPING = 7;
+
+    PHASE_RESUMING = 8;
+  }
+
+  // Current phase of the cluster.
+  Phase phase = 1;
+
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    STATE_IN_PROGRESS = 1;
+
+    STATE_FINISHED = 2;
+
+    STATE_ERROR = 3;
+
+    STATE_DEGRADED = 4;
+
+    STATE_SCHEDULED = 5;
+  }
+
+  // State reflects substatus of the phase to define whether it's healthy or not.
+  State state = 2;
+
+  bool reconciling = 100;
+}

@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package nebius.storage.v1;
+
+import "nebius/storage/v1/base.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
+option java_multiple_files = true;
+option java_outer_classname = "BucketCountersProto";
+option java_package = "ai.nebius.pub.storage.v1";
+
+message CurrentBucketCounters {
+  int64 simple_objects_quantity = 1;
+
+  int64 simple_objects_size = 2;
+
+  int64 multipart_objects_quantity = 3;
+
+  int64 multipart_objects_size = 4;
+
+  int64 multipart_uploads_quantity = 5;
+
+  int64 inflight_parts_quantity = 6;
+
+  int64 inflight_parts_size = 7;
+}
+
+// Counters for non-current object versions (for versioning buckets).
+message NonCurrentBucketCounters {
+  int64 simple_objects_quantity = 1;
+
+  int64 simple_objects_size = 2;
+
+  int64 multipart_objects_quantity = 3;
+
+  int64 multipart_objects_size = 4;
+}
+
+message BucketCounters {
+  StorageClass storage_class = 1;
+
+  CurrentBucketCounters counters = 2;
+
+  NonCurrentBucketCounters non_current_counters = 3;
+}

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "SessionManagementServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+service SessionManagementService {
+  option (api_service_name) = "cpl.iam";
+
+  rpc Revoke(RevokeSessionRequest) returns (RevokeSessionResponse);
+}
+
+message RevokeSessionRequest {
+  oneof revoke {
+    string service_account_id = 3; // revoke all for specific service account - to revoke logout from all sessions for user
+
+    bool all_my_active = 6; // revoke all active session of current user
+
+    string tenant_user_account_id = 7; // revoke all for specific tenant user - to revoke logout from all sessions for user
+  }
+}
+
+message RevokeSessionResponse {
+}

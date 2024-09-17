@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package nebius.msp.mlflow.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/annotations.proto";
+import "nebius/msp/v1alpha1/cluster.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/mlflow/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "ClusterProto";
+option java_package = "ai.nebius.pub.msp.mlflow.v1alpha1";
+
+message Cluster {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  ClusterSpec spec = 2 [(buf.validate.field).required = true];
+
+  MlflowClusterStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+// Cluster specification
+message ClusterSpec {
+  // Description of the cluster.
+  string description = 1;
+
+  // Either make cluster public accessible or accessible only via private VPC.
+  bool public_access = 2 [(buf.validate.field).required = true];
+
+  // Id of backbone where service will be created.
+  string backbone_id = 3 [(buf.validate.field).required = true];
+
+  // MLflow admin username. If not provided, default username will be used.
+  string admin_username = 4;
+
+  // MLflow admin password.
+  string admin_password = 5 [
+    (buf.validate.field).required = true,
+    (field_behavior) = INPUT_ONLY,
+    (sensitive) = true
+  ];
+
+  // Id of the SA that will be used to access S3 bucket (and create one if not provided)
+  string service_account_id = 6 [(buf.validate.field).required = true];
+
+  // Name of the Nefbius S3 bucket for MLflow artifacts. If not provided, will be created under the same parent.
+  string storage_bucket_name = 7;
+}
+
+message MlflowClusterStatus {
+  // Current phase of the cluster.
+  nebius.msp.v1alpha1.ClusterStatus.Phase phase = 1;
+
+  // State reflects substatus of the phase to define whether it's healthy or not.
+  nebius.msp.v1alpha1.ClusterStatus.State state = 2;
+
+  // Tracking endpoint url.
+  string tracking_endpoint = 3;
+
+  // Name of the Nebius S3 bucket for MLflow artifacts.
+  string effective_storage_bucket_name = 4;
+
+  // Count of experiments in the MLflow cluster
+  uint32 experiments_count = 5;
+
+  // MLflow version
+  string mlflow_version = 6;
+}

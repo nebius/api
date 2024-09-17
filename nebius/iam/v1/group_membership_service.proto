@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/iam/v1/group_membership.proto";
+import "nebius/iam/v1/group.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "GroupMembershipServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+service GroupMembershipService {
+  option (api_service_name) = "cpl.iam";
+
+  rpc Create(CreateGroupMembershipRequest) returns (common.v1.Operation);
+
+  rpc Get(GetGroupMembershipRequest) returns (GroupMembership);
+
+  rpc Delete(DeleteGroupMembershipRequest) returns (common.v1.Operation);
+
+  rpc ListMembers(ListGroupMembershipsRequest) returns (ListGroupMembershipsResponse);
+
+  rpc ListMemberOf(ListMemberOfRequest) returns (ListMemberOfResponse);
+}
+
+message CreateGroupMembershipRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  GroupMembershipSpec spec = 2;
+
+  int64 revoke_after_hours = 4;
+}
+
+message DeleteGroupMembershipRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message GetGroupMembershipRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message ListGroupMembershipsRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Default value: 10
+  optional int64 page_size = 2;
+
+  string page_token = 3;
+
+  string filter = 4;
+}
+
+message ListMemberOfRequest {
+  // Requested subject id. Can be tenant user account id or service account id.
+  string subject_id = 1 [(buf.validate.field).required = true];
+
+  // Default value: 10
+  optional int64 page_size = 2;
+
+  string page_token = 3;
+
+  string filter = 4;
+}
+
+message ListGroupMembershipsResponse {
+  // Members of the group. Can be tenant user account ids or service account ids.
+  repeated GroupMembership memberships = 1;
+
+  string next_page_token = 2;
+}
+
+message ListMemberOfResponse {
+  // Groups that requested entity is a member of
+  repeated Group items = 1;
+
+  string next_page_token = 2;
+}

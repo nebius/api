@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "StateProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+enum State {
+  STATE_UNSPECIFIED = 0;
+
+  ACTIVE = 1;
+
+  SCHEDULING_FOR_DELETION = 2;
+
+  SCHEDULED_FOR_DELETION = 3;
+
+  SCHEDULING_FOR_DELETION_BY_PARENT = 4;
+
+  SCHEDULED_FOR_DELETION_BY_PARENT = 5;
+
+  UNDELETING = 6;
+
+  PURGING = 7;
+
+  // DRAFT = 1000;
+  CREATING = 1001;
+}

@@ -1,0 +1,148 @@
+syntax = "proto3";
+
+package nebius.vpc.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/vpc/v1alpha1/pool.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "AllocationProto";
+option java_package = "ai.nebius.pub.vpc.v1alpha1";
+
+message Allocation {
+  // Metadata for the Allocation.
+  // `metadata.parent_id` represents IAM Container.
+  common.v1.ResourceMetadata metadata = 1;
+
+  // Specifications for the allocation, detailing its name and IP configuration.
+  AllocationSpec spec = 2;
+
+  // Contains the current status of the allocation, indicating its state and any additional details.
+  AllocationStatus status = 3;
+}
+
+message AllocationSpec {
+  // Holds the IP specifications for the allocation, including the type of IP (IPv4 or IPv6) and its corresponding configuration.
+  oneof ip_spec {
+    option (buf.validate.oneof).required = true;
+
+    IPv4PrivateAllocationSpec ipv4_private = 1 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+    IPv4PublicAllocationSpec ipv4_public = 2 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+  }
+}
+
+message IPv4PrivateAllocationSpec {
+  // CIDR block for IPv4 Allocation.
+  // May be a single IP address (such as 10.2.3.4),
+  // a prefix length (such as /24) or a CIDR-formatted string (such as 10.1.2.0/24).
+  // Random address (/32) from pool would be allocated if field is omitted.
+  string cidr = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "string.valid_cidr",
+          message: "value must be a valid IP address, CIDR or mask",
+          expression: "this == '' || this.matches('^/([0-9]|[1-2][0-9]|3[0-2])$') || this.isIp(4) || this.isIpPrefix(4, true)"
+        }
+      ]
+    },
+    (field_behavior) = IMMUTABLE
+  ];
+
+  oneof pool {
+    option (buf.validate.oneof).required = true;
+
+    // Subnet ID.
+    // Required same subnet to use allocation in subnet-resources (e.g. Network Interface)
+    string subnet_id = 2 [(field_behavior) = IMMUTABLE];
+
+    // Pool for the IPv4 private allocation.
+    string pool_id = 3 [(field_behavior) = IMMUTABLE];
+  }
+}
+
+message IPv4PublicAllocationSpec {
+  // CIDR block for IPv4 Allocation.
+  // May be a single IP address (such as 10.2.3.4),
+  // a prefix length (such as /32) or a CIDR-formatted string (such as 10.1.2.0/32).
+  // Random address (/32) from pool would be allocated if field is omitted.
+  string cidr = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "string.valid_cidr",
+          message: "value must be a valid IP address, CIDR or mask",
+          expression: "this == '' || this.matches('^/([0-9]|[1-2][0-9]|3[0-2])$') || this.isIp(4) || this.isIpPrefix(4, true)"
+        }
+      ]
+    },
+    (field_behavior) = IMMUTABLE
+  ];
+
+  // Pool for the IPv4 public allocation.
+  string pool_id = 2 [(field_behavior) = IMMUTABLE];
+}
+
+message AllocationStatus {
+  // Enumeration of possible states of the Allocation.
+  enum State {
+    STATE_UNSPECIFIED = 0; // Default state, unspecified.
+
+    CREATING = 1; // Allocation is being created.
+
+    ALLOCATED = 2; // Allocation is ready for use.
+
+    ASSIGNED = 3; // Allocation is used.
+
+    DELETING = 4; // Allocation is being deleted.
+  }
+
+  // This field represents the current state of the allocation.
+  State state = 1;
+
+  // Detailed information about the allocation status,
+  // including the allocated CIDR, pool ID, scope type, and IP version.
+  AllocationDetails details = 2;
+
+  // Information about the assignment associated with the allocation,
+  // such as network interface or load balancer assignment.
+  Assignment assignment = 3;
+
+  // If false - Lifecycle of allocation depends on resource that using it.
+  bool static = 4;
+}
+
+message AllocationDetails {
+  string allocated_cidr = 1;
+
+  string pool_id = 2;
+
+  IpVersion version = 4;
+}
+
+message Assignment {
+  // This field specifies the type of assignment associated with the allocation,
+  // which could be a network interface or load balancer assignment.
+  oneof type {
+    NetworkInterfaceAssignment network_interface = 1;
+
+    LoadBalancerAssignment load_balancer = 2;
+  }
+}
+
+message NetworkInterfaceAssignment {
+  // ID of the Compute instance network interface belongs to.
+  string instance_id = 1;
+
+  // Network interface name
+  string name = 2;
+}
+
+message LoadBalancerAssignment {
+  // ID of the Load Balancer.
+  string id = 1;
+}

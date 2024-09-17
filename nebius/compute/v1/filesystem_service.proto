@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package nebius.compute.v1;
+
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/common/v1/operation_service.proto";
+import "nebius/compute/v1/filesystem.proto";
+import "nebius/compute/v1/operation_service.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
+option java_multiple_files = true;
+option java_outer_classname = "FilesystemServiceProto";
+option java_package = "ai.nebius.pub.compute.v1";
+
+service FilesystemService {
+  rpc Get(GetFilesystemRequest) returns (Filesystem);
+
+  rpc GetByName(common.v1.GetByNameRequest) returns (Filesystem);
+
+  rpc List(ListFilesystemsRequest) returns (ListFilesystemsResponse);
+
+  rpc Create(CreateFilesystemRequest) returns (common.v1.Operation);
+
+  rpc Update(UpdateFilesystemRequest) returns (common.v1.Operation);
+
+  rpc Delete(DeleteFilesystemRequest) returns (common.v1.Operation);
+
+  rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse);
+}
+
+message GetFilesystemRequest {
+  string id = 1;
+}
+
+message ListFilesystemsRequest {
+  string parent_id = 1;
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+
+  string filter = 4;
+}
+
+message CreateFilesystemRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  FilesystemSpec spec = 2;
+}
+
+message UpdateFilesystemRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  FilesystemSpec spec = 2;
+}
+
+message DeleteFilesystemRequest {
+  string id = 1;
+}
+
+message ListFilesystemsResponse {
+  repeated Filesystem items = 1;
+
+  string next_page_token = 2;
+}

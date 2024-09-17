@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/iam/v1/group.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "GroupServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+service GroupService {
+  option (api_service_name) = "cpl.iam";
+
+  rpc Get(GetGroupRequest) returns (Group);
+
+  rpc GetByName(GetGroupByNameRequest) returns (Group);
+
+  rpc List(ListGroupsRequest) returns (ListGroupsResponse);
+}
+
+message GetGroupRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message GetGroupByNameRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListGroupsRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Default value: 10
+  optional int64 page_size = 2;
+
+  string page_token = 3;
+
+  string filter = 4;
+}
+
+message ListGroupsResponse {
+  repeated Group items = 1;
+
+  string next_page_token = 2;
+}

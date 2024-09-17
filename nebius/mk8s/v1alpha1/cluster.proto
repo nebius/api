@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package nebius.mk8s.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "ClusterProto";
+option java_package = "ai.nebius.pub.mk8s.v1alpha1";
+
+message Cluster {
+  common.v1.ResourceMetadata metadata = 1;
+
+  ClusterSpec spec = 2;
+
+  ClusterStatus status = 3;
+}
+
+message ClusterSpec {
+  ControlPlaneSpec control_plane = 2 [(buf.validate.field).required = true];
+}
+
+message ControlPlaneSpec {
+  // Version is desired Kubernetes version of the cluster. For now only acceptable format is
+  // `MAJOR.MINOR` like "1.30". Option for patch version update will be added later.
+  string version = 1;
+
+  // Subnet ID where control plane instances will be located.
+  string subnet_id = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+
+  ControlPlaneEndpointsSpec endpoints = 3;
+
+  int64 etcd_cluster_size = 4;
+}
+
+message ControlPlaneEndpointsSpec {
+  // PublicEndpointSpec is a specification of public endpoint for control plane.
+  PublicEndpointSpec public_endpoint = 1 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+}
+
+message PublicEndpointSpec {
+}
+
+message ClusterStatus {
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    PROVISIONING = 1;
+
+    RUNNING = 2;
+
+    DELETING = 3;
+  }
+
+  State state = 1;
+
+  ControlPlaneStatus control_plane = 2;
+
+  // Show that changes are in flight
+  bool reconciling = 100;
+}
+
+message ControlPlaneStatus {
+  // Version have format `major.minor.patch-nebius-cp.n` like "1.30.0-nebius-cp.3".
+  string version = 1;
+
+  ControlPlaneStatusEndpoints endpoints = 2;
+
+  ControlPlaneStatusAuth auth = 100;
+}
+
+// Endpoints of Kubernetes control plane. Kubernetes API can be accessed at `https://endpoint/`.
+message ControlPlaneStatusEndpoints {
+  // DNS name or IP address accessible from the Internet.
+  string public_endpoint = 1;
+
+  // DNS name or IP address accessible from the user VPC.
+  string private_endpoint = 2;
+}
+
+message ControlPlaneStatusAuth {
+  string cluster_ca_certificate = 1;
+}
