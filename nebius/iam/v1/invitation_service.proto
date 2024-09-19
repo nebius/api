@@ -48,7 +48,7 @@ message ListInvitationsRequest {
 
   string page_token = 3;
 
-  string filter = 4;
+  string filter = 4 [(sensitive) = true];
 }
 
 message ListInvitationsResponse {

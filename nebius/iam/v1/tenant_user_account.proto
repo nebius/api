@@ -66,7 +66,7 @@ message UserAttributes {
 
   optional bool email_verified = 7 [deprecated = true];
 
-  optional string zoneinfo = 8 [(sensitive) = true];
+  optional string zoneinfo = 8 [(sensitive) = true, deprecated = true];
 
   optional string locale = 9 [(sensitive) = true];
 
@@ -85,7 +85,7 @@ message TenantUserAccountSpec {
   // by listing explicitly visible PDS attributes
   // complete list of PDS attributes is described in ../../pds/inner/v1alpha1/iam_identifier.proto
   message VisibleAttributes {
-    repeated string attribute = 1;
+    repeated string attribute = 1 [(sensitive) = true];
   }
 
   VisibleAttributes visible_attributes = 1;

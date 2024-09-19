@@ -37,6 +37,8 @@ message ListTenantUserAccountsRequest {
 
   // Token for pagination, allowing the retrieval of the next set of results.
   string page_token = 3;
+
+  string filter = 4 [(sensitive) = true];
 }
 
 message ListTenantUserAccountsResponse {

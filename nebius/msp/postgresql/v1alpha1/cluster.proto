@@ -95,14 +95,6 @@ message BootstrapSpec {
 
   // Name of the PostgreSQL database. 1-63 characters long.
   string db_name = 3 [(buf.validate.field).required = true];
-
-  // POSIX locale for string sorting order.
-  // Can only be set at creation time.
-  string db_lc_collate = 4;
-
-  // POSIX locale for character classification.
-  // Can only be set at creation time.
-  string db_lc_ctype = 5;
 }
 
 message BackupSpec {
