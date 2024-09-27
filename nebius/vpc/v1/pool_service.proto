@@ -3,6 +3,8 @@ syntax = "proto3";
 package nebius.vpc.v1;
 
 import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
 import "nebius/vpc/v1/pool.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
@@ -16,6 +18,8 @@ service PoolService {
   rpc GetByName(GetPoolByNameRequest) returns (Pool);
 
   rpc List(ListPoolsRequest) returns (ListPoolsResponse);
+
+  rpc Update(UpdatePoolRequest) returns (common.v1.Operation);
 }
 
 message GetPoolRequest {
@@ -40,4 +44,10 @@ message ListPoolsResponse {
   repeated Pool items = 1;
 
   string next_page_token = 2;
+}
+
+message UpdatePoolRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  PoolSpec spec = 2;
 }

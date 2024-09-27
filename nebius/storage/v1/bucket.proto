@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package nebius.storage.v1;
 
+import "google/protobuf/timestamp.proto";
 import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
@@ -49,17 +50,31 @@ message BucketStatus {
     // Bucket is under creation and cannot be used yet.
     CREATING = 1;
 
-    // Bucket is ready for usage.
-    READY = 2;
+    // Bucket is active and ready for usage.
+    ACTIVE = 2;
 
     // Bucket is being updated.
     // It can be used, but some settings are being modified and you can observe their inconsistency.
     UPDATING = 3;
 
-    // Bucket is being deleted.
-    // It cannot be used anymore.
-    DELETING = 4;
+    // Bucket is scheduled for deletion.
+    // It cannot be used in s3 api anymore.
+    SCHEDULED_FOR_DELETION = 4;
   }
 
   State state = 2;
+
+  enum SuspensionState {
+    SUSPENSION_STATE_UNSPECIFIED = 0;
+
+    NOT_SUSPENDED = 1;
+
+    SUSPENDED = 2;
+  }
+
+  SuspensionState suspension_state = 3;
+
+  google.protobuf.Timestamp deleted_at = 4;
+
+  google.protobuf.Timestamp purge_at = 5;
 }

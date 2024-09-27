@@ -73,4 +73,7 @@ message FilesystemStatus {
   repeated string read_only_attachments = 4;
 
   int64 size_bytes = 5;
+
+  // Indicates whether there is an ongoing operation
+  bool reconciling = 6;
 }

@@ -98,4 +98,7 @@ message DiskStatus {
   string source_image_id = 5;
 
   int64 size_bytes = 6;
+
+  // Indicates whether there is an ongoing operation
+  bool reconciling = 7;
 }

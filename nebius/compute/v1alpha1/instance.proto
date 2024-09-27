@@ -131,4 +131,7 @@ message InstanceStatus {
   InstanceState state = 1;
 
   repeated nebius.vpc.v1alpha1.NetworkInterfaceStatus network_interfaces = 2;
+
+  // Indicates whether there is an ongoing operation
+  bool reconciling = 5;
 }

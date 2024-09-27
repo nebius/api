@@ -9,8 +9,32 @@ option java_multiple_files = true;
 option java_outer_classname = "AnnotationsProto";
 option java_package = "ai.nebius.pub";
 
+extend google.protobuf.ServiceOptions {
+  // by default API tools assume that every service is configured with address
+  //    in a format: <first-part-after-nebius-in-grpc-path>.<domain>
+  //    example: nebius.dns.v1alpha1.ZoneService => dns.<domain>
+  // this option is used to override the default behavior for private api domains
+  //    example for iam access: option (api_service_name) = "access-service.iam";
+  //    that leads to access-service.iam.<domain>
+  string api_service_name = 1191;
+}
+
 extend google.protobuf.MessageOptions {
   repeated ResourceBehavior resource_behavior = 1191;
+}
+
+extend google.protobuf.FieldOptions {
+  // Field behavior describes how the field behaves on input or output.
+  repeated FieldBehavior field_behavior = 1191;
+
+  // Sensitive field is masked/removed from the message while logging, storing in DB and
+  // on all others persistent layers (except specialized storage like PDS).
+  bool sensitive = 1192;
+}
+
+extend google.protobuf.OneofOptions {
+  // Field behavior describes how oneof behaves on input or output.
+  repeated FieldBehavior oneof_behavior = 1191;
 }
 
 enum ResourceBehavior {
@@ -31,32 +55,6 @@ enum ResourceBehavior {
   // it is created. It is strongly recommended to do srvices with renaming
   // capability, as the guidelines suggest.
   IMMUTABLE_NAME = 3;
-}
-
-extend google.protobuf.ServiceOptions {
-  // by default API tools assume that every service is configured with address
-  //    in a format: <first-part-after-nebius-in-grpc-path>.<domain>
-  //    example: nebius.dns.v1alpha1.ZoneService => dns.<domain>
-  // this option is used to override the default behavior for private api domains
-  //    example for iam access: option (api_service_name) = "access-service.iam";
-  //    that leads to access-service.iam.<domain>
-  string api_service_name = 1191;
-}
-
-extend google.protobuf.FieldOptions {
-  // Sensitive field is masked/removed from the message while logging, storing in DB and
-  // on all others persistent layers (except specialized storage like PDS).
-  bool sensitive = 1192;
-}
-
-extend google.protobuf.FieldOptions {
-  // Field behavior describes how the field behaves on input or output.
-  repeated FieldBehavior field_behavior = 1191;
-}
-
-extend google.protobuf.OneofOptions {
-  // Field behavior describes how oneof behaves on input or output.
-  repeated FieldBehavior oneof_behavior = 1191;
 }
 
 enum FieldBehavior {

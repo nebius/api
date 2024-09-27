@@ -130,4 +130,7 @@ message InstanceStatus {
   InstanceState state = 1;
 
   repeated NetworkInterfaceStatus network_interfaces = 2;
+
+  // Indicates whether there is an ongoing operation
+  bool reconciling = 5;
 }

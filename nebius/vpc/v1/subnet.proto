@@ -32,11 +32,17 @@ message SubnetSpec {
 
   // Pools for private ipv4 addresses.
   // Default is 'use_network_pools = true'
-  IPv4PrivateSubnetPools ipv4_private_pools = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
+  IPv4PrivateSubnetPools ipv4_private_pools = 2 [
+    (field_behavior) = NON_EMPTY_DEFAULT,
+    (field_behavior) = MEANINGFUL_EMPTY_VALUE
+  ];
 
   // Pools for public ipv4 addresses.
   // Default is 'use_network_pools = true'
-  IPv4PublicSubnetPools ipv4_public_pools = 3 [(field_behavior) = NON_EMPTY_DEFAULT];
+  IPv4PublicSubnetPools ipv4_public_pools = 3 [
+    (field_behavior) = NON_EMPTY_DEFAULT,
+    (field_behavior) = MEANINGFUL_EMPTY_VALUE
+  ];
 }
 
 message IPv4PrivateSubnetPools {

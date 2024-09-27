@@ -195,6 +195,22 @@ message NodeGroupStatus {
   // Version have format `MAJOR.MINOR.PATCH-nebius-node.n` like "1.30.0-nebius-node.10".
   string version = 2;
 
+  // Desired total number of nodes that should be in the node group.
+  // It is either fixed_node_count or arbitrary number between min_node_count and max_node_count decided by autoscaler.
+  int64 target_node_count = 3;
+
+  // Total number of nodes that are currently in the node group.
+  // Both ready and not ready nodes are counted.
+  int64 node_count = 4;
+
+  // Total number of nodes that has outdated node configuration.
+  // These nodes will be replaced by new nodes with up-to-date configuration.
+  int64 outdated_node_count = 5;
+
+  // Total number of nodes that successfully joined the cluster and are ready to serve workloads.
+  // Both outdated and up-to-date nodes are counted.
+  int64 ready_node_count = 6;
+
   // Show that changes are in flight
   bool reconciling = 100;
 }

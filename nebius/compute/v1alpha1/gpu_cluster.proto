@@ -28,4 +28,7 @@ message GpuClusterSpec {
 
 message GpuClusterStatus {
   repeated string instances = 1;
+
+  // Indicates whether there is an ongoing operation
+  bool reconciling = 2;
 }

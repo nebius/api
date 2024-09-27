@@ -46,6 +46,9 @@ message ClusterSpec {
 
   // Name of the Nefbius S3 bucket for MLflow artifacts. If not provided, will be created under the same parent.
   string storage_bucket_name = 7;
+
+  // ID of the vpc netowrk where the backbone has been created
+  string network_id = 8 [(field_behavior) = IMMUTABLE];
 }
 
 message MlflowClusterStatus {

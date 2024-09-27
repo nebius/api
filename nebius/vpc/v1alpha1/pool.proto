@@ -38,7 +38,7 @@ message PoolSpec {
   IpVersion version = 3 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 
   // CIDR blocks.
-  repeated PoolCidr cidrs = 4 [(buf.validate.field).required = true];
+  repeated PoolCidr cidrs = 4;
 }
 
 message PoolCidr {

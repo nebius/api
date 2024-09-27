@@ -51,4 +51,7 @@ message ImageStatus {
   int64 storage_size_bytes = 3;
 
   int64 min_disk_size_bytes = 4;
+
+  // Indicates whether there is an ongoing operation
+  bool reconciling = 5;
 }
