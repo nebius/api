@@ -27,9 +27,9 @@ message SessionSpec {
   // Description of the session.
   optional string description = 1;
 
-  DriverPresetSpec driver = 2 [(buf.validate.field).required = true];
+  DriverTemplateSpec driver = 2 [(buf.validate.field).required = true];
 
-  ExecutorPresetSpec executor = 3 [(buf.validate.field).required = true];
+  ExecutorTemplateSpec executor = 3 [(buf.validate.field).required = true];
 
   string spark_version = 4 [(buf.validate.field).required = true];
 

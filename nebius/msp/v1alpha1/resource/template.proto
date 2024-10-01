@@ -9,6 +9,26 @@ option java_multiple_files = true;
 option java_outer_classname = "TemplateProto";
 option java_package = "ai.nebius.pub.msp.v1alpha1.resource";
 
+message Template {
+  TemplateSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message TemplateSpec {
+  ResourcesSpec resources = 1 [(buf.validate.field).required = true];
+
+  Host hosts = 2 [(buf.validate.field).required = true];
+
+  Disk disk = 3 [(buf.validate.field).required = true];
+
+  string role = 4 [(buf.validate.field).required = true];
+}
+
+message ResourcesSpec {
+  string platform = 1 [(buf.validate.field).required = true];
+
+  string preset = 2 [(buf.validate.field).required = true];
+}
+
 message Range {
   int64 min = 1;
 
