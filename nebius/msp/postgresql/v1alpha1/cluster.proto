@@ -77,7 +77,7 @@ message ConfigSpec {
   ConnectionPoolerConfig pooler_config = 2;
 
   // Resources allocated to PostgreSQL hosts.
-  PresetSpec resources = 3 [(buf.validate.field).required = true];
+  TemplateSpec resources = 3 [(buf.validate.field).required = true];
 
   // Config of the PostgreSQL cluster.
   oneof config {

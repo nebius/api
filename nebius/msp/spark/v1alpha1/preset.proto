@@ -11,11 +11,13 @@ option java_multiple_files = true;
 option java_outer_classname = "PresetProto";
 option java_package = "ai.nebius.pub.msp.spark.v1alpha1";
 
-message DriverPresetSpec {
-  // reduced msp.v1alpha1.resource.PresetSpec
-  nebius.msp.v1alpha1.resource.FlavorSpec flavor = 1 [(buf.validate.field).required = true];
+message DriverTemplateSpec {
+  // reduced msp.v1alpha1.resource.TemplateSpec
+  nebius.msp.v1alpha1.resource.FlavorSpec flavor = 1;
 
   nebius.msp.v1alpha1.resource.DiskSpec disk = 3 [(buf.validate.field).required = true];
+
+  nebius.msp.v1alpha1.resource.ResourcesSpec resources = 4;
 }
 
 message DynamicAllocationSpec {
@@ -24,11 +26,13 @@ message DynamicAllocationSpec {
   int64 max = 2 [(buf.validate.field).required = true];
 }
 
-message ExecutorPresetSpec {
-  // reduced msp.v1alpha1.resource.PresetSpec
-  nebius.msp.v1alpha1.resource.FlavorSpec flavor = 1 [(buf.validate.field).required = true];
+message ExecutorTemplateSpec {
+  // reduced msp.v1alpha1.resource.TemplateSpec
+  nebius.msp.v1alpha1.resource.FlavorSpec flavor = 1;
 
   nebius.msp.v1alpha1.resource.DiskSpec disk = 2 [(buf.validate.field).required = true];
+
+  nebius.msp.v1alpha1.resource.ResourcesSpec resources = 4;
 
   oneof hosts_spec {
     option (buf.validate.oneof).required = true;

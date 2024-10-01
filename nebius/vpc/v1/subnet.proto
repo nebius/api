@@ -66,14 +66,6 @@ message IPv4PublicSubnetPools {
 }
 
 message SubnetPool {
-  oneof pool {
-    option (buf.validate.oneof).required = true;
-
-    SubnetPoolSpec spec = 1;
-  }
-}
-
-message SubnetPoolSpec {
   repeated SubnetCidr cidrs = 2;
 }
 

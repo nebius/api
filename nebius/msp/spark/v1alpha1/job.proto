@@ -31,9 +31,9 @@ message JobSpec {
   // Example: s3a://mybucket/myapp.py
   string application_file_uri = 2 [(buf.validate.field).required = true];
 
-  DriverPresetSpec driver = 3 [(buf.validate.field).required = true];
+  DriverTemplateSpec driver = 3 [(buf.validate.field).required = true];
 
-  ExecutorPresetSpec executor = 5 [(buf.validate.field).required = true];
+  ExecutorTemplateSpec executor = 5 [(buf.validate.field).required = true];
 
   string spark_version = 6 [(buf.validate.field).required = true];
 
