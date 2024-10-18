@@ -7,18 +7,18 @@ This repository contains the `.proto` files defining the gRPC API for [nebius.ai
 Nebius gRPC services are accessed via endpoints formatted as `{service-name}.{base-address}`. Below is an explanation of how these addresses are constructed:
 
 1. **Base Address**:
-   - The current base address is `api.eu-north1.nebius.cloud:443`, though additional base addresses will be introduced soon.
+   - The current base address is `api.eu.nebius.cloud:443`, though additional base addresses will be introduced soon.
 1. **Service Name Derivation**:
    - Services with `option (api_service_name)`:
      - Some services explicitly define their name using this annotation (e.g., `option (api_service_name) = "foo.bar"`), this value becomes the `{service-name}` used in the address.
-     - For example, requests to `TokenExchangeService` ([iam](nebius/iam/v1/token_exchange_service.proto)) would be sent to: `tokens.iam.api.eu-north1.nebius.cloud:443`.
+     - For example, requests to `TokenExchangeService` ([iam](nebius/iam/v1/token_exchange_service.proto)) would be sent to: `tokens.iam.api.eu.nebius.cloud:443`.
    - Services without `option (api_service_name)`:
      - For services lacking this annotation, the `{service-name}` is derived from the first level directory within the `.proto` file path.
-     - For instance, requests to `DiskService` (declared in [nebius/**compute**/v1/disk_service.proto](nebius/compute/v1/disk_service.proto)) would be directed to `compute.api.eu-north1.nebius.cloud:443`
+     - For instance, requests to `DiskService` (declared in [nebius/**compute**/v1/disk_service.proto](nebius/compute/v1/disk_service.proto)) would be directed to `compute.api.eu.nebius.cloud:443`
 1. **Special Case**: `OperationService`
    - `nebius.common.v1.OperationService` ([common](nebius/common/v1/operation_service.proto)) is an exception to the naming convention.
    - When fetching the status of an operation returned by another service, use the original service's address.
-   - As an example, to fetch the status of an operation created by `DiskService` ([compute](nebius/compute/v1/disk_service.proto)), you would use: `compute.api.eu-north1.nebius.cloud:443`.
+   - As an example, to fetch the status of an operation created by `DiskService` ([compute](nebius/compute/v1/disk_service.proto)), you would use: `compute.api.eu.nebius.cloud:443`.
 
 ## Authentication
 
@@ -37,7 +37,7 @@ Example:
 
 ```bash
 grpcurl -H "Authorization: Bearer $(nebius iam get-access-token)" \
-  cpl.iam.api.eu-north1.nebius.cloud:443 \
+  cpl.iam.api.eu.nebius.cloud:443 \
   nebius.iam.v1.ProfileService/Get
 ```
 
@@ -76,8 +76,8 @@ Steps:
         - `exp`: Set a short expiration time (e.g., 5 minutes) as the token is only used for exchanging another token.
     - Sign the JWT with the service account’s private key.
 1. Exchange JWT for an IAM Token:
-    - Using gRPC: Call `nebius.iam.v1.TokenExchangeService/Exchange` on `tokens.iam.api.eu-north1.nebius.cloud:443`.
-    - Using HTTP: Send a POST request to `https://auth.eu-north1.nebius.ai:443/oauth2/token/exchange`.
+    - Using gRPC: Call `nebius.iam.v1.TokenExchangeService/Exchange` on `tokens.iam.api.eu.nebius.cloud:443`.
+    - Using HTTP: Send a POST request to `https://auth.eu.nebius.com:443/oauth2/token/exchange`.
 1. Use the IAM Token from `access_token` from the response
 1. Repeat the process before the IAM token expires (indicated by `expires_in` from the response).
 
@@ -108,13 +108,13 @@ read -r -d '' REQUEST <<EOF
 EOF
 
 RESPONSE=$(grpcurl -d "$REQUEST" \
-  tokens.iam.api.eu-north1.nebius.cloud:443 \
+  tokens.iam.api.eu.nebius.cloud:443 \
   nebius.iam.v1.TokenExchangeService/Exchange)
 
 TOKEN=$(jq -r '.accessToken' <<< $RESPONSE)
 
 grpcurl -H "Authorization: Bearer $TOKEN" \
-  cpl.iam.api.eu-north1.nebius.cloud:443 \
+  cpl.iam.api.eu.nebius.cloud:443 \
   nebius.iam.v1.ProfileService/Get
 ```
 
@@ -155,7 +155,7 @@ JWT=$(jwt encode \
   --exp="$(date --date="+5minutes" +%s 2>/dev/null || date -v+5M +%s)" \
   --secret @${PRIVATE_KEY_PATH})
 
-RESPONSE=$(curl https://auth.eu-north1.nebius.ai:443/oauth2/token/exchange \
+RESPONSE=$(curl https://auth.eu.nebius.com:443/oauth2/token/exchange \
   -d "grant_type=urn:ietf:params:oauth:grant-type:token-exchange" \
   -d "requested_token_type=urn:ietf:params:oauth:token-type:access_token" \
   -d "subject_token=${JWT}" \
@@ -164,7 +164,7 @@ RESPONSE=$(curl https://auth.eu-north1.nebius.ai:443/oauth2/token/exchange \
 TOKEN=$(jq -r '.access_token' <<< $RESPONSE)
 
 grpcurl -H "Authorization: Bearer $TOKEN" \
-  cpl.iam.api.eu-north1.nebius.cloud:443 \
+  cpl.iam.api.eu.nebius.cloud:443 \
   nebius.iam.v1.ProfileService/Get
 ```
 
