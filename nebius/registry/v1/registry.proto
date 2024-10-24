@@ -25,7 +25,9 @@ message Registry {
 }
 
 message RegistrySpec {
-  string description = 1; //  Registry.Type type = 2;
+  string description = 1;
+
+  int32 images_count = 2; //  Registry.Type type = 2;
 }
 
 message RegistryStatus {
@@ -35,6 +37,8 @@ message RegistryStatus {
     ACTIVE = 1;
 
     DELETING = 2;
+
+    SUSPENDED = 3;
   }
 
   State state = 10;

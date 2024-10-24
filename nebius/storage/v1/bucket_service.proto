@@ -18,7 +18,7 @@ service BucketService {
 
   rpc Get(GetBucketRequest) returns (Bucket);
 
-  rpc GetByName(common.v1.GetByNameRequest) returns (Bucket);
+  rpc GetByName(GetBucketByNameRequest) returns (Bucket);
 
   rpc List(ListBucketsRequest) returns (ListBucketsResponse);
 
@@ -31,6 +31,20 @@ service BucketService {
 
 message GetBucketRequest {
   string id = 1 [(buf.validate.field).required = true];
+
+  // By default, only CREATING and ACTIVE buckets are visible.
+  // DEPRECATED: soft-deleted buckets are shown by default.
+  bool with_deleted = 2 [deprecated = true];
+}
+
+message GetBucketByNameRequest {
+  string parent_id = 1;
+
+  string name = 2;
+
+  // By default, only CREATING and ACTIVE buckets are visible.
+  // DEPRECATED: soft-deleted buckets are shown by default.
+  bool with_deleted = 3 [deprecated = true];
 }
 
 message CreateBucketRequest {
@@ -61,6 +75,10 @@ message ListBucketsRequest {
 
   // A filter to narrow down the results based on specific criteria.
   string filter = 4;
+
+  // By default, only CREATING and ACTIVE buckets are shown.
+  // DEPRECATED: soft-deleted buckets are shown by default.
+  bool with_deleted = 5 [deprecated = true];
 }
 
 message ListBucketsResponse {

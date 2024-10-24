@@ -25,9 +25,6 @@ message ClusterSpec {
   // Description of the cluster.
   optional string description = 1;
 
-  // Backbone ID of the cluster.
-  string backbone_id = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
-
   // Limits for the cluster
   Limits limits = 3 [(buf.validate.field).required = true];
 

@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/iam/v1/federation_certificate.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "FederationCertificateServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+service FederationCertificateService {
+  option (api_service_name) = "cpl.iam";
+
+  rpc Create(CreateFederationCertificateRequest) returns (common.v1.Operation);
+
+  rpc Get(GetFederationCertificateRequest) returns (FederationCertificate);
+
+  rpc ListByFederation(ListFederationCertificateByFederationRequest) returns (ListFederationCertificateResponse);
+
+  rpc Update(UpdateFederationCertificateRequest) returns (common.v1.Operation);
+
+  rpc Delete(DeleteFederationCertificateRequest) returns (common.v1.Operation);
+}
+
+message CreateFederationCertificateRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  FederationCertificateSpec spec = 2;
+}
+
+message GetFederationCertificateRequest {
+  string id = 1;
+}
+
+message ListFederationCertificateByFederationRequest {
+  // Represents the parent federation ID. Corresponds to the parent_id value.
+  string federation_id = 1;
+
+  // Specifies the maximum number of items to return in the response.
+  // Default value: 10
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+}
+
+message UpdateFederationCertificateRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  FederationCertificateSpec spec = 2;
+}
+
+message DeleteFederationCertificateRequest {
+  string id = 1;
+}
+
+message ListFederationCertificateResponse {
+  // List of public keys returned in the response. The field should be named as `items` for consistency.
+  repeated FederationCertificate items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}

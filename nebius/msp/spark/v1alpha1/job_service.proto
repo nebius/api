@@ -14,7 +14,7 @@ option java_outer_classname = "JobServiceProto";
 option java_package = "ai.nebius.pub.msp.spark.v1alpha1";
 
 service JobService {
-  option (api_service_name) = "spark.msp";
+  option (api_service_name) = "sp.msp";
 
   // Returns the specified job.
   rpc Get(GetJobRequest) returns (Job);

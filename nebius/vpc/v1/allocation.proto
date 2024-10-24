@@ -92,7 +92,7 @@ message IPv4PublicAllocationSpec {
     // Required same subnet to use allocation in subnet-resources (e.g. Network Interface)
     string subnet_id = 2 [(field_behavior) = IMMUTABLE];
 
-    // Pool for the IPv4 private allocation.
+    // Pool for the IPv4 public allocation.
     string pool_id = 3 [(field_behavior) = IMMUTABLE];
   }
 }

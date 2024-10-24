@@ -9,6 +9,12 @@ option java_multiple_files = true;
 option java_outer_classname = "AnnotationsProto";
 option java_package = "ai.nebius.pub";
 
+extend google.protobuf.FileOptions {
+  // Marks the file as unstable, indicating that it may change in a non-backward compatible way in the future.
+  // Changes to files marked with this option are ignored by the breaking change detector.
+  bool unstable = 1191;
+}
+
 extend google.protobuf.ServiceOptions {
   // by default API tools assume that every service is configured with address
   //    in a format: <first-part-after-nebius-in-grpc-path>.<domain>
@@ -17,6 +23,40 @@ extend google.protobuf.ServiceOptions {
   //    example for iam access: option (api_service_name) = "access-service.iam";
   //    that leads to access-service.iam.<domain>
   string api_service_name = 1191;
+}
+
+extend google.protobuf.MethodOptions {
+  // Defines custom region routing rules for a method.
+  //
+  // By default, the API Gateway searches for the NID in the following fields of the proto messages (in this order):
+  //  - `id`
+  //  - `parent_id`
+  //  - `metadata.id`
+  //  - `metadata.parent_id`
+  //
+  // If a valid NID is found, its associated region is used to route the request.
+  // These default rules typically suffice for most use cases.
+  //
+  // You can override the default routing behavior using the `region_routing` option:
+  //  - To specify a custom field path(s) for the NID, set `nid`.
+  //  - To disable region-based routing entirely, set `disabled` to `true`.
+  //
+  // Examples:
+  //
+  //    service MyService {
+  //      rpc DefaultRouting(Request) returns (Response);
+  //      rpc CustomRoutingField(Request) returns (Response) {
+  //        option (region_routing).nid = "path.to.resource_id";
+  //      };
+  //      rpc SeveralFieldsToSearch(Request) returns (Response) {
+  //        option (region_routing).nid = "path.to.resource_id";
+  //        option (region_routing).nid = "path.to.parent_id";
+  //      };
+  //      rpc DisabledRouting(Request) returns (Response) {
+  //        option (region_routing).disabled = true;
+  //      };
+  //    }
+  RegionRouting region_routing = 50003;
 }
 
 extend google.protobuf.MessageOptions {
@@ -30,6 +70,10 @@ extend google.protobuf.FieldOptions {
   // Sensitive field is masked/removed from the message while logging, storing in DB and
   // on all others persistent layers (except specialized storage like PDS).
   bool sensitive = 1192;
+
+  // Credentials field is masked access tokens/jwt/session from the message while logging, storing in DB and
+  // on all others persistent layers
+  bool credentials = 1193;
 }
 
 extend google.protobuf.OneofOptions {
@@ -55,6 +99,17 @@ enum ResourceBehavior {
   // it is created. It is strongly recommended to do srvices with renaming
   // capability, as the guidelines suggest.
   IMMUTABLE_NAME = 3;
+}
+
+message RegionRouting {
+  // A list of fields to extract the NID from, in order of priority.
+  // The API Gateway will check each field in sequence and use the first valid NID it finds.
+  // This overrides the default NID lookup order: `id`, `parent_id`, `metadata.id`, `metadata.parent_id`.
+  repeated string nid = 1;
+
+  // If true, region routing is disabled for the method.
+  // When this is set, requests will not be forwarded to a different region, even if an NID is present.
+  bool disabled = 2;
 }
 
 enum FieldBehavior {
@@ -89,5 +144,11 @@ enum FieldBehavior {
   // Usually, that field is a feature spec value, which by default is computed.
   // Values marked with this annotation won't raise error if they are not set
   // and the returned value is not equal to protobuf default.
+  //
+  // IMPORTANT:
+  // Updating this value from explicit to default may not lead to Update call in
+  // some tools (eg Terraform).
+  // Compound values (messages, lists and maps) may result in unpredictable
+  // updates (see examples in guidelines).
   NON_EMPTY_DEFAULT = 7;
 }

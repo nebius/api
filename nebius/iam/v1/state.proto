@@ -24,6 +24,8 @@ enum State {
 
   PURGING = 7;
 
+  PURGED = 8;
+
   // DRAFT = 1000;
   CREATING = 1001;
 }

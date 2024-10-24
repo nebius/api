@@ -4,6 +4,7 @@ package nebius.common.v1;
 
 import "buf/validate/validate.proto";
 import "nebius/common/v1/operation.proto";
+import "nebius/annotations.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1";
 option java_multiple_files = true;
@@ -13,7 +14,9 @@ option java_package = "ai.nebius.pub.common.v1";
 service OperationService {
   rpc Get(GetOperationRequest) returns (Operation);
 
-  rpc List(ListOperationsRequest) returns (ListOperationsResponse);
+  rpc List(ListOperationsRequest) returns (ListOperationsResponse) {
+    option (region_routing) = { nid: [ "resource_id" ] };
+  }
 }
 
 message GetOperationRequest {

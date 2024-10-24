@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "FederationCertificateProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+message FederationCertificate {
+  option (resource_behavior) = UNNAMED;
+
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  FederationCertificateSpec spec = 2 [(buf.validate.field).required = true];
+
+  FederationCertificateStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message FederationCertificateSpec {
+  string description = 1;
+
+  string data = 2 [(field_behavior) = IMMUTABLE];
+}
+
+message FederationCertificateStatus {
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    ACTIVE = 1;
+
+    EXPIRED = 2;
+  }
+
+  State state = 1;
+
+  string algorithm = 3;
+
+  int64 key_size = 4;
+
+  google.protobuf.Timestamp not_before = 5;
+
+  google.protobuf.Timestamp not_after = 6;
+}

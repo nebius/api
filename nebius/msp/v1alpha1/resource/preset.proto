@@ -17,9 +17,9 @@ message Preset {
 message PresetSpec {
   FlavorSpec flavor = 1 [(buf.validate.field).required = true];
 
-  Host hosts = 2 [(buf.validate.field).required = true];
+  Host hosts = 2;
 
-  Disk disk = 3 [(buf.validate.field).required = true];
+  Disk disk = 3;
 
   string role = 4 [(buf.validate.field).required = true];
 }
