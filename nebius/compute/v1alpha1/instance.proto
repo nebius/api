@@ -43,6 +43,8 @@ message InstanceSpec {
   string cloud_init_user_data = 8 [(field_behavior) = IMMUTABLE, (sensitive) = true];
 
   bool stopped = 13;
+
+  InstanceRecoveryPolicy recovery_policy = 15 [(field_behavior) = IMMUTABLE];
 }
 
 message ResourcesSpec {
@@ -134,4 +136,10 @@ message InstanceStatus {
 
   // Indicates whether there is an ongoing operation
   bool reconciling = 5;
+}
+
+enum InstanceRecoveryPolicy {
+  RECOVER = 0;
+
+  FAIL = 1;
 }

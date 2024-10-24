@@ -41,8 +41,8 @@ message ClusterSpec {
   // Description of the PostgreSQL cluster.
   string description = 1;
 
-  // ID of the backbone in which the cluster is created
-  string backbone_id = 2 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+  // Network ID in which the cluster is created.
+  string network_id = 6 [(field_behavior) = IMMUTABLE];
 
   ConfigSpec config = 3 [(buf.validate.field).required = true];
 
@@ -88,13 +88,55 @@ message ConfigSpec {
 
 message BootstrapSpec {
   // Name of the bootstrap PostgreSQL user.
-  string user_name = 1 [(buf.validate.field).required = true];
+  string user_name = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "user_name.min_length",
+          message: "User name must be at least 1 characters long.",
+          expression: "size(this) >= 1"
+        },
+        {
+          id: "user_name.max_length",
+          message: "User name must not exceed 63 characters.",
+          expression: "size(this) <= 63"
+        },
+        {
+          id: "user_name.pattern",
+          message: "User name must match the pattern: '^[a-zA-Z0-9_][a-zA-Z0-9_-]*$'",
+          expression: "this.matches('^[a-zA-Z0-9_][a-zA-Z0-9_-]*$')"
+        }
+      ],
+      required: true
+    }
+  ];
 
   // Password of the bootstrap PostgreSQL user.
   string user_password = 2 [(field_behavior) = INPUT_ONLY, (sensitive) = true];
 
   // Name of the PostgreSQL database. 1-63 characters long.
-  string db_name = 3 [(buf.validate.field).required = true];
+  string db_name = 3 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "db_name.min_length",
+          message: "Database name must be at least 1 characters long.",
+          expression: "size(this) >= 1"
+        },
+        {
+          id: "db_name.max_length",
+          message: "Database name must not exceed 63 characters.",
+          expression: "size(this) <= 63"
+        },
+        {
+          id: "db_name.pattern",
+          message: "Database name must match the pattern: '^[a-zA-Z0-9_][a-zA-Z0-9_-]*$'",
+          expression: "this.matches('^[a-zA-Z0-9_][a-zA-Z0-9_-]*$')"
+        }
+      ],
+      required: true
+    }
+  ];
 }
 
 message BackupSpec {

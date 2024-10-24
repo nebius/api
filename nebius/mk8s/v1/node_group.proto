@@ -34,7 +34,7 @@ message NodeGroupSpec {
     int64 fixed_node_count = 2; // number of nodes in the group
   }
 
-  NodeTemplate template = 3;
+  NodeTemplate template = 3 [(buf.validate.field).required = true];
 
   NodeGroupDeploymentStrategy strategy = 4;
 }

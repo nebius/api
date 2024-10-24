@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/iam/v1/federation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "FederationServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+service FederationService {
+  option (api_service_name) = "cpl.iam";
+
+  rpc Create(CreateFederationRequest) returns (common.v1.Operation);
+
+  rpc Get(GetFederationRequest) returns (Federation);
+
+  rpc GetByName(common.v1.GetByNameRequest) returns (Federation);
+
+  rpc List(ListFederationsRequest) returns (ListFederationsResponse);
+
+  rpc Update(UpdateFederationRequest) returns (common.v1.Operation);
+
+  rpc Delete(DeleteFederationRequest) returns (common.v1.Operation);
+}
+
+message CreateFederationRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  FederationSpec spec = 2;
+}
+
+message GetFederationRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message ListFederationsRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Default value: 10
+  int64 page_size = 2;
+
+  string page_token = 3;
+
+  string filter = 4;
+}
+
+message ListFederationsResponse {
+  repeated Federation items = 1;
+
+  string next_page_token = 2;
+}
+
+message UpdateFederationRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  FederationSpec spec = 2;
+
+  FederationStatus status = 3;
+}
+
+message DeleteFederationRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}

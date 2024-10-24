@@ -28,11 +28,8 @@ message ClusterSpec {
   // Either make cluster public accessible or accessible only via private VPC.
   bool public_access = 2 [(buf.validate.field).required = true];
 
-  // Id of backbone where service will be created.
-  string backbone_id = 3 [(buf.validate.field).required = true];
-
   // MLflow admin username. If not provided, default username will be used.
-  string admin_username = 4;
+  string admin_username = 4 [(buf.validate.field).required = true];
 
   // MLflow admin password.
   string admin_password = 5 [

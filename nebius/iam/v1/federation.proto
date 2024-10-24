@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "FederationProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+message Federation {
+  option (resource_behavior) = UNNAMED;
+
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  FederationSpec spec = 2 [(buf.validate.field).required = true];
+
+  FederationStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message FederationSpec {
+  bool user_account_auto_creation = 1;
+
+  reserved 3;
+
+  bool active = 4;
+
+  oneof settings {
+    option (buf.validate.oneof).required = true;
+
+    SamlSettings saml_settings = 10;
+  }
+}
+
+message SamlSettings {
+  string idp_issuer = 1;
+
+  string sso_url = 2;
+}
+
+message FederationStatus {
+}
