@@ -32,6 +32,8 @@ message NodeGroupSpec {
     option (buf.validate.oneof).required = true;
 
     int64 fixed_node_count = 2; // number of nodes in the group
+
+    NodeGroupAutoscalingSpec autoscaling = 5;
   }
 
   NodeTemplate template = 3 [(buf.validate.field).required = true];
@@ -113,6 +115,12 @@ message AttachedFilesystemSpec {
 
 message ExistingFilesystem {
   string id = 1 [(buf.validate.field).required = true];
+}
+
+message NodeGroupAutoscalingSpec {
+  int64 min_node_count = 1;
+
+  int64 max_node_count = 2;
 }
 
 // See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
