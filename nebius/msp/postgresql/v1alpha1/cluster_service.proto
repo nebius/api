@@ -33,6 +33,9 @@ service ClusterService {
 
   // Deletes the specified PostgreSQL cluster.
   rpc Delete(DeleteClusterRequest) returns (common.v1alpha1.Operation);
+
+  // Updates the PostgreSQL cluster.
+  rpc Update(UpdateClusterRequest) returns (common.v1alpha1.Operation);
 }
 
 message GetClusterRequest {
@@ -75,4 +78,12 @@ message DeleteClusterRequest {
   // ID of the PostgreSQL cluster to delete.
   // To get the PostgreSQL cluster ID, use a [ClusterService.List] request.
   string id = 1;
+}
+
+message UpdateClusterRequest {
+  // Metadata associated with the cluster. Must include id of the cluster we are going to update.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // Updated specification for the cluster.
+  ClusterSpec spec = 2;
 }

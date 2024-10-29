@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package nebius.msp.v1alpha1.resource;
+
+import "nebius/msp/v1alpha1/resource/template.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/v1alpha1/resource";
+option java_multiple_files = true;
+option java_outer_classname = "TemplateServiceProto";
+option java_package = "ai.nebius.pub.msp.v1alpha1.resource";
+
+service TemplateService {
+  rpc List(ListTemplatesRequest) returns (ListTemplatesResponse);
+}
+
+message ListTemplatesRequest {
+  int64 page_size = 1;
+
+  string page_token = 2;
+}
+
+message ListTemplatesResponse {
+  repeated Template items = 1;
+
+  string next_page_token = 2;
+}
