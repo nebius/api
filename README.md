@@ -4,7 +4,7 @@ This repository contains the `.proto` files defining the gRPC API for [nebius.ai
 
 ## API Endpoints
 
-Nebius gRPC services are accessed via endpoints formatted as `{service-name}.{base-address}`. Below is an explanation of how these addresses are constructed:
+Nebius gRPC services are accessed via endpoints formatted as `{service-name}.{base-address}`. You can find a list of endpoints and services [here](endpoints.md). Below is an explanation of how these addresses are constructed:
 
 1. **Base Address**:
    - The current base address is `api.eu.nebius.cloud:443`, though additional base addresses will be introduced soon.

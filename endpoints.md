@@ -1,0 +1,80 @@
+## Services and their endpoints
+
+* compute.api.eu.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+  * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)
+  * [nebius.compute.v1.DiskService](nebius/compute/v1/disk_service.proto)
+  * [nebius.compute.v1.FilesystemService](nebius/compute/v1/filesystem_service.proto)
+  * [nebius.compute.v1.GpuClusterService](nebius/compute/v1/gpu_cluster_service.proto)
+  * [nebius.compute.v1.ImageService](nebius/compute/v1/image_service.proto)
+  * [nebius.compute.v1.InstanceService](nebius/compute/v1/instance_service.proto)
+  * [nebius.compute.v1alpha1.DiskService](nebius/compute/v1alpha1/disk_service.proto)
+  * [nebius.compute.v1alpha1.FilesystemService](nebius/compute/v1alpha1/filesystem_service.proto)
+  * [nebius.compute.v1alpha1.GpuClusterService](nebius/compute/v1alpha1/gpu_cluster_service.proto)
+  * [nebius.compute.v1alpha1.ImageService](nebius/compute/v1alpha1/image_service.proto)
+  * [nebius.compute.v1alpha1.InstanceService](nebius/compute/v1alpha1/instance_service.proto)
+* cpl.iam.api.eu.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+  * [nebius.iam.v1.AccessKeyService](nebius/iam/v1/access_key_service.proto)
+  * [nebius.iam.v1.AuthPublicKeyService](nebius/iam/v1/auth_public_key_service.proto)
+  * [nebius.iam.v1.FederationCertificateService](nebius/iam/v1/federation_certificate_service.proto)
+  * [nebius.iam.v1.FederationService](nebius/iam/v1/federation_service.proto)
+  * [nebius.iam.v1.GroupMembershipService](nebius/iam/v1/group_membership_service.proto)
+  * [nebius.iam.v1.GroupService](nebius/iam/v1/group_service.proto)
+  * [nebius.iam.v1.InvitationService](nebius/iam/v1/invitation_service.proto)
+  * [nebius.iam.v1.ProfileService](nebius/iam/v1/profile_service.proto)
+  * [nebius.iam.v1.ProjectService](nebius/iam/v1/project_service.proto)
+  * [nebius.iam.v1.ServiceAccountService](nebius/iam/v1/service_account_service.proto)
+  * [nebius.iam.v1.SessionManagementService](nebius/iam/v1/session_management_service.proto)
+  * [nebius.iam.v1.TenantService](nebius/iam/v1/tenant_service.proto)
+  * [nebius.iam.v1.TenantUserAccountService](nebius/iam/v1/tenant_user_account_service.proto)
+  * [nebius.iam.v1.TenantUserAccountWithAttributesService](nebius/iam/v1/tenant_user_account_with_attributes_service.proto)
+* cpl.storage.api.eu.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+  * [nebius.storage.v1.BucketService](nebius/storage/v1/bucket_service.proto)
+* deployment-manager.mkt.api.eu.nebius.cloud:443
+  * [nebius.applications.v1alpha1.K8sReleaseService](nebius/applications/v1alpha1/k8s_release_service.proto)
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+* identity.iam.api.eu.nebius.cloud:443
+  * [nebius.iam.v1.IdentityService](nebius/iam/v1/identity_service.proto)
+* mk8s.api.eu.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+  * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)
+  * [nebius.mk8s.v1.ClusterService](nebius/mk8s/v1/cluster_service.proto)
+  * [nebius.mk8s.v1.NodeGroupService](nebius/mk8s/v1/node_group_service.proto)
+  * [nebius.mk8s.v1alpha1.ClusterService](nebius/mk8s/v1alpha1/cluster_service.proto)
+  * [nebius.mk8s.v1alpha1.NodeGroupService](nebius/mk8s/v1alpha1/node_group_service.proto)
+* mlflow.msp.api.eu.nebius.cloud:443
+  * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)
+  * [nebius.msp.mlflow.v1alpha1.ClusterService](nebius/msp/mlflow/v1alpha1/cluster_service.proto)
+* msp.api.eu.nebius.cloud:443
+  * [nebius.msp.v1alpha1.resource.PresetService](nebius/msp/v1alpha1/resource/preset_service.proto)
+  * [nebius.msp.v1alpha1.resource.TemplateService](nebius/msp/v1alpha1/resource/template_service.proto)
+* observability-agent-manager.api.eu.nebius.cloud:443
+  * [nebius.logging.agentmanager.v1.VersionService](nebius/logging/v1/agentmanager/version_service.proto)
+* postgresql.msp.api.eu.nebius.cloud:443
+  * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)
+  * [nebius.msp.postgresql.v1alpha1.ClusterService](nebius/msp/postgresql/v1alpha1/cluster_service.proto)
+* registry.api.eu.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+  * [nebius.registry.v1.ArtifactService](nebius/registry/v1/artifact_service.proto)
+  * [nebius.registry.v1.RegistryService](nebius/registry/v1/registry_service.proto)
+* sp.msp.api.eu.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+  * [nebius.msp.spark.v1alpha1.ClusterService](nebius/msp/spark/v1alpha1/cluster_service.proto)
+  * [nebius.msp.spark.v1alpha1.JobService](nebius/msp/spark/v1alpha1/job_service.proto)
+  * [nebius.msp.spark.v1alpha1.SessionService](nebius/msp/spark/v1alpha1/session_service.proto)
+* tokens.iam.api.eu.nebius.cloud:443
+  * [nebius.iam.v1.TokenExchangeService](nebius/iam/v1/token_exchange_service.proto)
+* vpc.api.eu.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+  * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)
+  * [nebius.vpc.v1.AllocationService](nebius/vpc/v1/allocation_service.proto)
+  * [nebius.vpc.v1.NetworkService](nebius/vpc/v1/network_service.proto)
+  * [nebius.vpc.v1.PoolService](nebius/vpc/v1/pool_service.proto)
+  * [nebius.vpc.v1.SubnetService](nebius/vpc/v1/subnet_service.proto)
+  * [nebius.vpc.v1alpha1.AllocationService](nebius/vpc/v1alpha1/allocation_service.proto)
+  * [nebius.vpc.v1alpha1.NetworkService](nebius/vpc/v1alpha1/network_service.proto)
+  * [nebius.vpc.v1alpha1.PoolService](nebius/vpc/v1alpha1/pool_service.proto)
+  * [nebius.vpc.v1alpha1.ScopeService](nebius/vpc/v1alpha1/scope_service.proto)
+  * [nebius.vpc.v1alpha1.SubnetService](nebius/vpc/v1alpha1/subnet_service.proto)
