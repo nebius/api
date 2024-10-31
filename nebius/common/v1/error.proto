@@ -38,6 +38,8 @@ message ServiceError {
 
     QuotaFailure quota_failure = 141;
 
+    NotEnoughResources not_enough_resources = 142;
+
     InternalError internal_error = 999;
   }
 }
@@ -145,5 +147,24 @@ message QuotaFailure {
 
     // Requested value.
     string requested = 4;
+  }
+}
+
+// Indicates that there are not enough resources available to perform the requested action.
+message NotEnoughResources {
+  // Describes all resource violations.
+  repeated Violation violations = 1;
+
+  message Violation {
+    // The type of resource that is insufficient.
+    // This field is populated when it is possible to determine the lacking resource type.
+    // **Not for programmatic use.**
+    string resource_type = 1;
+
+    // A description of how the resource is insufficient.
+    string message = 2;
+
+    // Requested value.
+    string requested = 3;
   }
 }
