@@ -40,7 +40,7 @@ message InstanceSpec {
 
   repeated AttachedFilesystemSpec filesystems = 7 [(field_behavior) = IMMUTABLE];
 
-  string cloud_init_user_data = 8 [(field_behavior) = IMMUTABLE, (sensitive) = true];
+  string cloud_init_user_data = 8 [(sensitive) = true];
 
   bool stopped = 13;
 

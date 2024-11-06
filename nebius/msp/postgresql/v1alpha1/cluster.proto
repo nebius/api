@@ -7,6 +7,7 @@ import "nebius/common/v1/metadata.proto";
 import "nebius/msp/v1alpha1/cluster.proto";
 import "nebius/msp/postgresql/v1alpha1/config/postgresql.proto";
 import "nebius/msp/postgresql/v1alpha1/preset.proto";
+import "nebius/msp/v1alpha1/resource/template.proto";
 import "nebius/annotations.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/msp/postgresql/v1alpha1";
@@ -35,11 +36,14 @@ message ConnectionPoolerConfig {
 
   // Mode that the connection pooler is working in.
   PoolingMode pooling_mode = 1;
+
+  // Maximum number of connections in the pool for a single database.
+  optional int64 max_pool_size = 2 [(buf.validate.field) = { int64: { lte: 12800, gte: 5 } }];
 }
 
 message ClusterSpec {
   // Description of the PostgreSQL cluster.
-  string description = 1;
+  string description = 1 [(buf.validate.field) = { string: { max_len: 256 } }];
 
   // Network ID in which the cluster is created.
   string network_id = 6 [(field_behavior) = IMMUTABLE];
@@ -53,13 +57,16 @@ message ClusterSpec {
 
 message ClusterStatus {
   // Current phase of the cluster.
-  nebius.msp.v1alpha1.ClusterStatus.Phase phase = 1 [(field_behavior) = OUTPUT_ONLY];
+  nebius.msp.v1alpha1.ClusterStatus.Phase phase = 1;
 
   // State reflects substatus of the phase to define whether it's healthy or not.
-  nebius.msp.v1alpha1.ClusterStatus.State state = 2 [(field_behavior) = OUTPUT_ONLY];
+  nebius.msp.v1alpha1.ClusterStatus.State state = 2;
 
   // Endpoints of the PostgreSQL cluster.
-  EndpointsSpec endpoints = 3 [(field_behavior) = OUTPUT_ONLY];
+  EndpointsSpec endpoints = 3;
+
+  // Cluster resource preset details
+  nebius.msp.v1alpha1.resource.PresetDetails preset_details = 4;
 }
 
 message EndpointsSpec {

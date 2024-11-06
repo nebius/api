@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.msp.v1alpha1.resource;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/msp/v1alpha1/resource";
 option java_multiple_files = true;
@@ -10,7 +11,13 @@ option java_outer_classname = "TemplateProto";
 option java_package = "ai.nebius.pub.msp.v1alpha1.resource";
 
 message Template {
+  TemplateStatus status = 1 [(field_behavior) = OUTPUT_ONLY];
+
   TemplateSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message TemplateStatus {
+  PresetDetails preset_details = 1;
 }
 
 message TemplateSpec {
@@ -27,6 +34,12 @@ message ResourcesSpec {
   string platform = 1 [(buf.validate.field).required = true];
 
   string preset = 2 [(buf.validate.field).required = true];
+}
+
+message PresetDetails {
+  int32 cpu_count = 1 [(buf.validate.field).required = true];
+
+  int64 memory_gibibytes = 2 [(buf.validate.field).required = true];
 }
 
 message Range {

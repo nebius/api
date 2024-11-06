@@ -8,6 +8,7 @@ import "nebius/common/v1/metadata.proto";
 import "nebius/msp/spark/v1alpha1/common.proto";
 import "nebius/msp/spark/v1alpha1/preset.proto";
 import "nebius/msp/v1alpha1/cluster.proto";
+import "nebius/msp/v1alpha1/resource/template.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/msp/spark/v1alpha1";
 option java_multiple_files = true;
@@ -58,4 +59,10 @@ message SessionStatus {
 
   // Spark Connect FQDN
   optional string spark_connect_endpoint = 3;
+
+  // Session driver resource preset details
+  nebius.msp.v1alpha1.resource.PresetDetails driver_preset_details = 4;
+
+  // Session executor resource preset details
+  nebius.msp.v1alpha1.resource.PresetDetails executor_preset_details = 5;
 }

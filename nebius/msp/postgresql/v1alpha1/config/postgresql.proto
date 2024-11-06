@@ -29,4 +29,8 @@ message PostgresqlConfig16 {
   optional bool default_transaction_read_only = 9;
 
   optional string search_path = 10;
+
+  optional int64 max_connections = 11 [(buf.validate.field) = { int64: { lte: 12800, gte: 100 } }];
+
+  optional int64 shared_buffers = 12 [(buf.validate.field) = { int64: { lte: 8589934584, gte: 128 } }]; // in kilobytes.
 }

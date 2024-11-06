@@ -108,6 +108,7 @@ message RegionRouting {
   // A list of fields to extract the NID from, in order of priority.
   // The API Gateway will check each field in sequence and use the first valid NID it finds.
   // This overrides the default NID lookup order: `id`, `parent_id`, `metadata.id`, `metadata.parent_id`.
+  // If the field contains a non-empty list of strings, all NIDs in the array must be valid and have the same routing code.
   repeated string nid = 1;
 
   // If true, region routing is disabled for the method.

@@ -21,6 +21,9 @@ message Cluster {
 
 message ClusterSpec {
   ControlPlaneSpec control_plane = 2 [(buf.validate.field).required = true];
+
+  // Defines kubernetes network configuration, like IP allocation.
+  KubeNetworkSpec kube_network = 3;
 }
 
 message ControlPlaneSpec {
@@ -42,6 +45,29 @@ message ControlPlaneEndpointsSpec {
 }
 
 message PublicEndpointSpec {
+}
+
+message KubeNetworkSpec {
+  // CIDR blocks for Service ClusterIP allocation. For now, only one value is supported.
+  // For now, value should be in prefix length form (such as "/16").
+  // Later a CIDR-formatted string (such as "10.1.2.0/16") will be supported.
+  // In case of prefix length, certain CIDR is auto allocated.
+  // Specified CIDR blocks will be reserved in Cluster.spec.control_plane.subnet_id to prevent address duplication.
+  // Allowed prefix length is from "/12" to "/28".
+  // Empty value treated as ["/16"].
+  repeated string service_cidrs = 1 [
+    (buf.validate.field) = {
+      repeated: { max_items: 1 },
+      cel: [
+        {
+          id: "string.valid_cidr",
+          message: "each value in service_cidrs must be a CIDR prefix between /12 and /28",
+          expression: "this.all(x, x.matches('^/(1[2-9]|2[0-8])$'))"
+        }
+      ]
+    },
+    (field_behavior) = IMMUTABLE
+  ];
 }
 
 message ClusterStatus {

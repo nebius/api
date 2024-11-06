@@ -16,6 +16,8 @@ service SubnetService {
   rpc GetByName(GetSubnetByNameRequest) returns (Subnet);
 
   rpc List(ListSubnetsRequest) returns (ListSubnetsResponse);
+
+  rpc ListByNetwork(ListSubnetsByNetworkRequest) returns (ListSubnetsResponse);
 }
 
 message GetSubnetRequest {
@@ -30,6 +32,16 @@ message GetSubnetByNameRequest {
 
 message ListSubnetsRequest {
   string parent_id = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+
+  string filter = 4;
+}
+
+message ListSubnetsByNetworkRequest {
+  string network_id = 1 [(buf.validate.field).required = true];
 
   int64 page_size = 2;
 
