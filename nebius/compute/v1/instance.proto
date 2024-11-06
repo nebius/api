@@ -41,11 +41,7 @@ message InstanceSpec {
     (buf.validate.field) = { repeated: { max_items: 8 } }
   ];
 
-  string cloud_init_user_data = 8 [
-    (field_behavior) = IMMUTABLE,
-    (sensitive) = true,
-    (buf.validate.field) = { string: { max_len: 32768 } }
-  ];
+  string cloud_init_user_data = 8 [(sensitive) = true, (buf.validate.field) = { string: { max_len: 32768 } }];
 
   bool stopped = 13;
 

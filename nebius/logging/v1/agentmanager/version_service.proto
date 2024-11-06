@@ -13,7 +13,9 @@ option java_package = "ai.nebius.pub.logging.v1.agentmanager";
 service VersionService {
   option (api_service_name) = "observability-agent-manager";
 
-  rpc GetVersion(GetVersionRequest) returns (GetVersionResponse);
+  rpc GetVersion(GetVersionRequest) returns (GetVersionResponse) {
+    option (region_routing) = { nid: [ "instance_id" ] };
+  }
 }
 
 enum AgentType {
@@ -52,6 +54,8 @@ message GetVersionRequest {
   google.protobuf.Duration updater_uptime = 10;
 
   repeated string agent_state_messages = 11;
+
+  string last_update_error = 12;
 }
 
 message OSInfo {

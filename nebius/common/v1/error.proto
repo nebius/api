@@ -42,6 +42,22 @@ message ServiceError {
 
     InternalError internal_error = 999;
   }
+
+  // Retry type tells how to provide retry, e.g.: just a single call or the whole logic before it.
+  RetryType retry_type = 30;
+
+  enum RetryType {
+    UNSPECIFIED = 0;
+
+    // Just retry the failed call.
+    CALL = 1;
+
+    // Retry whole logic before call and make a new one.
+    UNIT_OF_WORK = 2;
+
+    // Do not retry, this is a fatal error.
+    NOTHING = 3;
+  }
 }
 
 // The request is invalid.
