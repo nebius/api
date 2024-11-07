@@ -63,16 +63,34 @@ message ClusterStatus {
   nebius.msp.v1alpha1.ClusterStatus.State state = 2;
 
   // Endpoints of the PostgreSQL cluster.
-  EndpointsSpec endpoints = 3;
+  EndpointsSpec endpoints = 3 [deprecated = true];
 
   // Cluster resource preset details
   nebius.msp.v1alpha1.resource.PresetDetails preset_details = 4;
+
+  // Connection endpoints of the PostgreSQL cluster.
+  Endpoints connection_endpoints = 5;
 }
 
+// Deprecated in favor of Endpoints (see below)
 message EndpointsSpec {
   string read_write_endpoint = 1 [(field_behavior) = OUTPUT_ONLY];
 
   optional string read_only_endpoint = 2 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message Endpoints {
+  // Read write endpoint of the PostgreSQL cluster accessible from the private VPC.
+  string private_read_write = 1 [(field_behavior) = OUTPUT_ONLY];
+
+  // Read only endpoint of the PostgreSQL cluster accessible from the private VPC.
+  string private_read_only = 2 [(field_behavior) = OUTPUT_ONLY];
+
+  // Read write endpoint of the PostgreSQL cluster accessible from the internet.
+  string public_read_write = 3 [(field_behavior) = OUTPUT_ONLY];
+
+  // Read only endpoint of the PostgreSQL cluster accessible from the internet.
+  string public_read_only = 4 [(field_behavior) = OUTPUT_ONLY];
 }
 
 message ConfigSpec {
@@ -91,6 +109,9 @@ message ConfigSpec {
     // Configuration parameters for postgres
     config.PostgresqlConfig16 postgresql_config_16 = 4;
   }
+
+  // Either make cluster public accessible or accessible only via private VPC.
+  bool public_access = 5;
 }
 
 message BootstrapSpec {

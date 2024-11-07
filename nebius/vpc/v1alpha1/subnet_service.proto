@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.vpc.v1alpha1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/vpc/v1alpha1/subnet.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1alpha1";
@@ -17,7 +18,9 @@ service SubnetService {
 
   rpc List(ListSubnetsRequest) returns (ListSubnetsResponse);
 
-  rpc ListByNetwork(ListSubnetsByNetworkRequest) returns (ListSubnetsResponse);
+  rpc ListByNetwork(ListSubnetsByNetworkRequest) returns (ListSubnetsResponse) {
+    option (region_routing) = { nid: [ "network_id" ] };
+  }
 }
 
 message GetSubnetRequest {
