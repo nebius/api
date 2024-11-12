@@ -61,6 +61,19 @@ message JobSpec {
   }
 }
 
+enum JobResultCode {
+  JOB_RESULT_CODE_UNSPECIFIED = 0;
+
+  SUCCEEDED = 1;
+
+  ERROR = 2;
+}
+
+message JobResultDetails {
+  // Result code
+  JobResultCode code = 1;
+}
+
 message JobStatus {
   // Current phase (or stage) of the cluster.
   nebius.msp.v1alpha1.ClusterStatus.Phase phase = 1;
@@ -76,4 +89,7 @@ message JobStatus {
 
   // Job executor resource preset details
   nebius.msp.v1alpha1.resource.PresetDetails executor_preset_details = 5;
+
+  // Job execution result details
+  JobResultDetails result_details = 6;
 }
