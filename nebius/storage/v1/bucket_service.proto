@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package nebius.storage.v1;
 
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
 import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
@@ -27,6 +29,14 @@ service BucketService {
   rpc Update(UpdateBucketRequest) returns (common.v1.Operation);
 
   rpc Delete(DeleteBucketRequest) returns (common.v1.Operation);
+
+  // Purge instantly deletes the bucket in ScheduledForDeletion state.
+  // It can be used only for buckets in ScheduledForDeletion state.
+  // If you want to delete Active bucket instantly, use Delete with zero ttl.
+  rpc Purge(PurgeBucketRequest) returns (common.v1.Operation);
+
+  // Undelete recovers the bucket from ScheduledForDeletion state to Active.
+  rpc Undelete(UndeleteBucketRequest) returns (common.v1.Operation);
 }
 
 message GetBucketRequest {
@@ -60,6 +70,24 @@ message UpdateBucketRequest {
 }
 
 message DeleteBucketRequest {
+  string id = 1 [(buf.validate.field).required = true];
+
+  // You can provide purge_at or ttl after which the bucket will be purged automatically.
+  // Otherwise, default ttl of 7 days will be applied.
+  oneof purge {
+    // Absolute purging time: status.purge_at will be set to this value.
+    google.protobuf.Timestamp purge_at = 3;
+
+    // Relative purging time: status.purge_at will be set to (current timestamp + ttl).
+    google.protobuf.Duration ttl = 4;
+  }
+}
+
+message PurgeBucketRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message UndeleteBucketRequest {
   string id = 1 [(buf.validate.field).required = true];
 }
 

@@ -48,9 +48,11 @@ message InstanceSpec {
 }
 
 message ResourcesSpec {
-  string platform = 1;
+  string platform = 1 [(buf.validate.field).required = true];
 
   oneof size {
+    option (buf.validate.oneof).required = true;
+
     string preset = 2;
   }
 }

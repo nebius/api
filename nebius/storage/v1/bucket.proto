@@ -74,7 +74,10 @@ message BucketStatus {
 
   SuspensionState suspension_state = 3;
 
+  // The time when the bucket was deleted (or scheduled for deletion).
+  // It resets to null if the bucket is undeleted.
   google.protobuf.Timestamp deleted_at = 4;
 
+  // The time when the bucket will be automatically purged in case it was soft-deleted.
   google.protobuf.Timestamp purge_at = 5;
 }
