@@ -58,6 +58,7 @@ message MlflowClusterStatus {
   nebius.msp.v1alpha1.ClusterStatus.State state = 2;
 
   // Tracking endpoint url.
+  // Will be removed soon in favor of private_tracking_endpoint and public_tracking_endpoint.
   string tracking_endpoint = 3;
 
   // Name of the Nebius S3 bucket for MLflow artifacts.
@@ -68,4 +69,15 @@ message MlflowClusterStatus {
 
   // MLflow version
   string mlflow_version = 6;
+
+  // Public and private tracking endpoints
+  Endpoints tracking_endpoints = 7;
+}
+
+message Endpoints {
+  // Private endpoint
+  string private = 1;
+
+  // Public endpoint
+  string public = 2;
 }

@@ -81,7 +81,7 @@ message JobStatus {
   // State reflects substatus of the stage to define whether it's healthy or not.
   nebius.msp.v1alpha1.ClusterStatus.State state = 2;
 
-  // JobDriver Web UI FQDN
+  // Job Driver Web UI endpoint
   optional string driver_endpoint = 3;
 
   // Job driver resource preset details
