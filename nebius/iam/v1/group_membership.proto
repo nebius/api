@@ -2,10 +2,12 @@ syntax = "proto3";
 
 package nebius.iam.v1;
 
-import "google/protobuf/timestamp.proto";
 import "buf/validate/validate.proto";
-import "nebius/common/v1/metadata.proto";
+import "google/protobuf/timestamp.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/iam/v1/service_account.proto";
+import "nebius/iam/v1/tenant_user_account.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
 option java_multiple_files = true;
@@ -30,4 +32,22 @@ message GroupMembershipSpec {
 }
 
 message GroupMembershipStatus {
+}
+
+// see also nebius/iam/v1/tenant_user_account.proto/TenantUserAccountWithAttributes
+message GroupMembershipWithAttributes {
+  GroupMembership group_membership = 1;
+
+  oneof attributesOptional {
+    // filled with known data for members corresponding to tenant user accounts and provisional tenant user accounts (invitees)
+    // left unset for service accounts
+    UserAttributes user_attributes = 2;
+
+    // filled with known data for members corresponding to service accounts
+    // left unset for any kind of tenant user accounts
+    ServiceAccountAttributes service_account_attributes = 3;
+
+    // in a case of issues of getting attributes from pds service, we can still return some data from cpl
+    Error error = 99;
+  }
 }

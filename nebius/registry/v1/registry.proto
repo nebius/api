@@ -42,4 +42,6 @@ message RegistryStatus {
   }
 
   State state = 10;
+
+  int32 images_count = 11;
 }

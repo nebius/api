@@ -25,6 +25,8 @@ service GroupMembershipService {
 
   rpc ListMembers(ListGroupMembershipsRequest) returns (ListGroupMembershipsResponse);
 
+  rpc ListMembersWithAttributes(ListGroupMembershipsRequest) returns (ListGroupMembershipsWithAttributesResponse);
+
   rpc ListMemberOf(ListMemberOfRequest) returns (ListMemberOfResponse);
 }
 
@@ -70,6 +72,16 @@ message ListMemberOfRequest {
 message ListGroupMembershipsResponse {
   // Members of the group. Can be tenant user account ids or service account ids.
   repeated GroupMembership memberships = 1;
+
+  string next_page_token = 2;
+}
+
+message ListGroupMembershipsWithAttributesResponse {
+  // Members of the group with their attributes if supported by member type.
+  // Can be tenant user accounts (regular or provisional/invited) or service accounts.
+  // Regular tenant user accounts may have a full set of attributes, provisional may have contacts only,
+  // service accounts
+  repeated GroupMembershipWithAttributes memberships = 1;
 
   string next_page_token = 2;
 }

@@ -57,7 +57,7 @@ message SessionStatus {
   // State reflects substatus of the stage to define whether it's healthy or not.
   nebius.msp.v1alpha1.ClusterStatus.State state = 2;
 
-  // Spark Connect FQDN
+  // Spark Connect endpoint
   optional string spark_connect_endpoint = 3;
 
   // Session driver resource preset details
