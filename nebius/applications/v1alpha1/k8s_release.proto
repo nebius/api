@@ -46,6 +46,8 @@ message K8sReleaseStatus {
     DEPLOYED = 3;
 
     FAILED = 4;
+
+    INSTALLING = 5;
   }
 
   State state = 1;

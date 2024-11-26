@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package nebius.compute.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/compute/v1/platform.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
+option java_multiple_files = true;
+option java_outer_classname = "PlatformServiceProto";
+option java_package = "ai.nebius.pub.compute.v1";
+
+service PlatformService {
+  rpc GetByName(common.v1.GetByNameRequest) returns (Platform);
+
+  rpc List(ListPlatformsRequest) returns (ListPlatformsResponse);
+}
+
+message ListPlatformsRequest {
+  int64 page_size = 1;
+
+  string page_token = 2;
+
+  string parent_id = 3 [(buf.validate.field).required = true];
+}
+
+message ListPlatformsResponse {
+  repeated Platform items = 1;
+
+  string next_page_token = 2;
+}
