@@ -15,7 +15,7 @@ message ExchangeTokenRequest {
 
   string requested_token_type = 2; // optional type of requested token, default is urn:ietf:params:oauth:token-type:access_token
 
-  string subject_token = 3 [(sensitive) = true, (credentials) = true]; // required - could be self signed JWT token
+  string subject_token = 3 [(credentials) = true]; // required - could be self signed JWT token
 
   string subject_token_type = 4; // required, in case of jwt - urn:ietf:params:oauth:token-type:jwt
 
@@ -23,7 +23,7 @@ message ExchangeTokenRequest {
 
   string audience = 6; // optional, name of the oauth client id on which this token will be used
 
-  string actor_token = 7 [(sensitive) = true, (credentials) = true]; // optional, subject token for impersonation/delegation (who want to impersonate/delegate) in subject_token.
+  string actor_token = 7 [(credentials) = true]; // optional, subject token for impersonation/delegation (who want to impersonate/delegate) in subject_token.
 
   string actor_token_type = 8; // optional, token type for the impersonation/delegation (who want to impersonate/delegate). Usually it's urn:ietf:params:oauth:token-type:access_token
 
@@ -31,7 +31,7 @@ message ExchangeTokenRequest {
 }
 
 message CreateTokenResponse {
-  string access_token = 1 [(sensitive) = true, (credentials) = true]; // required
+  string access_token = 1 [(credentials) = true]; // required
 
   string issued_token_type = 2; // required
 

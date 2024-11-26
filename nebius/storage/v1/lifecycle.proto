@@ -23,7 +23,7 @@ option java_package = "ai.nebius.pub.storage.v1";
 //   object (one current version and zero or more noncurrent versions). The system provides predefined actions
 //   that you can specify for current and noncurrent object versions.
 message LifecycleConfiguration {
-  repeated LifecycleRule rules = 1;
+  repeated LifecycleRule rules = 1 [(buf.validate.field) = { repeated: { max_items: 1000 } }];
 }
 
 message LifecycleRule {

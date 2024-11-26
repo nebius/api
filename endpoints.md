@@ -8,6 +8,7 @@
   * [nebius.compute.v1.GpuClusterService](nebius/compute/v1/gpu_cluster_service.proto)
   * [nebius.compute.v1.ImageService](nebius/compute/v1/image_service.proto)
   * [nebius.compute.v1.InstanceService](nebius/compute/v1/instance_service.proto)
+  * [nebius.compute.v1.PlatformService](nebius/compute/v1/platform_service.proto)
   * [nebius.compute.v1alpha1.DiskService](nebius/compute/v1alpha1/disk_service.proto)
   * [nebius.compute.v1alpha1.FilesystemService](nebius/compute/v1alpha1/filesystem_service.proto)
   * [nebius.compute.v1alpha1.GpuClusterService](nebius/compute/v1alpha1/gpu_cluster_service.proto)

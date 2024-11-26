@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package nebius.compute.v1;
+
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
+option java_multiple_files = true;
+option java_outer_classname = "PlatformProto";
+option java_package = "ai.nebius.pub.compute.v1";
+
+message Platform {
+  common.v1.ResourceMetadata metadata = 1;
+
+  PlatformSpec spec = 2;
+
+  PlatformStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message PlatformSpec {
+  repeated Preset presets = 1;
+
+  string gpu_count_quota_type = 3;
+
+  string human_readable_name = 4;
+}
+
+message Preset {
+  string name = 1;
+
+  PresetResources resources = 2;
+
+  bool allow_gpu_clustering = 3;
+}
+
+message PresetResources {
+  int32 vcpu_count = 1 [(field_behavior) = OUTPUT_ONLY];
+
+  int32 memory_gibibytes = 3;
+
+  int32 gpu_count = 4;
+}
+
+message PlatformStatus {
+}
