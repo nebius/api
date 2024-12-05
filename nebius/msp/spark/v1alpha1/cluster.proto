@@ -35,7 +35,7 @@ message ClusterSpec {
 
   // ID of the user service account for accessing
   // S3 buckets in the user project
-  string service_account_id = 5 [(buf.validate.field).required = true];
+  string service_account_id = 5 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 
   string network_id = 6 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 }

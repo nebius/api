@@ -27,20 +27,26 @@ message ClusterSpec {
 }
 
 message ControlPlaneSpec {
-  // Version is desired Kubernetes version of the cluster. For now only acceptable format is
-  // `MAJOR.MINOR` like "1.30". Option for patch version update will be added later.
-  string version = 1;
+  // Desired Kubernetes version of the cluster. For now only acceptable format is
+  // `<major>.<minor>` like "1.30". Option for patch version update will be added later.
+  string version = 1 [(buf.validate.field) = { string: { pattern: "|^\\d\\.\\d\\d$" } }];
 
-  // Subnet ID where control plane instances will be located.
+  // Nebius VPC Subnet ID where control plane instances will be located.
+  // Also will be default NodeGroup subnet.
   string subnet_id = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 
   ControlPlaneEndpointsSpec endpoints = 3;
 
-  int64 etcd_cluster_size = 4;
+  // Number of instances in etcd cluster.
+  // 3 by default.
+  // Control plane with `etcd_cluster_size: 3` called "Highly Available" ("HA"), because it's Kubernetes API
+  // will be available despite a failure of one control plane instance.
+  int64 etcd_cluster_size = 4 [(buf.validate.field) = { int64: { in: [ 0, 1, 3 ] } }];
 }
 
 message ControlPlaneEndpointsSpec {
-  // PublicEndpointSpec is a specification of public endpoint for control plane.
+  // Specification of public endpoint for control plane.
+  // Set value to empty, to enable it.
   PublicEndpointSpec public_endpoint = 1 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
 }
 
@@ -90,10 +96,16 @@ message ClusterStatus {
 }
 
 message ControlPlaneStatus {
-  // Version have format `major.minor.patch-nebius-cp.n` like "1.30.0-nebius-cp.3".
+  // Actual Kubernetes and configuration version.
+  // Version have format `<major>.<minor>.<patch>-nebius-cp.<infra_version>` like "1.30.0-nebius-cp.3".
+  // Where <major>.<minor>.<patch> is Kubernetes version and <infra_version> is version of control plane infrastructure and configuration,
+  // which update may include bug fixes, security updates and new features of components running on control plane, like CCM or Cluster Autoscaler.
   string version = 1;
 
   ControlPlaneStatusEndpoints endpoints = 2;
+
+  // Number of instances in etcd cluster.
+  int64 etcd_cluster_size = 3;
 
   ControlPlaneStatusAuth auth = 100;
 }
@@ -108,5 +120,6 @@ message ControlPlaneStatusEndpoints {
 }
 
 message ControlPlaneStatusAuth {
+  // PEM with the Cluster Certificate Authority, that must be used for TLS connection to Kubernetes API.
   string cluster_ca_certificate = 1;
 }

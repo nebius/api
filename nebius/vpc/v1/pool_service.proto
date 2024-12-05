@@ -19,6 +19,8 @@ service PoolService {
 
   rpc List(ListPoolsRequest) returns (ListPoolsResponse);
 
+  rpc ListBySourcePool(ListPoolsBySourcePoolRequest) returns (ListPoolsResponse);
+
   rpc Update(UpdatePoolRequest) returns (common.v1.Operation);
 }
 
@@ -40,6 +42,14 @@ message ListPoolsRequest {
   string page_token = 3;
 }
 
+message ListPoolsBySourcePoolRequest {
+  string pool_id = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
 message ListPoolsResponse {
   repeated Pool items = 1;
 
@@ -47,7 +57,17 @@ message ListPoolsResponse {
 }
 
 message UpdatePoolRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name",
+          message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters.",
+          expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+        }
+      ]
+    }
+  ];
 
   PoolSpec spec = 2;
 }

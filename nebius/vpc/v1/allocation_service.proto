@@ -19,6 +19,8 @@ service AllocationService {
 
   rpc List(ListAllocationsRequest) returns (ListAllocationsResponse);
 
+  rpc ListByPool(ListAllocationsByPoolRequest) returns (ListAllocationsResponse);
+
   rpc Create(CreateAllocationRequest) returns (common.v1.Operation);
 
   rpc Update(UpdateAllocationRequest) returns (common.v1.Operation);
@@ -44,6 +46,14 @@ message ListAllocationsRequest {
   string page_token = 3;
 }
 
+message ListAllocationsByPoolRequest {
+  string pool_id = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
 message ListAllocationsResponse {
   repeated Allocation items = 1;
 
@@ -51,13 +61,34 @@ message ListAllocationsResponse {
 }
 
 message CreateAllocationRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name",
+          message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters.",
+          expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+        }
+      ],
+      required: true
+    }
+  ];
 
   AllocationSpec spec = 2 [(buf.validate.field).required = true];
 }
 
 message UpdateAllocationRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name",
+          message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters.",
+          expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+        }
+      ]
+    }
+  ];
 
   AllocationSpec spec = 2;
 }
