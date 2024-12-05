@@ -80,4 +80,8 @@ message BucketStatus {
 
   // The time when the bucket will be automatically purged in case it was soft-deleted.
   google.protobuf.Timestamp purge_at = 5;
+
+  // The domain of the endpoint where the bucket can be accessed. It omits the scheme (HTTPS) and the port (443)
+  // and contains only the FQDN address.
+  string domain_name = 6;
 }

@@ -29,7 +29,10 @@ message NetworkInterfaceSpec {
   ];
 
   // Private IPv4 address associated with the interface.
-  IPAddress ip_address = 3 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+  IPAddress ip_address = 3 [
+    (buf.validate.field).required = true,
+    (field_behavior) = MEANINGFUL_EMPTY_VALUE
+  ];
 
   // Public IPv4 address associated with the interface.
   PublicIPAddress public_ip_address = 4 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];

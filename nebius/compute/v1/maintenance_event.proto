@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package nebius.compute.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
+option java_multiple_files = true;
+option java_outer_classname = "MaintenanceEventProto";
+option java_package = "ai.nebius.pub.compute.v1";
+
+message MaintenanceEventStatus {
+  enum State {
+    PENDING = 0;
+
+    IN_PROGRESS = 1;
+
+    COMPLETED = 2;
+
+    CANCELLED = 3;
+  }
+
+  string maintenance_id = 1;
+
+  State state = 2;
+
+  string operation_id = 4; // Operation ID of stopping or recovering operation
+
+  google.protobuf.Timestamp finished_at = 5; // Time when the maintenance event is finished
+
+  google.protobuf.Timestamp sla_deadline_ts = 6; // Time when the instance will be force stopped
+
+  string ticket_id = 8; // Ticket key, can be transformed into url where support is talking with the client
+}

@@ -14,7 +14,6 @@ message DiskSpec {
   enum DiskType {
     UNSPECIFIED = 0;
 
-    // the list of available types will be clarified later, it is not final version
     NETWORK_SSD = 1;
 
     NETWORK_HDD = 2;

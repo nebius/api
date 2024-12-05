@@ -36,7 +36,11 @@ message ControlPlaneSpec {
 
   ControlPlaneEndpointsSpec endpoints = 3;
 
-  int64 etcd_cluster_size = 4;
+  // Number of instances in etcd cluster.
+  // 3 by default.
+  // Control plane with `etcd_cluster_size: 3` called "Highly Available" ("HA"), because it's Kubernetes API
+  // will be available despite a failure of one control plane instance.
+  int64 etcd_cluster_size = 4 [(buf.validate.field) = { int64: { in: [ 0, 1, 3 ] } }];
 }
 
 message ControlPlaneEndpointsSpec {
@@ -94,6 +98,9 @@ message ControlPlaneStatus {
   string version = 1;
 
   ControlPlaneStatusEndpoints endpoints = 2;
+
+  // Number of instances in etcd cluster.
+  int64 etcd_cluster_size = 3;
 
   ControlPlaneStatusAuth auth = 100;
 }

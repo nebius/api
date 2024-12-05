@@ -11,6 +11,7 @@ option java_outer_classname = "IdentityServiceProto";
 option java_package = "ai.nebius.pub.iam.v1";
 
 service IdentityService {
+  option deprecated = true;
   option (api_service_name) = "identity.iam";
 
   rpc ExchangeToken(ExchangeTokenRequest) returns (CreateTokenResponse);
