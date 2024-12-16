@@ -50,7 +50,7 @@ message ClusterSpec {
   ];
 
   // Network ID in which the cluster is created.
-  string network_id = 6 [(field_behavior) = IMMUTABLE];
+  string network_id = 6 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
 
   ConfigSpec config = 3 [(buf.validate.field).required = true];
 
@@ -96,7 +96,7 @@ message ConfigSpec {
   ConnectionPoolerConfig pooler_config = 2;
 
   // Resources allocated to PostgreSQL hosts.
-  PresetSpec resources = 3 [(buf.validate.field).required = true];
+  PresetSpec resources = 3 [deprecated = true]; // use template instead
 
   // Config of the PostgreSQL cluster.
   oneof config {
