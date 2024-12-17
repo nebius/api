@@ -78,7 +78,7 @@ message LifecycleExpiration {
 
     // Indicates the lifetime, in days, of the objects that are subject to the rule.
     // The value must be a non-zero positive integer.
-    int32 days = 2;
+    int32 days = 2 [(buf.validate.field) = { int32: { lte: 18250, gte: 1 } }];
   }
 
   // Indicates whether the system will remove a "delete marker" with no noncurrent versions.
@@ -93,11 +93,11 @@ message LifecycleNoncurrentVersionExpiration {
   optional int32 newer_noncurrent_versions = 1;
 
   // Specifies the number of days an object is noncurrent before the system will expire it.
-  int32 noncurrent_days = 2;
+  int32 noncurrent_days = 2 [(buf.validate.field) = { int32: { lte: 18250, gte: 1 } }];
 }
 
 message LifecycleAbortIncompleteMultipartUpload {
   // Specifies the days since the initiation of an incomplete multipart upload that
   // the system will wait before permanently removing all parts of the upload.
-  int32 days_after_initiation = 1;
+  int32 days_after_initiation = 1 [(buf.validate.field) = { int32: { lte: 18250, gte: 1 } }];
 }
