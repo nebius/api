@@ -6,6 +6,7 @@ import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "google/rpc/status.proto";
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1";
 option java_multiple_files = true;
@@ -76,5 +77,5 @@ message Operation {
   //     [ServiceError] from nebius/common/v1/error.proto
   // - [status.code] must belong to an Operation-compatible subset of GRPC codes:
   //   OK, CANCELLED, PERMISSION_DENIED, RESOURCE_EXHAUSTED, FAILED_PRECONDITION, ABORTED, INTERNAL
-  google.rpc.Status status = 10;
+  google.rpc.Status status = 10 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
 }
