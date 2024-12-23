@@ -24,7 +24,7 @@ message Instance {
 message InstanceSpec {
   string service_account_id = 1 [(field_behavior) = IMMUTABLE];
 
-  ResourcesSpec resources = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  ResourcesSpec resources = 2 [(buf.validate.field).required = true];
 
   InstanceGpuClusterSpec gpu_cluster = 3 [(field_behavior) = IMMUTABLE];
 
@@ -50,7 +50,7 @@ message InstanceSpec {
 }
 
 message ResourcesSpec {
-  string platform = 1 [(buf.validate.field).required = true];
+  string platform = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 
   oneof size {
     option (buf.validate.oneof).required = true;

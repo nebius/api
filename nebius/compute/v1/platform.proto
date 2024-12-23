@@ -24,6 +24,8 @@ message PlatformSpec {
   string gpu_count_quota_type = 3;
 
   string human_readable_name = 4;
+
+  bool allow_preset_change = 5;
 }
 
 message Preset {

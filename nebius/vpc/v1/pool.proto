@@ -99,6 +99,9 @@ message PoolStatus {
 
   // Scope is the unique identifier for single pool tree.
   string scope_id = 3;
+
+  // Assignment details for this Pool
+  PoolAssignment assignment = 4;
 }
 
 enum IpVersion {
@@ -115,4 +118,12 @@ enum IpVisibility {
   PRIVATE = 1; // Private address.
 
   PUBLIC = 2; // Public address.
+}
+
+message PoolAssignment {
+  // IDs of Networks to which the Pool is assigned.
+  repeated string networks = 1;
+
+  // IDs of Subnets to which the Pool is assigned.
+  repeated string subnets = 2;
 }
