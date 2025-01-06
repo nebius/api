@@ -28,10 +28,7 @@ message InstanceSpec {
 
   InstanceGpuClusterSpec gpu_cluster = 3 [(field_behavior) = IMMUTABLE];
 
-  repeated NetworkInterfaceSpec network_interfaces = 4 [
-    (buf.validate.field) = { repeated: { max_items: 8 }, required: true },
-    (field_behavior) = IMMUTABLE
-  ];
+  repeated NetworkInterfaceSpec network_interfaces = 4 [(buf.validate.field) = { repeated: { max_items: 8 }, required: true }];
 
   AttachedDiskSpec boot_disk = 5 [(field_behavior) = IMMUTABLE];
 
