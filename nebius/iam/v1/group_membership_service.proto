@@ -21,6 +21,8 @@ service GroupMembershipService {
 
   rpc Get(GetGroupMembershipRequest) returns (GroupMembership);
 
+  rpc GetWithAttributes(GetGroupMembershipRequest) returns (GroupMembershipWithAttributes);
+
   rpc Delete(DeleteGroupMembershipRequest) returns (common.v1.Operation);
 
   rpc ListMembers(ListGroupMembershipsRequest) returns (ListGroupMembershipsResponse);

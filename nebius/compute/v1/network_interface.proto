@@ -25,13 +25,15 @@ message NetworkInterfaceSpec {
         pattern: "^[0-9a-z][0-9a-z-]*$"
       },
       required: true
-    }
+    },
+    (field_behavior) = IMMUTABLE
   ];
 
   // Private IPv4 address associated with the interface.
   IPAddress ip_address = 3 [
     (buf.validate.field).required = true,
-    (field_behavior) = MEANINGFUL_EMPTY_VALUE
+    (field_behavior) = MEANINGFUL_EMPTY_VALUE,
+    (field_behavior) = IMMUTABLE
   ];
 
   // Public IPv4 address associated with the interface.
@@ -49,7 +51,7 @@ message PublicIPAddress {
   // Describes different methods of public IP address allocation.
   oneof allocation {
     // Allocation identifier if it was created before.
-    string allocation_id = 1;
+    string allocation_id = 1 [(field_behavior) = IMMUTABLE];
   }
 
   // If false - Allocation will be created/deleted during NetworkInterface.Allocate/NetworkInterface.Deallocate
