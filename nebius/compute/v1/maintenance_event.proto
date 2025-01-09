@@ -11,13 +11,15 @@ option java_package = "ai.nebius.pub.compute.v1";
 
 message MaintenanceEventStatus {
   enum State {
-    PENDING = 0;
+    STATE_UNSPECIFIED = 0;
 
-    IN_PROGRESS = 1;
+    STATE_PENDING = 1;
 
-    COMPLETED = 2;
+    STATE_IN_PROGRESS = 2;
 
-    CANCELLED = 3;
+    STATE_COMPLETED = 3;
+
+    STATE_CANCELLED = 4;
   }
 
   string maintenance_id = 1;
@@ -26,9 +28,11 @@ message MaintenanceEventStatus {
 
   string operation_id = 4; // Operation ID of stopping or recovering operation
 
-  google.protobuf.Timestamp finished_at = 5; // Time when the maintenance event is finished
+  google.protobuf.Timestamp created_at = 5; // Time when the maintenance event is created
 
-  google.protobuf.Timestamp sla_deadline_ts = 6; // Time when the instance will be force stopped
+  google.protobuf.Timestamp finished_at = 6; // Time when the maintenance event is finished
 
-  string ticket_id = 8; // Ticket key, can be transformed into url where support is talking with the client
+  google.protobuf.Timestamp sla_deadline_ts = 7; // Time when the instance will be force stopped
+
+  string support_center_ticket_id = 9; // Ticket key, can be transformed into url where support is talking with the client
 }
