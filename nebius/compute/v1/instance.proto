@@ -6,7 +6,6 @@ import "buf/validate/validate.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
 import "nebius/compute/v1/network_interface.proto";
-import "nebius/compute/v1/maintenance_event.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
 option java_multiple_files = true;
@@ -111,6 +110,8 @@ message AttachedFilesystemSpec {
 }
 
 message InstanceStatus {
+  reserved 6;
+
   enum InstanceState {
     UNSPECIFIED = 0;
 
@@ -138,7 +139,7 @@ message InstanceStatus {
   // Indicates whether there is an ongoing operation
   bool reconciling = 5;
 
-  MaintenanceEventStatus maintenance_event = 6;
+  string maintenance_event_id = 7;
 }
 
 enum InstanceRecoveryPolicy {
