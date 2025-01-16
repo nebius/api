@@ -146,6 +146,16 @@ message NodeGroupAutoscalingSpec {
   int64 min_node_count = 1 [(buf.validate.field) = { int64: { lte: 5000, gte: 0 } }];
 
   int64 max_node_count = 2 [(buf.validate.field) = { int64: { lte: 5000, gte: 0 } }];
+
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "autoscaling.protovalidate.message",
+        message: "min_node_count must be less or equal than max_node_count",
+        expression: "this.min_node_count <= this.max_node_count"
+      }
+    ]
+  };
 }
 
 // See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
