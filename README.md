@@ -1,10 +1,21 @@
-# Nebius API
+# Nebius AI Cloud API
 
-This repository contains the `.proto` files defining the gRPC API for [nebius.ai](https://nebius.ai). These files describe the structure of requests and responses exchanged between your client application and Nebius services using Protocol Buffers.
+This repository contains the `.proto` files defining the gRPC API for [Nebius AI Cloud](https://nebius.com) services. These files describe the structure of requests and responses exchanged between your client application and Nebius services using Protocol Buffers.
+
+## Tools
+
+While you can interact directly with the Nebius AI Cloud API, we recommend leveraging the following tools to simplify your development and operations:
+
+- [Nebius CLI](https://docs.nebius.com/cli)
+- [Terraform Provider](https://docs.nebius.com/terraform-provider)
+- [SDK for Go](https://github.com/nebius/gosdk)
+- [Python SDK](https://github.com/nebius/pysdk)
+
+Using these tools can save time and reduce the complexity of managing authentication, constructing requests, and handling responses.
 
 ## API Endpoints
 
-Nebius gRPC services are accessed via endpoints formatted as `{service-name}.{base-address}`. You can find a list of endpoints and services [here](endpoints.md). Below is an explanation of how these addresses are constructed:
+Nebius AI Cloud gRPC services are accessed via endpoints formatted as `{service-name}.{base-address}`. You can find a list of endpoints and services [here](endpoints.md). Below is an explanation of how these addresses are constructed:
 
 1. **Base Address**:
    - The current base address is `api.eu.nebius.cloud:443`, though additional base addresses will be introduced soon.
@@ -22,11 +33,11 @@ Nebius gRPC services are accessed via endpoints formatted as `{service-name}.{ba
 
 ## Authentication
 
-Nebius uses bearer token authentication. All requests must include an `Authorization: Bearer <IAM-access-token>` header.
+Nebius AI Cloud uses bearer token authentication. All requests must include an `Authorization: Bearer <IAM-access-token>` header.
 
 ### User Account Authentication
 
-Prerequisites: Ensure you have installed and configured the `nebius` CLI as per the [documentation](https://docs.nebius.ai/cli/).
+Prerequisites: Ensure you have installed and configured the `nebius` CLI as per the [documentation](https://docs.nebius.com/cli/).
 
 Steps:
 
@@ -62,7 +73,7 @@ grpcurl -H "Authorization: Bearer $(nebius iam get-access-token)" \
 
 ### Service Account Authentication
 
-Prerequisites: You must have created a service account with the necessary credentials as outlined in the [documentation](https://docs.nebius.ai/iam/service-accounts/manage/).
+Prerequisites: You must have created a service account with the necessary credentials as outlined in the [documentation](https://docs.nebius.com/iam/service-accounts/manage/).
 
 Service account credentials cannot be directly used for authentication. Your service needs to obtain an IAM token using OAuth 2.0 with a compatible client library that implements RFC-8693 and JWT to generate a claim.
 
@@ -201,7 +212,7 @@ In some cases, the `status.details` field provides additional information via a 
 
 ### Parallel Operations
 
-Nebius does not support performing multiple operations on the same resource simultaneously. Attempting to do so may result in an error, or the first operation might be aborted in favor of the new one.
+Nebius AI Cloud does not support performing multiple operations on the same resource simultaneously. Attempting to do so may result in an error, or the first operation might be aborted in favor of the new one.
 
 ### Retention Policy
 
