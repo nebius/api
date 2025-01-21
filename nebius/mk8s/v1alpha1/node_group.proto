@@ -31,7 +31,7 @@ message NodeGroupSpec {
   oneof size {
     option (buf.validate.oneof).required = true;
 
-    int64 fixed_node_count = 2; // number of nodes in the group
+    int64 fixed_node_count = 2 [(buf.validate.field) = { int64: { lte: 100, gte: 0 } }];
 
     NodeGroupAutoscalingSpec autoscaling = 5;
   }
@@ -117,9 +117,9 @@ message ExistingFilesystem {
 }
 
 message NodeGroupAutoscalingSpec {
-  int64 min_node_count = 1;
+  int64 min_node_count = 1 [(buf.validate.field) = { int64: { lte: 100, gte: 0 } }];
 
-  int64 max_node_count = 2;
+  int64 max_node_count = 2 [(buf.validate.field) = { int64: { lte: 100, gte: 0 } }];
 
   option (buf.validate.message) = {
     cel: [
