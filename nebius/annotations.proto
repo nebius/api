@@ -9,12 +9,6 @@ option java_multiple_files = true;
 option java_outer_classname = "AnnotationsProto";
 option java_package = "ai.nebius.pub";
 
-extend google.protobuf.FileOptions {
-  // Marks the file as unstable, indicating that it may change in a non-backward compatible way in the future.
-  // Changes to files marked with this option are ignored by the breaking change detector.
-  bool unstable = 1191;
-}
-
 extend google.protobuf.ServiceOptions {
   // by default API tools assume that every service is configured with address
   //    in a format: <first-part-after-nebius-in-grpc-path>.<domain>

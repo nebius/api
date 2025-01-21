@@ -34,7 +34,7 @@ message NodeGroupSpec {
     option (buf.validate.oneof).required = true;
 
     // Number of nodes in the group. Can be changed manually at any time.
-    int64 fixed_node_count = 2 [(buf.validate.field) = { int64: { lte: 5000, gte: 0 } }];
+    int64 fixed_node_count = 2 [(buf.validate.field) = { int64: { lte: 100, gte: 0 } }];
 
     // Enables [Kubernetes Cluster Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler)
     // for that NodeGroup, and defines autoscaling parameters.
@@ -143,9 +143,9 @@ message ExistingFilesystem {
 }
 
 message NodeGroupAutoscalingSpec {
-  int64 min_node_count = 1 [(buf.validate.field) = { int64: { lte: 5000, gte: 0 } }];
+  int64 min_node_count = 1 [(buf.validate.field) = { int64: { lte: 100, gte: 0 } }];
 
-  int64 max_node_count = 2 [(buf.validate.field) = { int64: { lte: 5000, gte: 0 } }];
+  int64 max_node_count = 2 [(buf.validate.field) = { int64: { lte: 100, gte: 0 } }];
 
   option (buf.validate.message) = {
     cel: [
