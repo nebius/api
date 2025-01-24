@@ -1,0 +1,33 @@
+name: CI
+on:
+  workflow_dispatch:
+    inputs:
+      debug_ssh:
+        description: "Enable SSH debug with tmate, see https://github.com/marketplace/actions/debugging-with-tmate"
+        required: false
+        type: boolean
+        default: false
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * 1" # Each Monday
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  buf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: bufbuild/buf-action@v1.0.2
+        with:
+          setup_only: true
+      - run: buf build --error-format github-actions
+      - run: buf generate --error-format github-actions

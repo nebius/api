@@ -1,4 +1,4 @@
-# Nebius AI Cloud API
+# Nebius AI Cloud API <br> [![CI][ci-img]][ci-url] [![License][license-img]][license-url]
 
 This repository contains the `.proto` files defining the gRPC API for [Nebius AI Cloud](https://nebius.com) services. These files describe the structure of requests and responses exchanged between your client application and Nebius services using Protocol Buffers.
 
@@ -218,6 +218,11 @@ Nebius AI Cloud does not support performing multiple operations on the same reso
 
 Ongoing operations are never deleted. However, completed operations may be subject to deletion based on the service's retention policy.
 
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2024 Nebius B.V.
 
 
 [//]: # (TODO: grpcurl examples)
@@ -226,3 +231,8 @@ Ongoing operations are never deleted. However, completed operations may be subje
 [//]: # (TODO: X-ResetMask)
 [//]: # (TODO: X-SelectMask)
 [//]: # (TODO: resource_version)
+
+[ci-img]: https://github.com/nebius/api/actions/workflows/ci.yml/badge.svg
+[ci-url]: https://github.com/nebius/api/actions/workflows/ci.yml
+[license-img]: https://img.shields.io/github/license/nebius/api.svg
+[license-url]: /LICENSE
