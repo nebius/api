@@ -39,6 +39,9 @@ message SamlSettings {
   string idp_issuer = 1;
 
   string sso_url = 2;
+
+  // if "true", the identity provider MUST authenticate the presenter directly rather than rely on a previous security context.
+  bool force_authn = 3;
 }
 
 message FederationStatus {
