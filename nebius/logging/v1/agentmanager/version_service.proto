@@ -58,6 +58,22 @@ message GetVersionRequest {
   string last_update_error = 12;
 
   string mk8s_cluster_id = 13;
+
+  ModulesHealth modules_health = 14;
+}
+
+message ModulesHealth {
+  ModuleHealth process = 1;
+
+  ModuleHealth gpu_pipeline = 2;
+
+  ModuleHealth cpu_pipeline = 3;
+}
+
+message ModuleHealth {
+  AgentState state = 1;
+
+  repeated string messages = 2;
 }
 
 message OSInfo {
