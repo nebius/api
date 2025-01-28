@@ -199,6 +199,80 @@ grpcurl -H "Authorization: Bearer $TOKEN" \
 ```
 </details>
 
+## Method `Update` and `X-ResetMask` Header
+
+In Nebius AI Cloud API, the `Update` method is designed to perform a "full-replace" of resource fields rather than a "patch" operation.
+However, to maintain compatibility with clients of different versions, the server ensures that fields unknown to the client are not unintentionally modified.
+To achieve this, Nebius employs a mechanism called the **Reset Mask**.
+
+> Note: Nebius' Reset Mask is distinct from Google's [Field Mask](https://protobuf.dev/reference/protobuf/google.protobuf/#field-mask).
+
+### Behavior
+
+A field in a protobuf message is not transmitted over the wire if it has a default value (empty string, `0`, `false`, or NULL).
+The server updates a resource field only if:
+- The request contains a non-default value for that field, or
+- The field is explicitly included in the mask provided in the `X-ResetMask` header.
+
+For example, to detach (remove) secondary disks from a compute instance, you can use the following `X-ResetMask`:
+
+```bash
+grpcurl -H "Authorization: Bearer $TOKEN" \
+  -H "X-ResetMask: spec.secondary_disks" \
+  -d '{"metadata": {"id": "compute-instance-id"}}' \
+  compute.api.eu.nebius.cloud:443 \
+  nebius.compute.v1.InstanceService/Update
+```
+
+The Nebius SDK for all supported languages manages the `X-ResetMask` header automatically.
+
+### Reset Mask Syntax
+
+A reset mask is a comma-separated list of elements, where each element specifies one or more fields in a protobuf message.
+
+**Example:**
+
+```
+a, b.c, d.e.12, f.(j.h,i.j).k, l.*.m
+```
+
+The fields matched by the mask above are:
+- `a`
+- `c` within the structure `b`
+- The 12th element in the list `e` within the structure `d`
+- The field `k` within maps `h` and `j` (found in objects `j` and `i`, respectively, under the common ancestor `f`)
+- All `m` fields from any direct child of `l` (e.g., `l.q.m`)
+
+#### Lists and Maps
+
+When modifying lists or maps, all elements of the container are included in the operation since the client can fully read and understand these structures, regardless of version differences.
+
+- **Lists**:
+  - Elements within the range `0...min(incoming.length, previous.length)-1` are updated individually, with each treated as part of the field mask.
+  - Elements beyond this range are either removed or added.
+- **Maps**:
+  - Elements present in the incoming message are updated.
+  - Missing elements are removed, while new elements are added.
+
+**Special Cases:**
+- To clear a list or map, add its name as a key in the reset mask.
+- To modify or fully replace a list/map, include it in the request without specifying it in the reset mask.
+- To remove specific values from objects in a list or map, include the object's index in the reset mask.
+
+#### Nested Structures
+
+If a reset mask targets a structure (e.g., `a`), it does not clear the contents of its fields unless those fields are explicitly included in the mask.
+However, if a field inside a structure is listed in the mask (e.g., `a.b`), the structure itself is reset if it is not present in the request payload.
+
+**Example:**
+- Resource: `{a: {b:1, c:2}}`
+- Request: `{}` + `X-ResetMask: a.b`
+- Result: `{a: null}` (the entire `a` structure is reset)
+
+To preserve other fields in the structure, ensure the structure is explicitly included in the request:
+- Resource: `{a: {b:1, c:2}}`
+- Request: `{a: {}}` + `X-ResetMask: a.b`
+- Result: `{a: {c: 2}}`
 
 ## Operations
 
@@ -228,8 +302,6 @@ Copyright (c) 2024 Nebius B.V.
 [//]: # (TODO: grpcurl examples)
 [//]: # (TODO: Errors)
 [//]: # (TODO: X-Idempotency-Key)
-[//]: # (TODO: X-ResetMask)
-[//]: # (TODO: X-SelectMask)
 [//]: # (TODO: resource_version)
 
 [ci-img]: https://github.com/nebius/api/actions/workflows/ci.yml/badge.svg
