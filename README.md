@@ -1,6 +1,7 @@
 # Nebius AI Cloud API <br> [![CI][ci-img]][ci-url] [![License][license-img]][license-url]
 
-This repository contains the `.proto` files defining the gRPC API for [Nebius AI Cloud](https://nebius.com) services. These files describe the structure of requests and responses exchanged between your client application and Nebius services using Protocol Buffers.
+This repository contains the `.proto` files defining the gRPC API for [Nebius AI Cloud](https://nebius.com) services.
+These files describe the structure of requests and responses exchanged between your client application and Nebius services using Protocol Buffers.
 
 ## Tools
 
@@ -15,7 +16,8 @@ Using these tools can save time and reduce the complexity of managing authentica
 
 ## API Endpoints
 
-Nebius AI Cloud gRPC services are accessed via endpoints formatted as `{service-name}.{base-address}`. You can find a list of endpoints and services [here](endpoints.md). Below is an explanation of how these addresses are constructed:
+Nebius AI Cloud gRPC services are accessed via endpoints formatted as `{service-name}.{base-address}`.
+You can find a list of endpoints and services [here](endpoints.md). Below is an explanation of how these addresses are constructed:
 
 1. **Base Address**:
    - The current base address is `api.eu.nebius.cloud:443`, though additional base addresses will be introduced soon.
@@ -33,7 +35,8 @@ Nebius AI Cloud gRPC services are accessed via endpoints formatted as `{service-
 
 ## Authentication
 
-Nebius AI Cloud uses bearer token authentication. All requests must include an `Authorization: Bearer <IAM-access-token>` header.
+Nebius AI Cloud uses bearer token authentication.
+All requests must include an `Authorization: Bearer <IAM-access-token>` header.
 
 ### User Account Authentication
 
@@ -75,7 +78,8 @@ grpcurl -H "Authorization: Bearer $(nebius iam get-access-token)" \
 
 Prerequisites: You must have created a service account with the necessary credentials as outlined in the [documentation](https://docs.nebius.com/iam/service-accounts/manage/).
 
-Service account credentials cannot be directly used for authentication. Your service needs to obtain an IAM token using OAuth 2.0 with a compatible client library that implements RFC-8693 and JWT to generate a claim.
+Service account credentials cannot be directly used for authentication.
+Your service needs to obtain an IAM token using OAuth 2.0 with a compatible client library that implements RFC-8693 and JWT to generate a claim.
 
 Steps:
 1. Generate a JWT:
@@ -276,21 +280,54 @@ To preserve other fields in the structure, ensure the structure is explicitly in
 
 ## Operations
 
-Most methods that modify data return a `nebius.common.v1.Operation` ([operation.proto](nebius/common/v1/operation.proto)). This message can represent both synchronous and asynchronous operations. A synchronous operation is returned in a completed state, while an asynchronous one will update over time.
+Most methods that modify data return a `nebius.common.v1.Operation` ([operation.proto](nebius/common/v1/operation.proto)).
+This message can represent both synchronous and asynchronous operations.
+A synchronous operation is returned in a completed state, while an asynchronous one will update over time.
 
 ### Status
 
-Operations are considered complete when the `status` field is set. If `status` is null, the operation is still in progress. Additionally, a completed operation will include a `finished_at` timestamp.
-
-In some cases, the `status.details` field provides additional information via a `nebius.common.v1.ServiceError` ([error.proto](nebius/common/v1/error.proto)).
+An operation is considered complete when its `status` field is set.
+If the `status` field is `null`, the operation is still in progress.
+Completed operations also include a `finished_at` timestamp.
+If an error occurs, details will be provided in the `status.details` field, as explained in the [Error Details](#error-details) section.
 
 ### Parallel Operations
 
-Nebius AI Cloud does not support performing multiple operations on the same resource simultaneously. Attempting to do so may result in an error, or the first operation might be aborted in favor of the new one.
+Nebius AI Cloud does not support concurrent operations on the same resource.
+Attempting multiple operations simultaneously on the same resource may result in an error, or the initial operation could be aborted in favor of the newer request.
 
 ### Retention Policy
 
-Ongoing operations are never deleted. However, completed operations may be subject to deletion based on the service's retention policy.
+Ongoing operations are never deleted.
+Completed operations, however, may be deleted according to the retention policy of the service.
+
+## Error Details
+
+Errors can occur either when an RPC method is called or when an asynchronous `Operation` completes unsuccessfully.
+In both cases, the `google.rpc.Status` message is used to describe the error.
+It may include additional details in the form of `nebius.common.v1.ServiceError` messages, providing more context about the issue.
+
+A variety of `ServiceError` types can be returned (e.g. `BadRequest`, `QuotaFailure`, `TooManyRequests`).
+Refer to the complete list of possible error types in [error.proto](nebius/common/v1/error.proto).
+
+The `ServiceError` may also include a `retry_type` field, offering guidance on how to handle retries for the failed operation.
+
+## Idempotency
+
+To ensure the idempotency of modifying operations in the Nebius AI Cloud API, you can use the `X-Idempotency-Key` header.
+Idempotency guarantees that the same operation will not be executed multiple times, even if the client retries the request due to network failures or timeouts.
+For read-only methods such as `Get` and `List`, the `X-Idempotency-Key` header is ignored.
+
+The value of `X-Idempotency-Key` must be a sufficiently long string of random alphanumeric characters (`[A-Za-z0-9-]`), preferably a random-based UUID (e.g., `7f95c54a-ee0e-4f8c-a64c-c9e0aac605a0`).
+
+Example:
+```bash
+grpcurl -H "Authorization: Bearer $TOKEN" \
+  -H "X-Idempotency-Key: 7f95c54a-ee0e-4f8c-a64c-c9e0aac605a0" \
+  -d '{"metadata": {"id": "compute-instance-id"}, "spec": {"cpu": 4}}' \
+  compute.api.eu.nebius.cloud:443 \
+  nebius.compute.v1.InstanceService/Update
+```
 
 ## License
 
@@ -299,10 +336,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 Copyright (c) 2024 Nebius B.V.
 
 
-[//]: # (TODO: grpcurl examples)
-[//]: # (TODO: Errors)
-[//]: # (TODO: X-Idempotency-Key)
-[//]: # (TODO: resource_version)
 
 [ci-img]: https://github.com/nebius/api/actions/workflows/ci.yml/badge.svg
 [ci-url]: https://github.com/nebius/api/actions/workflows/ci.yml
