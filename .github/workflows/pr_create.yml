@@ -19,7 +19,7 @@ jobs:
       - name: Create Pull Request using gh CLI
         run: |
           BRANCH_NAME="${{ github.ref_name }}"
-          PR_URL=$(gh pr create --title "Sync: $BRANCH_NAME" --body "Automated sync PR from branch $BRANCH_NAME" --head "$BRANCH_NAME" --base main --reviewer "@me" --label "automerge" || true)
+          PR_URL=$(gh pr create --title "Sync: $BRANCH_NAME" --body "Automated sync PR from branch $BRANCH_NAME" --head "$BRANCH_NAME" --base main --label "automerge" || true)
           echo "PR created: $PR_URL"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
