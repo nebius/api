@@ -34,14 +34,9 @@ message GroupMembershipSpec {
 message GroupMembershipStatus {
 }
 
-message GroupMemberKind {
-}
-
 // see also nebius/iam/v1/tenant_user_account.proto/TenantUserAccountWithAttributes
 message GroupMembershipWithAttributes {
   GroupMembership group_membership = 1;
-
-  GroupMemberKind group_member_kind = 11;
 
   oneof attributesOptional {
     // filled with known data for members corresponding to tenant user accounts and provisional tenant user accounts (invitees)

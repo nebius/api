@@ -32,8 +32,4 @@ message GroupStatus {
   State state = 1;
 
   int32 members_count = 2;
-
-  int32 service_accounts_count = 3;
-
-  int32 tenant_user_accounts_count = 4;
 }

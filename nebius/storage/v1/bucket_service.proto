@@ -42,7 +42,9 @@ service BucketService {
 message GetBucketRequest {
   string id = 1 [(buf.validate.field).required = true];
 
-  reserved 2;
+  // By default, only CREATING and ACTIVE buckets are visible.
+  // DEPRECATED: soft-deleted buckets are shown by default.
+  bool with_deleted = 2 [deprecated = true];
 }
 
 message GetBucketByNameRequest {
@@ -50,7 +52,9 @@ message GetBucketByNameRequest {
 
   string name = 2;
 
-  reserved 3;
+  // By default, only CREATING and ACTIVE buckets are visible.
+  // DEPRECATED: soft-deleted buckets are shown by default.
+  bool with_deleted = 3 [deprecated = true];
 }
 
 message CreateBucketRequest {
@@ -67,8 +71,6 @@ message UpdateBucketRequest {
 
 message DeleteBucketRequest {
   string id = 1 [(buf.validate.field).required = true];
-
-  reserved 2;
 
   // You can provide purge_at or ttl after which the bucket will be purged automatically.
   // Otherwise, default ttl of 7 days will be applied.
@@ -102,7 +104,9 @@ message ListBucketsRequest {
   // A filter to narrow down the results based on specific criteria.
   string filter = 4;
 
-  reserved 5;
+  // By default, only CREATING and ACTIVE buckets are shown.
+  // DEPRECATED: soft-deleted buckets are shown by default.
+  bool with_deleted = 5 [deprecated = true];
 }
 
 message ListBucketsResponse {

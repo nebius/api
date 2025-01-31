@@ -6,6 +6,7 @@ import "buf/validate/validate.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/msp/v1alpha1/cluster.proto";
 import "nebius/msp/postgresql/v1alpha1/config/postgresql.proto";
+import "nebius/msp/postgresql/v1alpha1/preset.proto";
 import "nebius/msp/postgresql/v1alpha1/template.proto";
 import "nebius/msp/v1alpha1/resource/template.proto";
 import "nebius/annotations.proto";
@@ -94,7 +95,8 @@ message ConfigSpec {
   // Configuration of the connection pooler.
   ConnectionPoolerConfig pooler_config = 2;
 
-  reserved 3;
+  // Resources allocated to PostgreSQL hosts.
+  PresetSpec resources = 3 [deprecated = true]; // use template instead
 
   // Config of the PostgreSQL cluster.
   oneof config {
@@ -106,7 +108,7 @@ message ConfigSpec {
   bool public_access = 5;
 
   // Resources allocated to PostgreSQL hosts.
-  TemplateSpec template = 7 [(buf.validate.field).required = true];
+  TemplateSpec template = 7;
 }
 
 message BootstrapSpec {
