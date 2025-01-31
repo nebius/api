@@ -11,6 +11,7 @@ on:
   push:
     branches:
       - main
+      - sync/**
   schedule:
     - cron: "0 0 * * 1" # Each Monday
 
