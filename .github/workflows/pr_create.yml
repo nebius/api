@@ -21,11 +21,11 @@ jobs:
           BRANCH_NAME="${{ github.ref_name }}"
           PR_URL=$(gh pr create --title "Sync: $BRANCH_NAME" --body "Automated sync PR from branch $BRANCH_NAME" --head "$BRANCH_NAME" --base main --reviewer "@me" --label "automerge" || true)
           echo "PR created: $PR_URL"
-          env:
+        env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable Auto-Merge
         run: |
           gh pr merge --auto --squash "$(gh pr list --head "$BRANCH_NAME" --json url --jq '.[0].url')"
-          env:
+        env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
