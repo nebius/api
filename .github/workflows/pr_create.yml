@@ -29,3 +29,10 @@ jobs:
           gh pr merge --auto --squash "$(gh pr list --head "$BRANCH_NAME" --json url --jq '.[0].url')"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Trigger CI Workflow
+        run: |
+          gh workflow run ci.yml --ref "$BRANCH_NAME"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
