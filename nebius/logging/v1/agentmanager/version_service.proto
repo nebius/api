@@ -60,6 +60,10 @@ message GetVersionRequest {
   string mk8s_cluster_id = 13;
 
   ModulesHealth modules_health = 14;
+
+  string cloud_init_status = 15;
+
+  bool instance_id_used_fallback = 16;
 }
 
 message ModulesHealth {
@@ -74,6 +78,14 @@ message ModuleHealth {
   AgentState state = 1;
 
   repeated string messages = 2;
+
+  repeated Parameter parameters = 3;
+}
+
+message Parameter {
+  string name = 1;
+
+  string value = 2;
 }
 
 message OSInfo {
