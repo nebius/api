@@ -31,10 +31,3 @@ jobs:
           gh pr merge --auto --squash "${{ steps.create_pr.outputs.pr_url }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-      # - name: Trigger CI Workflow
-      #   run: |
-      #     gh workflow run ci.yml --ref "${{ github.ref_name }}"
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
