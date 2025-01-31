@@ -16,19 +16,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create Pull Request
-        id: create_pr
-        uses: peter-evans/create-pull-request@v7
-        with:
-          title: "Sync: ${{ github.ref_name }}"
-          body: "Automated sync PR from branch ${{ github.ref_name }}"
-          branch: ${{ github.ref_name }}
-          base: main
-          delete-branch: true
+      - name: Create Pull Request using gh CLI
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          PR_URL=$(gh pr create --title "Sync: $BRANCH_NAME" --body "Automated sync PR from branch $BRANCH_NAME" --head "$BRANCH_NAME" --base main --reviewer "@me" --label "automerge" || true)
+          echo "PR created: $PR_URL"
+          env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable Auto-Merge
-        if: steps.create_pr.outputs.pull-request-operation == 'created'
         run: |
-          gh pr merge --auto --squash "${{ steps.create_pr.outputs.pull-request-url }}"
-        env:
+          gh pr merge --auto --squash "$(gh pr list --head "$BRANCH_NAME" --json url --jq '.[0].url')"
+          env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
