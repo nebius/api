@@ -35,6 +35,17 @@ message GroupMembershipStatus {
 }
 
 message GroupMemberKind {
+  enum Kind {
+    KIND_UNSPECIFIED = 0;
+
+    ORDINARY_TENANT_USER_ACCOUNT = 1;
+
+    INVITED_TENANT_USER_ACCOUNT = 2;
+
+    SERVICE_ACCOUNT = 3;
+  }
+
+  Kind kind = 1;
 }
 
 // see also nebius/iam/v1/tenant_user_account.proto/TenantUserAccountWithAttributes
