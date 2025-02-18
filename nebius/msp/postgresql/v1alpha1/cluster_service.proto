@@ -36,6 +36,9 @@ service ClusterService {
 
   // Updates the PostgreSQL cluster.
   rpc Update(UpdateClusterRequest) returns (common.v1alpha1.Operation);
+
+  // Creates a new PostgreSQL cluster from a previously created backup.
+  rpc Restore(RestoreClusterRequest) returns (common.v1alpha1.Operation);
 }
 
 message GetClusterRequest {
@@ -72,6 +75,20 @@ message CreateClusterRequest {
 
   // Specification for the new cluster.
   ClusterSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message RestoreClusterRequest {
+  // Metadata associated with the new cluster.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // Specification for the new cluster.
+  ClusterSpec spec = 2 [(buf.validate.field).required = true];
+
+  // ID of the backup to restore from.
+  string backup_id = 3 [(buf.validate.field).required = true];
+
+  // ID of the PostgreSQL cluster to restore from.
+  string source_cluster_id = 4 [(buf.validate.field).required = true];
 }
 
 message DeleteClusterRequest {

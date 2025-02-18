@@ -54,9 +54,9 @@ message PublicEndpointSpec {
 }
 
 message KubeNetworkSpec {
-  // CIDR blocks for Service ClusterIP allocation. For now, only one value is supported.
-  // For now, value should be in prefix length form (such as "/16").
-  // Later a CIDR-formatted string (such as "10.1.2.0/16") will be supported.
+  // CIDR blocks for Service ClusterIP allocation.
+  // For now, only one value is supported.
+  // Must be a valid CIDR block or prefix length.
   // In case of prefix length, certain CIDR is auto allocated.
   // Specified CIDR blocks will be reserved in Cluster.spec.control_plane.subnet_id to prevent address duplication.
   // Allowed prefix length is from "/12" to "/28".
@@ -67,8 +67,8 @@ message KubeNetworkSpec {
       cel: [
         {
           id: "string.valid_cidr",
-          message: "each value in service_cidrs must be a CIDR prefix between /12 and /28",
-          expression: "this.all(x, x.matches('^/(1[2-9]|2[0-8])$'))"
+          message: "value must be a CIDR block or prefix length from \"/12\" to \"/28\"",
+          expression: "this.all(x, x.matches('^(.*)/(1[2-9]|2[0-8])$'))"
         }
       ]
     },
