@@ -10,124 +10,186 @@ option java_multiple_files = true;
 option java_outer_classname = "VersionServiceProto";
 option java_package = "ai.nebius.pub.logging.v1.agentmanager";
 
+// VersionService provides functionality for managing nebius-observability-agent versions and health status
+// in the Nebius observability system.
 service VersionService {
   option (api_service_name) = "observability-agent-manager";
 
+  // GetVersion retrieves version information and receives instructions for agent updates
+  // or maintenance based on the current state and health of the agent.
   rpc GetVersion(GetVersionRequest) returns (GetVersionResponse) {
     option (region_routing) = { nid: [ "instance_id" ] };
   }
 }
 
+// Type of the agent in the system.
 enum AgentType {
+  // Default undefined state.
   AGENT_UNDEFINED = 0;
 
+  // Observability agent type.
   O11Y_AGENT = 1;
 }
 
+// Current operational state of the agent.
 enum AgentState {
+  // Default undefined state.
   STATE_UNDEFINED = 0;
 
+  // Agent is functioning normally.
   STATE_HEALTHY = 1;
 
+  // Agent is in error state.
   STATE_ERROR = 2;
 }
 
+// Request message for GetVersion RPC containing agent status and system information.
 message GetVersionRequest {
+  // Type of the agent. Must be O11Y_AGENT (1).
   AgentType type = 1;
 
+  // Current version of the agent software.
   string agent_version = 2;
 
+  // Version of the updater component.
   string updater_version = 3;
 
+  // Parent identifier for the VM
   string parent_id = 4;
 
+  // Unique identifier for the instance where agent is running.
   string instance_id = 5;
 
+  // Detailed information about the operating system.
   OSInfo os_info = 6;
 
+  // Current operational state of the agent.
   AgentState agent_state = 7;
 
+  // Time duration since the agent started.
   google.protobuf.Duration agent_uptime = 8;
 
+  // Total system uptime.
   google.protobuf.Duration system_uptime = 9;
 
+  // Time duration since the updater component started.
   google.protobuf.Duration updater_uptime = 10;
 
+  // Status messages from the agent describing its current state.
   repeated string agent_state_messages = 11;
 
+  // Description of the last update failure, if any.
   string last_update_error = 12;
 
+  // Managed Kubernetes cluster identifier, if applicable.
   string mk8s_cluster_id = 13;
 
+  // Health status of individual agent modules.
   ModulesHealth modules_health = 14;
 
+  // Status of cloud initialization process.
   string cloud_init_status = 15;
 
+  // Indicates if a fallback method was used to determine instance_id.
   bool instance_id_used_fallback = 16;
+
+  // Recent agent log entries for diagnostic purposes.
+  string last_agent_logs = 17;
 }
 
+// Health status information for all agent modules.
 message ModulesHealth {
+  // Health status of the process module.
   ModuleHealth process = 1;
 
+  // Health status of the GPU pipeline module.
   ModuleHealth gpu_pipeline = 2;
 
+  // Health status of the CPU pipeline module.
   ModuleHealth cpu_pipeline = 3;
 }
 
+// Health status information for an individual module.
 message ModuleHealth {
+  // Current operational state of the module.
   AgentState state = 1;
 
+  // Status messages describing the module's state.
   repeated string messages = 2;
 
+  // Current parameters of the module.
   repeated Parameter parameters = 3;
 }
 
+// Key-value parameter for module configuration.
 message Parameter {
+  // Name of the parameter.
   string name = 1;
 
+  // Value of the parameter.
   string value = 2;
 }
 
+// Operating system information for the instance.
 message OSInfo {
+  // Operating system name and version.
   // Example: "Ubuntu 22.04.4 LTS"
   string name = 1;
 
+  // Detailed system information from uname command.
   // Example: "Linux computeimage-abcdef 6.5.0-44-generic #44~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Jun 18 14:36:16 UTC 2 x86_64 x86_64 x86_64 GNU/Linux"
   string uname = 2;
 
+  // System architecture.
   string architecture = 3;
 }
 
+// Action to be taken by the agent based on version check.
 enum Action {
+  // Default undefined action.
   ACTION_UNDEFINED = 0;
 
+  // No operation needed.
   NOP = 1;
 
+  // Update to new version required.
   UPDATE = 2;
 
+  // Agent restart required.
   RESTART = 3;
 }
 
+// Response message for GetVersion RPC containing required action for the agent.
 message GetVersionResponse {
+  // Required action for the agent to take.
   Action action = 1;
 
+  // Parameters specific to the required action.
   oneof response {
+    // Parameters for no-operation action.
     NopActionParams nop = 2;
 
+    // Parameters for update action.
     UpdateActionParams update = 3;
 
+    // Parameters for restart action.
     RestartActionParams restart = 4;
   }
 }
 
+// Parameters when no operation is required.
 message NopActionParams {
 }
 
+// Parameters for agent update action.
 message UpdateActionParams {
+  // Target version for the update.
   string version = 1;
 
+  // URL of the repository containing the update.
   string repo_url = 2;
 }
 
+// Parameters for agent restart action.
 message RestartActionParams {
 }

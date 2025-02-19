@@ -93,4 +93,9 @@ message PublicIPAddressStatus {
 
   // Allocation identifier.
   string allocation_id = 2;
+
+  // If false - Allocation will be created/deleted during NetworkInterface.Allocate/NetworkInterface.Deallocate
+  // If true  - Allocation will be created/deleted during NetworkInterface.Create/NetworkInterface.Delete
+  // False by default
+  bool static = 3;
 }
