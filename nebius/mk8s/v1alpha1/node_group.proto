@@ -50,6 +50,9 @@ message NodeTemplate {
 
   DiskSpec boot_disk = 9 [(field_behavior) = NON_EMPTY_DEFAULT];
 
+  // GPU-related settings.
+  GpuSettings gpu_settings = 13;
+
   GpuClusterSpec gpu_cluster = 4;
 
   repeated NetworkInterfaceTemplate network_interfaces = 5 [(field_behavior) = NON_EMPTY_DEFAULT];
@@ -72,6 +75,13 @@ message NodeMetadataTemplate {
   // System labels containing "kubernetes.io" and "k8s.io" will not be propagated.
   // On update labels they will not be updated in nodes right away, only on node group update.
   map<string, string> labels = 1;
+}
+
+// GPU-related settings.
+message GpuSettings {
+  // Identifier of the predefined set of drivers included in the ComputeImage deployed on ComputeInstances that are part of the NodeGroup.
+  // Supported presets: cuda12
+  string drivers_preset = 1 [(buf.validate.field).required = true];
 }
 
 message GpuClusterSpec {

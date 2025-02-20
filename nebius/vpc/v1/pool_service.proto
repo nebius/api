@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.vpc.v1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
 import "nebius/vpc/v1/pool.proto";
@@ -19,7 +20,9 @@ service PoolService {
 
   rpc List(ListPoolsRequest) returns (ListPoolsResponse);
 
-  rpc ListBySourcePool(ListPoolsBySourcePoolRequest) returns (ListPoolsResponse);
+  rpc ListBySourcePool(ListPoolsBySourcePoolRequest) returns (ListPoolsResponse) {
+    option (region_routing) = { nid: [ "pool_id" ] };
+  }
 
   rpc Update(UpdatePoolRequest) returns (common.v1.Operation);
 }
