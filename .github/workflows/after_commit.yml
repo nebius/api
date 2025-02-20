@@ -1,0 +1,19 @@
+name: Dispatch event to PySDK
+
+on:
+  push:
+    branches:
+      - main
+
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch event to server
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.TRIGGER_PYSDK_WORKFLOW_PAT }}
+          repository: nebius/pysdk
+          event-type: updated-${{ github.event.repository.name }}
+        
