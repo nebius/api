@@ -66,6 +66,9 @@ message NodeTemplate {
   // Parameters of a Node Nebius Compute Instance boot disk.
   DiskSpec boot_disk = 9 [(field_behavior) = NON_EMPTY_DEFAULT];
 
+  // GPU-related settings.
+  GpuSettings gpu_settings = 13;
+
   // Nebius Compute GPUCluster ID that will be attached to node.
   GpuClusterSpec gpu_cluster = 4;
 
@@ -96,6 +99,13 @@ message NodeMetadataTemplate {
   // System labels containing "kubernetes.io" and "k8s.io" will be ignored.
   // Field change will NOT trigger NodeGroup roll out.
   map<string, string> labels = 1 [(buf.validate.field) = { map: { max_pairs: 100 } }];
+}
+
+// GPU-related settings.
+message GpuSettings {
+  // Identifier of the predefined set of drivers included in the ComputeImage deployed on ComputeInstances that are part of the NodeGroup.
+  // Supported presets: cuda12
+  string drivers_preset = 1 [(buf.validate.field).required = true];
 }
 
 message GpuClusterSpec {

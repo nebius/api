@@ -21,7 +21,7 @@ message TemplateStatus {
 }
 
 message TemplateSpec {
-  ResourcesSpec resources = 1 [(buf.validate.field).required = true];
+  ResourcesSpec resources = 1;
 
   Host hosts = 2;
 

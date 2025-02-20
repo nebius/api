@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.vpc.v1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
 import "nebius/vpc/v1/allocation.proto";
@@ -19,7 +20,9 @@ service AllocationService {
 
   rpc List(ListAllocationsRequest) returns (ListAllocationsResponse);
 
-  rpc ListByPool(ListAllocationsByPoolRequest) returns (ListAllocationsResponse);
+  rpc ListByPool(ListAllocationsByPoolRequest) returns (ListAllocationsResponse) {
+    option (region_routing) = { nid: [ "pool_id" ] };
+  }
 
   rpc Create(CreateAllocationRequest) returns (common.v1.Operation);
 
