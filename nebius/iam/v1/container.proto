@@ -28,4 +28,6 @@ message ContainerStatus {
   SuspensionState suspension_state = 2;
 
   State container_state = 3;
+
+  string region = 4;
 }
