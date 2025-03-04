@@ -48,7 +48,7 @@ message GetBucketRequest {
 message GetBucketByNameRequest {
   string parent_id = 1;
 
-  string name = 2;
+  string name = 2 [(buf.validate.field).required = true];
 
   reserved 3;
 }

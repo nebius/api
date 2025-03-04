@@ -101,4 +101,6 @@ message DiskStatus {
 
   // Indicates whether there is an ongoing operation
   bool reconciling = 7;
+
+  int64 block_size_bytes = 8;
 }

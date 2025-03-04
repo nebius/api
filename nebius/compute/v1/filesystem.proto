@@ -73,4 +73,6 @@ message FilesystemStatus {
 
   // Indicates whether there is an ongoing operation
   bool reconciling = 6;
+
+  int64 block_size_bytes = 7;
 }
