@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package nebius.msp.postgresql.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/msp/postgresql/v1alpha1/backup.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/postgresql/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "BackupServiceProto";
+option java_package = "ai.nebius.pub.msp.postgresql.v1alpha1";
+
+service BackupService {
+  option (api_service_name) = "postgresql.msp";
+
+  rpc Get(GetBackupRequest) returns (Backup);
+
+  rpc List(ListBackupsRequest) returns (ListBackupsResponse);
+
+  rpc ListByCluster(ListBackupsByClusterRequest) returns (ListBackupsResponse);
+}
+
+message GetBackupRequest {
+  string cluster_id = 1 [(buf.validate.field).required = true];
+
+  string backup_id = 2 [(buf.validate.field).required = true];
+}
+
+message ListBackupsRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+}
+
+message ListBackupsByClusterRequest {
+  string cluster_id = 1 [(buf.validate.field).required = true];
+}
+
+message ListBackupsResponse {
+  repeated Backup backups = 1;
+}

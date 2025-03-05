@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package nebius.msp.postgresql.v1alpha1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/postgresql/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "BackupProto";
+option java_package = "ai.nebius.pub.msp.postgresql.v1alpha1";
+
+message Backup {
+  // Required. ID of the backup.
+  string id = 1;
+
+  // ID of the PostgreSQL cluster that the backup was created for.
+  string source_cluster_id = 2;
+
+  // Creation start timestamp.
+  google.protobuf.Timestamp creation_start = 3;
+
+  // Creation finish timestamp.
+  google.protobuf.Timestamp creation_finish = 4;
+
+  // Name of the ProstgreSQL cluster that the backup was created for.
+  string source_cluster_name = 5;
+}
