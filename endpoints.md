@@ -55,6 +55,7 @@
   * [nebius.logging.agentmanager.v1.VersionService](nebius/logging/v1/agentmanager/version_service.proto)
 * postgresql.msp.api.eu.nebius.cloud:443
   * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)
+  * [nebius.msp.postgresql.v1alpha1.BackupService](nebius/msp/postgresql/v1alpha1/backup_service.proto)
   * [nebius.msp.postgresql.v1alpha1.ClusterService](nebius/msp/postgresql/v1alpha1/cluster_service.proto)
 * registry.api.eu.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
