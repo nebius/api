@@ -31,9 +31,9 @@ message InstanceSpec {
 
   AttachedDiskSpec boot_disk = 5 [(field_behavior) = IMMUTABLE];
 
-  repeated AttachedDiskSpec secondary_disks = 6 [(buf.validate.field) = { repeated: { max_items: 8 } }];
+  repeated AttachedDiskSpec secondary_disks = 6;
 
-  repeated AttachedFilesystemSpec filesystems = 7 [(buf.validate.field) = { repeated: { max_items: 8 } }];
+  repeated AttachedFilesystemSpec filesystems = 7;
 
   string cloud_init_user_data = 8 [(sensitive) = true, (buf.validate.field) = { string: { max_len: 32768 } }];
 
