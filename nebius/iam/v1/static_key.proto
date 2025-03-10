@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/iam/v1/access.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "StaticKeyProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+message StaticKey {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  StaticKeySpec spec = 2 [(buf.validate.field).required = true];
+
+  StaticKeyStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message StaticKeySpec {
+  Account account = 1 [(field_behavior) = IMMUTABLE]; // account of the static key. only service accounts are supported for now
+
+  ClientService service = 2 [(buf.validate.field).required = true]; // service static key is to be used for
+
+  google.protobuf.Timestamp expiresAt = 3; // when will the static key expire
+
+  enum ClientService {
+    CLIENT_SERVICE_UNSPECIFIED = 0;
+
+    OBSERVABILITY = 1;
+
+    CONTAINER_REGISTRY = 2;
+  }
+}
+
+message StaticKeyStatus {
+  bool active = 1;
+}

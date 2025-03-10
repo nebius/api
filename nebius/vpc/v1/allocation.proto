@@ -127,10 +127,13 @@ message AllocationStatus {
 }
 
 message AllocationDetails {
+  // The actual CIDR block that has been allocated.
   string allocated_cidr = 1;
 
+  // ID of the pool from which this allocation was made.
   string pool_id = 2;
 
+  // The IP version of this allocation (IPv4 or IPv6).
   IpVersion version = 4;
 }
 
