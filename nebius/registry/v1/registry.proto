@@ -44,4 +44,7 @@ message RegistryStatus {
   State state = 10;
 
   int32 images_count = 11;
+
+  // regional fqdn "cr.eu-north1.nebius.cloud"
+  string registry_fqdn = 15;
 }

@@ -27,6 +27,7 @@
   * [nebius.iam.v1.ProjectService](nebius/iam/v1/project_service.proto)
   * [nebius.iam.v1.ServiceAccountService](nebius/iam/v1/service_account_service.proto)
   * [nebius.iam.v1.SessionManagementService](nebius/iam/v1/session_management_service.proto)
+  * [nebius.iam.v1.StaticKeyService](nebius/iam/v1/static_key_service.proto)
   * [nebius.iam.v1.TenantService](nebius/iam/v1/tenant_service.proto)
   * [nebius.iam.v1.TenantUserAccountService](nebius/iam/v1/tenant_user_account_service.proto)
   * [nebius.iam.v1.TenantUserAccountWithAttributesService](nebius/iam/v1/tenant_user_account_with_attributes_service.proto)

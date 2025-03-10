@@ -45,6 +45,7 @@ message IPv4PublicNetworkPools {
 }
 
 message NetworkPool {
+  // ID of the IP address pool.
   string id = 1 [(buf.validate.field).required = true];
 }
 

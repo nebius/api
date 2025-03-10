@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/iam/v1/static_key.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "StaticKeyServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+service StaticKeyService {
+  option (api_service_name) = "cpl.iam";
+
+  rpc Issue(IssueStaticKeyRequest) returns (IssueStaticKeyResponse);
+
+  rpc List(ListStaticKeysRequest) returns (ListStaticKeysResponse);
+
+  rpc Get(GetStaticKeyRequest) returns (StaticKey);
+
+  rpc GetByName(GetStaticKeyByNameRequest) returns (StaticKey);
+
+  rpc Delete(DeleteStaticKeyRequest) returns (common.v1.Operation);
+
+  rpc Find(FindStaticKeyRequest) returns (FindStaticKeyResponse);
+
+  rpc Revoke(RevokeStaticKeyRequest) returns (common.v1.Operation);
+}
+
+message GetStaticKeyRequest {
+  string id = 1; // id of the static key
+}
+
+message GetStaticKeyByNameRequest {
+  string parent_id = 1; // id of the parent container (service account)
+
+  string name = 2; // name of the static key
+}
+
+message DeleteStaticKeyRequest {
+  string id = 1; // id of the static key to delete
+}
+
+message ListStaticKeysRequest {
+  // Represents the container ID.
+  string parent_id = 1;
+
+  // Specifies the maximum number of items to return in the response.
+  // Default value: 10
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+
+  // A filter to narrow down the results based on specific criteria.
+  string filter = 4;
+}
+
+message ListStaticKeysResponse {
+  // List of static keys returned in the response. The field should be named as `items` for consistency.
+  repeated StaticKey items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}
+
+message IssueStaticKeyRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  StaticKeySpec spec = 2;
+}
+
+message IssueStaticKeyResponse {
+  string token = 1 [(sensitive) = true];
+
+  common.v1.Operation operation = 2;
+}
+
+message FindStaticKeyRequest {
+  // the method accepts a static key token with and without signature as an input
+  string token = 1 [(sensitive) = true];
+}
+
+message FindStaticKeyResponse {
+  StaticKey static_key = 1;
+}
+
+message RevokeStaticKeyRequest {
+  // the method accepts a static key token with and without signature as an input
+  string token = 1 [(sensitive) = true];
+}
