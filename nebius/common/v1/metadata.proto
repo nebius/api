@@ -36,6 +36,7 @@ message ResourceMetadata {
   google.protobuf.Timestamp updated_at = 6 [(field_behavior) = OUTPUT_ONLY];
 
   // Labels associated with the resource.
+  //
   map<string, string> labels = 7;
 }
 
