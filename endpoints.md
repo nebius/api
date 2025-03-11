@@ -37,8 +37,6 @@
 * deployment-manager.mkt.api.eu.nebius.cloud:443
   * [nebius.applications.v1alpha1.K8sReleaseService](nebius/applications/v1alpha1/k8s_release_service.proto)
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
-* identity.iam.api.eu.nebius.cloud:443
-  * [nebius.iam.v1.IdentityService](nebius/iam/v1/identity_service.proto)
 * mk8s.api.eu.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)

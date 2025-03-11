@@ -11,30 +11,40 @@ option java_multiple_files = true;
 option java_outer_classname = "BackupServiceProto";
 option java_package = "ai.nebius.pub.msp.postgresql.v1alpha1";
 
+// A set of methods for managing PostgreSQL Cluster backups.
 service BackupService {
   option (api_service_name) = "postgresql.msp";
 
+  // Returns the specified PostgreSQL Cluster backup.
+  // To get the list of available PostgreSQL Cluster backups, make a [List] or [ListByCluster] request.
   rpc Get(GetBackupRequest) returns (Backup);
 
+  // Retrieves the list of PostgreSQL Cluster backups by project.
   rpc List(ListBackupsRequest) returns (ListBackupsResponse);
 
+  // Retrieves the list of PostgreSQL Cluster backups by cluster.
   rpc ListByCluster(ListBackupsByClusterRequest) returns (ListBackupsResponse);
 }
 
 message GetBackupRequest {
+  // ID of the PostgreSQL cluster that holds backup.
   string cluster_id = 1 [(buf.validate.field).required = true];
 
+  // ID of the designated backup.
   string backup_id = 2 [(buf.validate.field).required = true];
 }
 
 message ListBackupsRequest {
+  // Identifier of IAM container to list backups from.
   string parent_id = 1 [(buf.validate.field).required = true];
 }
 
 message ListBackupsByClusterRequest {
+  // ID of the PostgreSQL cluster to list backups from.
   string cluster_id = 1 [(buf.validate.field).required = true];
 }
 
 message ListBackupsResponse {
+  // List of backups.
   repeated Backup backups = 1;
 }

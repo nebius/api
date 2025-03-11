@@ -11,6 +11,8 @@ enum StorageClass {
   STORAGE_CLASS_UNSPECIFIED = 0;
 
   STANDARD = 1;
+
+  ENHANCED_THROUGHPUT = 2;
 }
 
 enum VersioningPolicy {
