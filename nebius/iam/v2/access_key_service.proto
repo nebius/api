@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package nebius.iam.v2;
+
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/iam/v2/access_key.proto";
+import "nebius/iam/v1/access.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v2";
+option java_multiple_files = true;
+option java_outer_classname = "AccessKeyServiceProto";
+option java_package = "ai.nebius.pub.iam.v2";
+
+service AccessKeyService {
+  option (api_service_name) = "cpl.iam";
+
+  rpc Create(CreateAccessKeyRequest) returns (common.v1.Operation);
+
+  rpc Get(GetAccessKeyRequest) returns (AccessKey);
+
+  rpc List(ListAccessKeysRequest) returns (ListAccessKeysResponse);
+
+  rpc Update(UpdateAccessKeyRequest) returns (common.v1.Operation);
+
+  rpc Delete(DeleteAccessKeyRequest) returns (common.v1.Operation);
+
+  rpc Activate(ActivateAccessKeyRequest) returns (common.v1.Operation);
+
+  rpc Deactivate(DeactivateAccessKeyRequest) returns (common.v1.Operation);
+
+  rpc ListByAccount(ListAccessKeysByAccountRequest) returns (ListAccessKeysResponse);
+
+  rpc GetByAwsId(GetAccessKeyByAwsIdRequest) returns (AccessKey);
+
+  rpc DeleteByAwsId(DeleteAccessKeyByAwsIdRequest) returns (common.v1.Operation);
+
+  rpc ActivateByAwsId(ActivateAccessKeyByAwsIdRequest) returns (common.v1.Operation);
+
+  rpc DeactivateByAwsId(DeactivateAccessKeyByAwsIdRequest) returns (common.v1.Operation);
+}
+
+message CreateAccessKeyRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  AccessKeySpec spec = 2;
+}
+
+message GetAccessKeyRequest {
+  string id = 1;
+}
+
+message GetAccessKeyByAwsIdRequest {
+  string aws_access_key_id = 1;
+}
+
+message ListAccessKeysRequest {
+  // Represents the container ID.
+  string parent_id = 1;
+
+  // Specifies the maximum number of items to return in the response.
+  // Default value: 10
+  optional int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+
+  // A filter to narrow down the results based on specific criteria.
+  string filter = 4;
+}
+
+message ListAccessKeysByAccountRequest {
+  // Represents the parent account ID.
+  nebius.iam.v1.Account account = 1;
+
+  // Specifies the maximum number of items to return in the response.
+  // Default value: 10
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+
+  // A filter to narrow down the results based on specific criteria.
+  string filter = 4;
+}
+
+message UpdateAccessKeyRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  AccessKeySpec spec = 2;
+}
+
+message ActivateAccessKeyRequest {
+  string id = 1;
+}
+
+message DeactivateAccessKeyRequest {
+  string id = 1;
+}
+
+message ActivateAccessKeyByAwsIdRequest {
+  string aws_access_key_id = 1;
+}
+
+message DeactivateAccessKeyByAwsIdRequest {
+  string aws_access_key_id = 1;
+}
+
+message DeleteAccessKeyRequest {
+  string id = 1;
+}
+
+message DeleteAccessKeyByAwsIdRequest {
+  string aws_access_key_id = 1;
+}
+
+message ListAccessKeysResponse {
+  // List of access keys returned in the response. The field should be named as `items` for consistency.
+  repeated AccessKey items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}

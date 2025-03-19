@@ -4,6 +4,8 @@ package nebius.iam.v1;
 
 import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
 import "nebius/iam/v1/group.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
@@ -14,11 +16,23 @@ option java_package = "ai.nebius.pub.iam.v1";
 service GroupService {
   option (api_service_name) = "cpl.iam";
 
+  rpc Create(CreateGroupRequest) returns (common.v1.Operation);
+
   rpc Get(GetGroupRequest) returns (Group);
 
   rpc GetByName(GetGroupByNameRequest) returns (Group);
 
   rpc List(ListGroupsRequest) returns (ListGroupsResponse);
+
+  rpc Delete(DeleteGroupRequest) returns (common.v1.Operation);
+
+  rpc Update(UpdateGroupRequest) returns (common.v1.Operation);
+}
+
+message CreateGroupRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  GroupSpec spec = 2;
 }
 
 message GetGroupRequest {
@@ -46,4 +60,14 @@ message ListGroupsResponse {
   repeated Group items = 1;
 
   string next_page_token = 2;
+}
+
+message DeleteGroupRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message UpdateGroupRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  GroupSpec spec = 2;
 }

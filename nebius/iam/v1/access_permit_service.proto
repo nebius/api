@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/iam/v1/access_permit.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "AccessPermitServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+service AccessPermitService {
+  option (api_service_name) = "cpl.iam";
+
+  // Creates access permit for provided resource with provided role.
+  // Subject of access permit is also a parent of access permit.
+  // If resource is unknown - NOT_FOUND will be thrown.
+  // If parent of subject is not from resource's hierarchy - NOT_FOUND will be thrown.
+  rpc Create(CreateAccessPermitRequest) returns (common.v1.Operation);
+
+  // Lists access permits for provided parent
+  rpc List(ListAccessPermitRequest) returns (ListAccessPermitResponse);
+
+  // Delete access permit by id
+  rpc Delete(DeleteAccessPermitRequest) returns (common.v1.Operation);
+
+  // Gets access permit by id
+  rpc Get(GetAccessPermitRequest) returns (AccessPermit);
+}
+
+message CreateAccessPermitRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  AccessPermitSpec spec = 2;
+}
+
+message ListAccessPermitRequest {
+  // Represents the container ID.
+  string parent_id = 1;
+
+  // Specifies the maximum number of items to return in the response.
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+
+  // A filter to narrow down the results based on specific criteria.
+  string filter = 4;
+}
+
+message DeleteAccessPermitRequest {
+  string id = 1;
+}
+
+message GetAccessPermitRequest {
+  string id = 1;
+}
+
+message ListAccessPermitResponse {
+  // List of access bindings returned in the response. The field should be named as `items` for consistency.
+  repeated AccessPermit items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}
