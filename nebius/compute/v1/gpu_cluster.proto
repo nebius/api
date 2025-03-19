@@ -28,4 +28,18 @@ message GpuClusterStatus {
 
   // Indicates whether there is an ongoing operation
   bool reconciling = 2;
+
+  oneof topology {
+    GpuClusterStatusInfinibandTopologyPath infiniband_topology_path = 3;
+  }
+}
+
+message GpuClusterStatusInfinibandTopologyPath {
+  repeated GpuClusterStatusInfinibandTopologyPathInstance instances = 1;
+}
+
+message GpuClusterStatusInfinibandTopologyPathInstance {
+  string instance_id = 1;
+
+  repeated string path = 2;
 }

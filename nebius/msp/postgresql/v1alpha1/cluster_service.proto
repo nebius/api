@@ -39,6 +39,12 @@ service ClusterService {
 
   // Creates a new PostgreSQL cluster from a previously created backup.
   rpc Restore(RestoreClusterRequest) returns (common.v1alpha1.Operation);
+
+  // Suspends the PostgreSQL cluster to save resources.
+  rpc Stop(StopClusterRequest) returns (common.v1alpha1.Operation);
+
+  // Wakes up suspended PostgreSQL cluster.
+  rpc Start(StartClusterRequest) returns (common.v1alpha1.Operation);
 }
 
 message GetClusterRequest {
@@ -103,4 +109,16 @@ message UpdateClusterRequest {
 
   // Updated specification for the cluster.
   ClusterSpec spec = 2;
+}
+
+message StopClusterRequest {
+  // ID of the PostgreSQL Cluster resource to pause.
+  // To get the cluster ID use a [ClusterService.List] request.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message StartClusterRequest {
+  // ID of the PostgreSQL Cluster resource to resume.
+  // To get the cluster ID use a [ClusterService.List] request.
+  string id = 1 [(buf.validate.field).required = true];
 }

@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "nebius/common/v1/metadata.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "AccessPermitProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+message AccessPermit {
+  option (resource_behavior) = UNNAMED;
+
+  common.v1.ResourceMetadata metadata = 1;
+
+  AccessPermitSpec spec = 2;
+
+  AccessPermitStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message AccessPermitSpec {
+  // Resource for granting access permit.
+  string resource_id = 1 [(field_behavior) = IMMUTABLE];
+
+  // Role for granting access permit.
+  string role = 2 [(field_behavior) = IMMUTABLE];
+}
+
+message AccessPermitStatus {
+}

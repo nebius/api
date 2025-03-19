@@ -17,6 +17,7 @@
 * cpl.iam.api.eu.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.iam.v1.AccessKeyService](nebius/iam/v1/access_key_service.proto)
+  * [nebius.iam.v1.AccessPermitService](nebius/iam/v1/access_permit_service.proto)
   * [nebius.iam.v1.AuthPublicKeyService](nebius/iam/v1/auth_public_key_service.proto)
   * [nebius.iam.v1.FederationCertificateService](nebius/iam/v1/federation_certificate_service.proto)
   * [nebius.iam.v1.FederationService](nebius/iam/v1/federation_service.proto)
@@ -31,6 +32,7 @@
   * [nebius.iam.v1.TenantService](nebius/iam/v1/tenant_service.proto)
   * [nebius.iam.v1.TenantUserAccountService](nebius/iam/v1/tenant_user_account_service.proto)
   * [nebius.iam.v1.TenantUserAccountWithAttributesService](nebius/iam/v1/tenant_user_account_with_attributes_service.proto)
+  * [nebius.iam.v2.AccessKeyService](nebius/iam/v2/access_key_service.proto)
 * cpl.storage.api.eu.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.storage.v1.BucketService](nebius/storage/v1/bucket_service.proto)

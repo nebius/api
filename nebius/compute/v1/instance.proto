@@ -137,10 +137,18 @@ message InstanceStatus {
   bool reconciling = 5;
 
   string maintenance_event_id = 7;
+
+  oneof gpu_cluster_topology {
+    InstanceStatusInfinibandTopologyPath infiniband_topology_path = 10;
+  }
 }
 
 enum InstanceRecoveryPolicy {
   RECOVER = 0;
 
   FAIL = 1;
+}
+
+message InstanceStatusInfinibandTopologyPath {
+  repeated string path = 1;
 }
