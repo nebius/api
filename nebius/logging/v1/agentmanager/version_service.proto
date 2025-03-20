@@ -107,6 +107,9 @@ message ModulesHealth {
 
   // Health status of the CPU pipeline module.
   ModuleHealth cpu_pipeline = 3;
+
+  // Health status of the Cilium pipeline module.
+  ModuleHealth cilium_pipeline = 4;
 }
 
 // Health status information for an individual module.
