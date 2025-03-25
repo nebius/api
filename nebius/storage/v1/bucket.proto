@@ -84,4 +84,7 @@ message BucketStatus {
   // The domain of the endpoint where the bucket can be accessed. It omits the scheme (HTTPS) and the port (443)
   // and contains only the FQDN address.
   string domain_name = 6;
+
+  // The name of the region where the bucket is located for use with S3 clients, i.e. "eu-west1".
+  string region = 8;
 }
