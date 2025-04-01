@@ -22,6 +22,9 @@ message Backup {
   // Creation finish timestamp.
   google.protobuf.Timestamp creation_finish = 4;
 
-  // Name of the ProstgreSQL cluster that the backup was created for.
+  // Name of the PostgreSQL cluster that the backup was created for.
   string source_cluster_name = 5;
+
+  // Is PostgreSQL cluster that the backup was created for visible.
+  bool source_cluster_visible = 6;
 }
