@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package nebius.quotas.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/quotas/v1/quota_allowance.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/quotas/v1";
+option java_multiple_files = true;
+option java_outer_classname = "QuotaAllowanceServiceProto";
+option java_package = "ai.nebius.pub.quotas.v1";
+
+service QuotaAllowanceService {
+  option (api_service_name) = "quota-dispatcher.billing-cpl";
+
+  // Lists quotas by an ID of a Tenant or a Project.
+  rpc List(ListQuotaAllowancesRequest) returns (ListQuotaAllowancesResponse);
+
+  // Gets a quota by its ID.
+  rpc Get(GetQuotaAllowanceRequest) returns (QuotaAllowance);
+
+  // Gets a quota by an ID of a Tenant or a Project, its region, and name.
+  rpc GetByName(GetByNameRequest) returns (QuotaAllowance);
+}
+
+message ListQuotaAllowancesRequest {
+  // ID of the Tenant or Project to list quotas for.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Page size. Must be between [1...1000].
+  // Optional; if not specified, a reasonable default will be chosen by the service.
+  int64 page_size = 2;
+
+  // Listing continuation token. Pass an empty string to start listing from the first page.
+  string page_token = 3;
+}
+
+message GetQuotaAllowanceRequest {
+  // ID of the quota.
+  string id = 1 [(buf.validate.field).required = true, (field_behavior) = IDENTIFIER];
+}
+
+message ListQuotaAllowancesResponse {
+  // List of quotas on this result page.
+  repeated QuotaAllowance items = 1;
+
+  // Listing continuation token for the next page of results.
+  string next_page_token = 2;
+}
+
+message GetByNameRequest {
+  // ID of the Tenant or Project to list quotas for.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Name of the quota.
+  // Example: "compute.disk.size.network-ssd".
+  string name = 2 [(buf.validate.field).required = true];
+
+  // Name of the region where the quota is allocated.
+  // Example: "eu-north1".
+  string region = 3 [(buf.validate.field).required = true];
+}

@@ -17,9 +17,17 @@ extend google.protobuf.ServiceOptions {
   //    example for iam access: option (api_service_name) = "access-service.iam";
   //    that leads to access-service.iam.<domain>
   string api_service_name = 1191;
+
+  // Contains additional information about the planned deprecation of a service.
+  // Used along with `option deprecated = true`.
+  DeprecationDetails service_deprecation_details = 1194;
 }
 
 extend google.protobuf.MethodOptions {
+  // Contains additional information about the planned deprecation of a method.
+  // Used along with `option deprecated = true`.
+  DeprecationDetails method_deprecation_details = 1194;
+
   // Defines custom region routing rules for a method.
   //
   // By default, the API Gateway searches for the NID in the following proto message fields (in order):
@@ -58,6 +66,10 @@ extend google.protobuf.MethodOptions {
 
 extend google.protobuf.MessageOptions {
   repeated ResourceBehavior resource_behavior = 1191;
+
+  // Contains additional information about the planned deprecation of a message.
+  // Used along with `option deprecated = true`.
+  DeprecationDetails message_deprecation_details = 1194;
 }
 
 extend google.protobuf.FieldOptions {
@@ -71,6 +83,10 @@ extend google.protobuf.FieldOptions {
   // Credentials field is masked access tokens/jwt/session from the message while logging, storing in DB and
   // on all others persistent layers
   bool credentials = 1193;
+
+  // Contains additional information about the planned deprecation of a field.
+  // Used along with `[deprecated = true]`.
+  DeprecationDetails field_deprecation_details = 1194;
 }
 
 extend google.protobuf.OneofOptions {
@@ -153,4 +169,12 @@ enum FieldBehavior {
   // Compound values (messages, lists and maps) may result in unpredictable
   // updates (see examples in guidelines).
   NON_EMPTY_DEFAULT = 7;
+}
+
+message DeprecationDetails {
+  // The date when this method, service, message or field will stop working (format: YYYY-MM-DD)
+  string effective_at = 1;
+
+  // A description to help users understand the reason for deprecation and suggest alternatives
+  string description = 2;
 }

@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package nebius.quotas.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/quotas/v1";
+option java_multiple_files = true;
+option java_outer_classname = "QuotaAllowanceProto";
+option java_package = "ai.nebius.pub.quotas.v1";
+
+message QuotaAllowanceSpec {
+  // Total amount of resources allocated.
+  optional uint64 limit = 1;
+
+  // Name of the region where the quota is allocated.
+  // Example: "eu-north1".
+  string region = 2 [(field_behavior) = IMMUTABLE];
+}
+
+message QuotaAllowanceStatus {
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    // Quota is being allocated; the process can take up to several minutes.
+    STATE_PROVISIONING = 1;
+
+    // Quota is allocated and can be used.
+    STATE_ACTIVE = 2;
+
+    // Quota has been removed and is no longer allocated.
+    STATE_DELETED = 10;
+  }
+
+  // Current state of the quota.
+  State state = 1;
+
+  // Current quota usage.
+  uint64 usage = 2;
+
+  // Service in which the quota is allocated.
+  // Example: "mk8s".
+  string service = 3;
+
+  // Human-readable description of the quota.
+  // Example: "Total RAM across VMs".
+  string description = 6;
+
+  // Human-readable name of the service managing the quota.
+  // Example: "Managed Kubernetes®".
+  string service_description = 7;
+
+  // Quota unit.
+  // Example: "byte".
+  string unit = 8;
+
+  // Current quota usage as a percentage.
+  // Values range from 0.0 to 1.0, representing 0% to 100%.
+  // Values can exceed 1.0 if usage exceeds the limit.
+  // Example: "0.12".
+  string usage_percentage = 9;
+
+  enum UsageState {
+    USAGE_STATE_UNSPECIFIED = 0;
+
+    // Quota is actively in use.
+    USAGE_STATE_USED = 1;
+
+    // Quota is not currently in use.
+    USAGE_STATE_NOT_USED = 2;
+
+    // Quota region is unreachable, the current usage is therefore unknown.
+    // Please, retry the request later.
+    USAGE_STATE_UNKNOWN = 3;
+  }
+
+  // Current state of the quota usage.
+  UsageState usage_state = 10;
+}
+
+message QuotaAllowance {
+  option (resource_behavior) = UNNAMED;
+
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  QuotaAllowanceSpec spec = 2 [(buf.validate.field).required = true];
+
+  QuotaAllowanceStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
