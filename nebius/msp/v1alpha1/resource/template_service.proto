@@ -17,6 +17,8 @@ message ListTemplatesRequest {
   int64 page_size = 1;
 
   string page_token = 2;
+
+  string parent_id = 3;
 }
 
 message ListTemplatesResponse {
