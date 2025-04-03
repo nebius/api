@@ -17,13 +17,17 @@ service BackupService {
 
   // Returns the specified PostgreSQL Cluster backup.
   // To get the list of available PostgreSQL Cluster backups, make a [List] or [ListByCluster] request.
-  rpc Get(GetBackupRequest) returns (Backup);
+  rpc Get(GetBackupRequest) returns (Backup) {
+    option (region_routing) = { nid: [ "cluster_id" ] };
+  }
 
   // Retrieves the list of PostgreSQL Cluster backups by project.
   rpc List(ListBackupsRequest) returns (ListBackupsResponse);
 
   // Retrieves the list of PostgreSQL Cluster backups by cluster.
-  rpc ListByCluster(ListBackupsByClusterRequest) returns (ListBackupsResponse);
+  rpc ListByCluster(ListBackupsByClusterRequest) returns (ListBackupsResponse) {
+    option (region_routing) = { nid: [ "cluster_id" ] };
+  }
 }
 
 message GetBackupRequest {

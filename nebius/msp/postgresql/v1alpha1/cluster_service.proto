@@ -7,6 +7,7 @@ import "nebius/msp/postgresql/v1alpha1/cluster.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1alpha1/operation.proto";
 import "nebius/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/msp/postgresql/v1alpha1";
 option java_multiple_files = true;
@@ -95,6 +96,9 @@ message RestoreClusterRequest {
 
   // ID of the PostgreSQL cluster to restore from.
   string source_cluster_id = 4 [(buf.validate.field).required = true];
+
+  // Timestamp for point in time recovery.
+  google.protobuf.Timestamp recovery_time = 5;
 }
 
 message DeleteClusterRequest {
