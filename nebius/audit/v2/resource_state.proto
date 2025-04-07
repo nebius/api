@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package nebius.audit.v2;
+
+import "google/protobuf/struct.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
+option java_multiple_files = true;
+option java_outer_classname = "ResourceStateProto";
+option java_package = "ai.nebius.pub.audit.v2";
+
+message ResourceState {
+  // The state of the resource before the change in the call.
+  google.protobuf.Struct previous = 1;
+
+  // The state of the resource after the change in the call.
+  google.protobuf.Struct current = 2;
+}

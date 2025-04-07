@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package nebius.audit.v2;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
+option java_multiple_files = true;
+option java_outer_classname = "StatusProto";
+option java_package = "ai.nebius.pub.audit.v2";
+
+enum Status {
+  RESPONSE_STATUS_UNSPECIFIED = 0;
+
+  // Asynchronous action started
+  STARTED = 1;
+
+  // Action finished successfully
+  DONE = 2;
+
+  // Action finished with error
+  ERROR = 3;
+}

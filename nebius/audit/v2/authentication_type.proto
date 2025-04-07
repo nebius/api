@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package nebius.audit.v2;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
+option java_multiple_files = true;
+option java_outer_classname = "AuthenticationTypeProto";
+option java_package = "ai.nebius.pub.audit.v2";
+
+enum AuthenticationType {
+  AUTHENTICATION_TYPE_UNSPECIFIED = 0;
+
+  ACCESS_TOKEN = 1;
+
+  STATIC_KEY = 2;
+}

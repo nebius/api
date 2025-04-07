@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package nebius.audit.v2;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/audit/v2/authentication.proto";
+import "nebius/audit/v2/authorization.proto";
+import "nebius/audit/v2/request.proto";
+import "nebius/audit/v2/resource.proto";
+import "nebius/audit/v2/response.proto";
+import "nebius/audit/v2/service.proto";
+import "nebius/audit/v2/status.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
+option java_multiple_files = true;
+option java_outer_classname = "AuditEventProto";
+option java_package = "ai.nebius.pub.audit.v2";
+
+message AuditEvent {
+  // Unique event id.
+  string id = 1 [(buf.validate.field).required = true];
+
+  // Identifies the context in which an event happened. Presented in the form of URI.
+  string source = 2 [(buf.validate.field).required = true];
+
+  // Version of CloudEvents spec. See https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#specversion
+  string spec_version = 3 [(buf.validate.field).required = true];
+
+  // The type of event related to the originating occurrence. Formed according to template: "ai.nebius.<serviceName>.<resourceType>.<action>"
+  string type = 4 [(buf.validate.field).required = true];
+
+  // Indicates the service that generated the event.
+  Service service = 5 [(buf.validate.field).required = true];
+
+  // Indicates an action taken on the resource.
+  string action = 6 [(buf.validate.field).required = true];
+
+  // Timestamp of when the occurrence happened.
+  google.protobuf.Timestamp time = 7 [(buf.validate.field).required = true];
+
+  // Audit event version, in "X.Y" format, events within different Y's are backwards compatible, events with different X's are not.
+  string event_version = 8 [(buf.validate.field).required = true];
+
+  // Represents the subject of an API call.
+  Authentication authentication = 9;
+
+  // Represents permissions that have been verified for the subject as part of the API call.
+  Authorization authorization = 10;
+
+  // A resource that was read or modified as part of the operation. Can be empty if no resource accessed or changed.
+  Resource resource = 11;
+
+  // Contains information about the request from the customer.
+  Request request = 12;
+
+  // Contains information about the response from the server.
+  Response response = 13;
+
+  // The async operation status
+  Status status = 16 [(buf.validate.field).required = true];
+}

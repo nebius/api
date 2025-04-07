@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package nebius.audit.v2;
+
+import "google/rpc/code.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
+option java_multiple_files = true;
+option java_outer_classname = "ResponseProto";
+option java_package = "ai.nebius.pub.audit.v2";
+
+message Response {
+  // The status that the server returned to the client.
+  google.rpc.Code status_code = 1;
+
+  // Error message if the call was not successful.
+  string error_message = 2;
+}

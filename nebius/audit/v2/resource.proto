@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package nebius.audit.v2;
+
+import "buf/validate/validate.proto";
+import "nebius/audit/v2/resource_metadata.proto";
+import "nebius/audit/v2/resource_state.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
+option java_multiple_files = true;
+option java_outer_classname = "ResourceProto";
+option java_package = "ai.nebius.pub.audit.v2";
+
+message Resource {
+  // Provides basic information about the resource.
+  ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // Gives an understanding of how the resource was changed in the call.
+  ResourceState state = 2;
+
+  // Top-down resources hierarchy from tenant to resource.
+  repeated ResourceMetadata hierarchy = 3;
+}

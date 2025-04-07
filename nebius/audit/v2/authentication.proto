@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package nebius.audit.v2;
+
+import "buf/validate/validate.proto";
+import "nebius/audit/v2/access_token.proto";
+import "nebius/audit/v2/authentication_type.proto";
+import "nebius/audit/v2/federation.proto";
+import "nebius/audit/v2/static_key.proto";
+import "nebius/audit/v2/subject.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
+option java_multiple_files = true;
+option java_outer_classname = "AuthenticationProto";
+option java_package = "ai.nebius.pub.audit.v2";
+
+message Authentication {
+  // Answers the question whether or not the subject has been successfully authenticated.
+  bool authenticated = 1 [(buf.validate.field).required = true];
+
+  // Contains information about the subject of the call.
+  Subject subject = 2;
+
+  // Information on the federation within which the subject exists.
+  Federation federation = 3;
+
+  // Describes the type of authentication.
+  AuthenticationType authentication_type = 4;
+
+  oneof credential {
+    // Information about token.
+    AccessToken token_credential = 10;
+
+    // Information about static key.
+    StaticKey static_key_credential = 11;
+  }
+}
