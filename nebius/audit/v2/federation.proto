@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package nebius.audit.v2;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
+option java_multiple_files = true;
+option java_outer_classname = "FederationProto";
+option java_package = "ai.nebius.pub.audit.v2";
+
+message Federation {
+  // Unique identifier of the federation.
+  string id = 1 [(buf.validate.field).required = true];
+
+  // Human-readable name of the federation.
+  string name = 2;
+}

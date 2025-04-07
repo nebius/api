@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package nebius.audit.v2;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
+option java_multiple_files = true;
+option java_outer_classname = "ResourceMetadataProto";
+option java_package = "ai.nebius.pub.audit.v2";
+
+message ResourceMetadata {
+  // Unique identifier of the resource.
+  string id = 1 [(buf.validate.field).required = true];
+
+  // Name of the resource.
+  string name = 2;
+
+  // Type of the resource.
+  string type = 3;
+}

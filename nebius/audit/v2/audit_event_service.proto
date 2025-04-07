@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package nebius.audit.v2;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+import "nebius/audit/v2/audit_event.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
+option java_multiple_files = true;
+option java_outer_classname = "AuditEventServiceProto";
+option java_package = "ai.nebius.pub.audit.v2";
+
+service AuditEventService {
+  option (api_service_name) = "audit";
+
+  rpc List(ListAuditEventRequest) returns (ListAuditEventResponse);
+}
+
+message ListAuditEventRequest {
+  // A tenant id must be provided
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2 [(buf.validate.field) = { int64: { lte: 500, gte: 0 } }];
+
+  google.protobuf.Timestamp start = 3 [(buf.validate.field).required = true];
+
+  google.protobuf.Timestamp end = 4 [(buf.validate.field).required = true];
+
+  string page_token = 5;
+
+  // Example:
+  // service.name = 'iam' AND resource.hierarchy.id:'container-e0t'
+  //
+  // Supported filters:
+  // "=" - equals
+  // "!=" - not equals
+  // ":" - contains
+  //
+  // Fields that can be used for filtering:
+  // action
+  // authentication.static_key_credential.id
+  // authentication.subject.name
+  // authentication.subject.service_account_id
+  // authentication.subject.tenant_user_id
+  // authentication.token_credential.masked_token
+  // resource.hierarchy.id
+  // resource.hierarchy.name
+  // resource.metadata.id
+  // resource.metadata.name
+  // resource.metadata.type
+  string filter = 6;
+}
+
+message ListAuditEventResponse {
+  repeated AuditEvent items = 1;
+
+  string next_page_token = 2;
+}

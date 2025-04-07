@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package nebius.audit.v2;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
+option java_multiple_files = true;
+option java_outer_classname = "AccessTokenProto";
+option java_package = "ai.nebius.pub.audit.v2";
+
+message AccessToken {
+  // Token without signature.
+  string masked_token = 2 [(buf.validate.field).required = true];
+}
