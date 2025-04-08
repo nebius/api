@@ -24,7 +24,11 @@ service PoolService {
     option (region_routing) = { nid: [ "pool_id" ] };
   }
 
+  rpc Create(CreatePoolRequest) returns (common.v1.Operation);
+
   rpc Update(UpdatePoolRequest) returns (common.v1.Operation);
+
+  rpc Delete(DeletePoolRequest) returns (common.v1.Operation);
 }
 
 message GetPoolRequest {
@@ -59,6 +63,23 @@ message ListPoolsResponse {
   string next_page_token = 2;
 }
 
+message CreatePoolRequest {
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name",
+          message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters.",
+          expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+        }
+      ],
+      required: true
+    }
+  ];
+
+  PoolSpec spec = 2 [(buf.validate.field).required = true];
+}
+
 message UpdatePoolRequest {
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field) = {
@@ -73,4 +94,8 @@ message UpdatePoolRequest {
   ];
 
   PoolSpec spec = 2;
+}
+
+message DeletePoolRequest {
+  string id = 1 [(buf.validate.field).required = true];
 }

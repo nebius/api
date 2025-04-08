@@ -4,6 +4,8 @@ package nebius.vpc.v1;
 
 import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
 import "nebius/vpc/v1/subnet.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
@@ -21,6 +23,12 @@ service SubnetService {
   rpc ListByNetwork(ListSubnetsByNetworkRequest) returns (ListSubnetsResponse) {
     option (region_routing) = { nid: [ "network_id" ] };
   }
+
+  rpc Create(CreateSubnetRequest) returns (common.v1.Operation);
+
+  rpc Update(UpdateSubnetRequest) returns (common.v1.Operation);
+
+  rpc Delete(DeleteSubnetRequest) returns (common.v1.Operation);
 }
 
 message GetSubnetRequest {
@@ -53,4 +61,41 @@ message ListSubnetsResponse {
   repeated Subnet items = 1;
 
   string next_page_token = 2;
+}
+
+message CreateSubnetRequest {
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name",
+          message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters.",
+          expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+        }
+      ],
+      required: true
+    }
+  ];
+
+  SubnetSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message UpdateSubnetRequest {
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name",
+          message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters.",
+          expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+        }
+      ]
+    }
+  ];
+
+  SubnetSpec spec = 2;
+}
+
+message DeleteSubnetRequest {
+  string id = 1;
 }
