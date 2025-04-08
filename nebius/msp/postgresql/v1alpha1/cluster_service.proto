@@ -25,6 +25,10 @@ service ClusterService {
   // Returns the specified PostgreSQL Cluster resource by name.
   rpc GetByName(common.v1.GetByNameRequest) returns (Cluster);
 
+  // Returns the specified PostgreSQL Cluster resource for backup.
+  // It should be used as a hint of cluster configuration in case of backup restoration.
+  rpc GetForBackup(GetClusterForBackupRequest) returns (Cluster);
+
   // Retrieves the list of PostgreSQL Cluster resources that belong
   // to the specified folder.
   rpc List(ListClustersRequest) returns (ListClustersResponse);
@@ -52,6 +56,14 @@ message GetClusterRequest {
   // ID of the PostgreSQL Cluster resource to return.
   // To get the cluster ID use a [ClusterService.List] request.
   string id = 1 [(buf.validate.field).required = true];
+}
+
+message GetClusterForBackupRequest {
+  // ID of the PostgreSQL cluster that holds backup.
+  string id = 1 [(buf.validate.field).required = true];
+
+  // ID of the backup for which source cluster is requested.
+  string backup_id = 2 [(buf.validate.field).required = true];
 }
 
 message ListClustersRequest {
