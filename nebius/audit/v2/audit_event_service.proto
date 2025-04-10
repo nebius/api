@@ -31,12 +31,13 @@ message ListAuditEventRequest {
   string page_token = 5;
 
   // Example:
-  // service.name = 'iam' AND resource.hierarchy.id:'container-e0t'
+  // service.name = 'iam' AND resource.hierarchy.id:'container-e0t' AND regex(resource.metadata.name, '^.*test.*$')
   //
   // Supported filters:
   // "=" - equals
   // "!=" - not equals
   // ":" - contains
+  // regex - regular expression
   //
   // Fields that can be used for filtering:
   // action
@@ -50,6 +51,8 @@ message ListAuditEventRequest {
   // resource.metadata.id
   // resource.metadata.name
   // resource.metadata.type
+  // service.name
+  // type
   string filter = 6;
 }
 
