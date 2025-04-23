@@ -4,6 +4,8 @@ package nebius.iam.v1;
 
 import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
 import "nebius/iam/v1/container.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
@@ -14,11 +16,21 @@ option java_package = "ai.nebius.pub.iam.v1";
 service ProjectService {
   option (api_service_name) = "cpl.iam";
 
+  rpc Create(CreateProjectRequest) returns (common.v1.Operation);
+
   rpc Get(GetProjectRequest) returns (Container);
 
   rpc GetByName(GetProjectByNameRequest) returns (Container);
 
   rpc List(ListProjectsRequest) returns (ListProjectsResponse);
+
+  rpc Update(UpdateProjectRequest) returns (common.v1.Operation);
+}
+
+message CreateProjectRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  ContainerSpec spec = 2;
 }
 
 message GetProjectRequest {
@@ -44,6 +56,12 @@ message ListProjectsRequest {
 
   // A filter to narrow down the results based on specific criteria.
   string filter = 4;
+}
+
+message UpdateProjectRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  ContainerSpec spec = 2;
 }
 
 message ListProjectsResponse {
