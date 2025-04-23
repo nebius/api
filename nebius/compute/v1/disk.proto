@@ -87,6 +87,14 @@ message DiskStatus {
     ERROR = 5;
   }
 
+  enum SourceImageCPUArchitecture {
+    SOURCE_IMAGE_CPU_UNSPECIFIED = 0;
+
+    AMD64 = 1;
+
+    ARM64 = 2;
+  }
+
   State state = 1;
 
   string state_description = 2;
@@ -103,4 +111,6 @@ message DiskStatus {
   bool reconciling = 7;
 
   int64 block_size_bytes = 8;
+
+  SourceImageCPUArchitecture source_image_cpu_architecture = 9;
 }

@@ -19,11 +19,21 @@ message Image {
 }
 
 message ImageSpec {
+  enum CPUArchitecture {
+    UNSPECIFIED = 0;
+
+    AMD64 = 1;
+
+    ARM64 = 2;
+  }
+
   optional string description = 1 [(field_behavior) = IMMUTABLE];
 
   string image_family = 2 [(field_behavior) = IMMUTABLE];
 
   string version = 3 [(field_behavior) = IMMUTABLE];
+
+  CPUArchitecture cpu_architecture = 6 [(field_behavior) = IMMUTABLE];
 }
 
 message ImageStatus {

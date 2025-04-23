@@ -22,6 +22,7 @@ message Container {
 }
 
 message ContainerSpec {
+  string region = 1 [(field_behavior) = NON_EMPTY_DEFAULT];
 }
 
 message ContainerStatus {
