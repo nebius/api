@@ -53,7 +53,7 @@ message ListAuditEventRequest {
   // resource.metadata.type
   // service.name
   // type
-  string filter = 6;
+  string filter = 6 [(sensitive) = true];
 }
 
 message ListAuditEventResponse {

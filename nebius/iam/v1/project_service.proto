@@ -25,6 +25,10 @@ service ProjectService {
   rpc List(ListProjectsRequest) returns (ListProjectsResponse);
 
   rpc Update(UpdateProjectRequest) returns (common.v1.Operation);
+
+  rpc Delete(DeleteProjectRequest) returns (common.v1.Operation);
+
+  rpc Undelete(UndeleteProjectRequest) returns (common.v1.Operation);
 }
 
 message CreateProjectRequest {
@@ -62,6 +66,14 @@ message UpdateProjectRequest {
   common.v1.ResourceMetadata metadata = 1;
 
   ContainerSpec spec = 2;
+}
+
+message DeleteProjectRequest {
+  string id = 1;
+}
+
+message UndeleteProjectRequest {
+  string id = 1;
 }
 
 message ListProjectsResponse {
