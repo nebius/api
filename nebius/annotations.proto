@@ -94,6 +94,12 @@ extend google.protobuf.OneofOptions {
   repeated FieldBehavior oneof_behavior = 1191;
 }
 
+extend google.protobuf.EnumValueOptions {
+  // Contains additional information about the planned deprecation of enum value.
+  // Used along with `[deprecated = true]`.
+  DeprecationDetails enum_value_deprecation_details = 1194;
+}
+
 enum ResourceBehavior {
   // The behavior of the resource is unspecified.
   // Avoid using this default value.
