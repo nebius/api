@@ -95,6 +95,15 @@ message GetVersionRequest {
 
   // Recent agent log entries for diagnostic purposes.
   string last_agent_logs = 17;
+
+  // Model of the GPU used in the system.
+  string gpu_model = 18;
+
+  // Number of GPUs available in the system.
+  int32 gpu_number = 19;
+
+  // Version of the DCGM (Data Center GPU Manager) used.
+  string dcgm_version = 20;
 }
 
 // Health status information for all agent modules.
