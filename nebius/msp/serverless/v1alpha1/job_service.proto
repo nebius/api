@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package nebius.msp.serverless.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/msp/serverless/v1alpha1/job.proto";
+import "nebius/msp/v1alpha1/common.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/serverless/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "JobServiceProto";
+option java_package = "ai.nebius.pub.msp.serverless.v1alpha1";
+
+service JobService {
+  option (api_service_name) = "apps.msp";
+
+  // Returns the specified job.
+  rpc Get(nebius.msp.v1alpha1.GetRequest) returns (Job);
+
+  // Retrieves a list of jobs.
+  rpc List(nebius.msp.v1alpha1.ListRequest) returns (ListJobsResponse);
+
+  // Creates a job.
+  rpc Create(CreateJobRequest) returns (common.v1.Operation);
+
+  // Delete a job.
+  rpc Delete(nebius.msp.v1alpha1.DeleteRequest) returns (common.v1.Operation);
+
+  // Cancel a job.
+  rpc Cancel(CancelJobRequest) returns (common.v1.Operation);
+}
+
+message CreateJobRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  JobSpec spec = 2 [(buf.validate.field).required = true];
+
+  // If set to true, only API validation will be performed, without creating the job.
+  // Returned operation will be in "done" state. ID of resource will be empty.
+  bool dry_run = 3;
+}
+
+message CancelJobRequest {
+  // ID of the job to cancel.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message ListJobsResponse {
+  // List of jobs.
+  repeated Job items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}

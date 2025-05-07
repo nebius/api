@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package nebius.msp.serverless.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/msp/v1alpha1/cluster.proto";
+import "nebius/msp/v1alpha1/resource/template.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/serverless/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "JobProto";
+option java_package = "ai.nebius.pub.msp.serverless.v1alpha1";
+
+message Job {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  JobSpec spec = 2 [(buf.validate.field).required = true];
+
+  JobStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message JobSpec {
+  // Description of the job.
+  string description = 1;
+
+  // Network ID to run the job in
+  string network_id = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+
+  // Container spec
+  JobContainerSpec container = 101;
+}
+
+message JobContainerSpec {
+  // Image name
+  string image = 1 [(buf.validate.field).required = true];
+
+  // Replica count
+  int64 replica_count = 2;
+
+  // Container resource template
+  JobTemplateSpec template = 3 [(buf.validate.field).required = true];
+
+  // Job command
+  string command = 101;
+
+  // Command args
+  repeated string args = 102;
+
+  // Environment variables
+  map<string, string> envs = 103;
+
+  // Environment variables with sensitive data
+  map<string, string> sensitive_envs = 104 [(field_behavior) = INPUT_ONLY, (sensitive) = true];
+}
+
+message JobTemplateSpec {
+  nebius.msp.v1alpha1.resource.ResourcesSpec resources = 1 [(buf.validate.field).required = true];
+}
+
+enum JobResult {
+  // Job is not finished yet.
+  JOB_RESULT_UNSPECIFIED = 0;
+
+  // Job finished successfully.
+  JOB_RESULT_SUCCESS = 1;
+
+  // Job failed.
+  JOB_RESULT_FAILURE = 2;
+
+  // Job was cancelled.
+  JOB_RESULT_CANCELLED = 3;
+}
+
+message JobStatus {
+  // Current phase (or stage) of the workload.
+  nebius.msp.v1alpha1.ClusterStatus.Phase phase = 1;
+
+  // State reflects substatus of the phase
+  nebius.msp.v1alpha1.ClusterStatus.State state = 2;
+
+  // Job result
+  JobResult result = 3;
+}

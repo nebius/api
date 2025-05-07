@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package nebius.msp.v1alpha1;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "CommonProto";
+option java_package = "ai.nebius.pub.msp.v1alpha1";
+
+message GetRequest {
+  // ID of the entity to retrieve.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message GetByNameRequest {
+  // Parent ID of entity to retrieve.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Name of the entity to retrieve.
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message DeleteRequest {
+  // ID of the entity to delete.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message StartRequest {
+  // ID of the entity to start.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message StopRequest {
+  // ID of the entity to stop.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message ListRequest {
+  // Identifier of IAM container to list from.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Specifies the maximum number of items to return in the response. Default value is 100.
+  int64 page_size = 2 [(buf.validate.field) = { int64: { gte: 0 } }];
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+}
