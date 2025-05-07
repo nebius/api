@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package nebius.msp.serverless.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/msp/serverless/v1alpha1/endpoint.proto";
+import "nebius/msp/v1alpha1/common.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/serverless/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "EndpointServiceProto";
+option java_package = "ai.nebius.pub.msp.serverless.v1alpha1";
+
+service EndpointService {
+  option (api_service_name) = "apps.msp";
+
+  // Returns the specified endpoint.
+  rpc Get(nebius.msp.v1alpha1.GetRequest) returns (Endpoint);
+
+  // Returns the specified endpoint by name.
+  rpc GetByName(nebius.msp.v1alpha1.GetByNameRequest) returns (Endpoint);
+
+  // Retrieves a list of Endpoints.
+  rpc List(nebius.msp.v1alpha1.ListRequest) returns (ListEndpointsResponse);
+
+  // Creates an endpoint.
+  rpc Create(CreateEndpointRequest) returns (common.v1.Operation);
+
+  // Delete an endpoint.
+  rpc Delete(nebius.msp.v1alpha1.DeleteRequest) returns (common.v1.Operation);
+
+  // Start an endpoint.
+  rpc Start(nebius.msp.v1alpha1.StartRequest) returns (common.v1.Operation);
+
+  // Stop an endpoint.
+  rpc Stop(nebius.msp.v1alpha1.StopRequest) returns (common.v1.Operation);
+}
+
+message CreateEndpointRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  EndpointSpec spec = 2 [(buf.validate.field).required = true];
+
+  // If set to true, only API validation will be performed, without creating the endpoint.
+  // Returned operation will be in "done" state. ID of resource will be empty.
+  bool dry_run = 3;
+}
+
+message ListEndpointsResponse {
+  // List of Endpoints.
+  repeated Endpoint items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}

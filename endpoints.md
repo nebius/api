@@ -1,5 +1,9 @@
 ## Services and their endpoints
 
+* apps.msp.api.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+  * [nebius.msp.serverless.v1alpha1.EndpointService](nebius/msp/serverless/v1alpha1/endpoint_service.proto)
+  * [nebius.msp.serverless.v1alpha1.JobService](nebius/msp/serverless/v1alpha1/job_service.proto)
 * audit.api.nebius.cloud:443
   * [nebius.audit.v2.AuditEventService](nebius/audit/v2/audit_event_service.proto)
 * compute.api.nebius.cloud:443

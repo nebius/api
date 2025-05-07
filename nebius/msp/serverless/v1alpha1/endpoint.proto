@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package nebius.msp.serverless.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/msp/v1alpha1/cluster.proto";
+import "nebius/msp/v1alpha1/resource/template.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/serverless/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "EndpointProto";
+option java_package = "ai.nebius.pub.msp.serverless.v1alpha1";
+
+message Endpoint {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  EndpointSpec spec = 2 [(buf.validate.field).required = true];
+
+  EndpointStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message EndpointSpec {
+  // Description of the endpoint.
+  string description = 1;
+
+  // Network ID to run the endpoint in
+  string network_id = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+
+  // Username for accessing the container endpoint.
+  string username = 3 [
+    (buf.validate.field).required = true,
+    (field_behavior) = INPUT_ONLY,
+    (sensitive) = true
+  ];
+
+  // Password for accessing the container endpoint.
+  string password = 4 [
+    (buf.validate.field).required = true,
+    (field_behavior) = INPUT_ONLY,
+    (sensitive) = true
+  ];
+
+  // Container port to be exposed.
+  uint32 port = 5 [(buf.validate.field).required = true];
+
+  // Container spec
+  EndpointContainerSpec container = 101;
+}
+
+message EndpointContainerSpec {
+  // Image name
+  string image = 1 [(buf.validate.field).required = true];
+
+  // Replica count
+  int64 replica_count = 2;
+
+  // Container resource template
+  EndpointTemplateSpec template = 3 [(buf.validate.field).required = true];
+
+  // Endpoint command
+  string command = 101;
+
+  // Command args
+  repeated string args = 102;
+
+  // Environment variables
+  map<string, string> envs = 103;
+
+  // Environment variables with sensitive data
+  map<string, string> sensitive_envs = 104 [(field_behavior) = INPUT_ONLY, (sensitive) = true];
+
+  // Liveness probe spec
+  ProbeSpec liveness = 201;
+}
+
+message ProbeSpec {
+  // Probe path
+  string path = 1;
+
+  // Probe port
+  uint32 port = 2;
+
+  // Initial Delay seconds
+  uint32 delay = 3;
+
+  // Period seconds
+  uint32 period = 4;
+}
+
+message EndpointTemplateSpec {
+  nebius.msp.v1alpha1.resource.ResourcesSpec resources = 1 [(buf.validate.field).required = true];
+}
+
+message EndpointStatus {
+  // Current phase (or stage) of the workload.
+  nebius.msp.v1alpha1.ClusterStatus.Phase phase = 1;
+
+  // State reflects substatus of the phase
+  nebius.msp.v1alpha1.ClusterStatus.State state = 2;
+
+  // Public endpoint for accessing the workload.
+  string public_endpoint = 3;
+}
