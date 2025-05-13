@@ -53,6 +53,12 @@ message JobContainerSpec {
 
   // Environment variables with sensitive data
   map<string, string> sensitive_envs = 104 [(field_behavior) = INPUT_ONLY, (sensitive) = true];
+
+  // Job timeout in seconds (0 - no timeout)
+  int64 timeout_seconds = 201;
+
+  // Max retries (0 - no retries)
+  int64 max_retries = 202;
 }
 
 message JobTemplateSpec {
