@@ -77,16 +77,18 @@ message EndpointContainerSpec {
 
 message ProbeSpec {
   // Probe path
-  string path = 1;
+  string path = 1 [(buf.validate.field).required = true];
 
-  // Probe port
-  uint32 port = 2;
+  reserved 2, 3, 4;
 
-  // Initial Delay seconds
-  uint32 delay = 3;
+  // Initial delay before starting probing in seconds
+  int64 delay_seconds = 5;
 
-  // Period seconds
-  uint32 period = 4;
+  // Probing period in seconds
+  int64 period_seconds = 6 [(buf.validate.field) = { int64: { gt: 0 }, required: true }];
+
+  // Failure threshold for the probe after which the container will be restarted
+  int64 failure_threshold = 7 [(buf.validate.field) = { int64: { gt: 0 }, required: true }];
 }
 
 message EndpointTemplateSpec {

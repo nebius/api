@@ -3,8 +3,6 @@ syntax = "proto3";
 package nebius.iam.v1;
 
 import "nebius/annotations.proto";
-import "nebius/common/v1/metadata.proto";
-import "nebius/common/v1/operation.proto";
 import "nebius/iam/v1/container.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
@@ -18,18 +16,10 @@ service TenantService {
   rpc Get(GetTenantRequest) returns (Container);
 
   rpc List(ListTenantsRequest) returns (ListTenantsResponse);
-
-  rpc Update(UpdateTenantRequest) returns (common.v1.Operation);
 }
 
 message GetTenantRequest {
   string id = 1;
-}
-
-message UpdateTenantRequest {
-  common.v1.ResourceMetadata metadata = 1;
-
-  ContainerSpec spec = 2;
 }
 
 message ListTenantsRequest {
