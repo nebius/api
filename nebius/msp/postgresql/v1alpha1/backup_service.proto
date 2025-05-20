@@ -3,7 +3,6 @@ syntax = "proto3";
 package nebius.msp.postgresql.v1alpha1;
 
 import "buf/validate/validate.proto";
-import "nebius/common/v1alpha1/operation.proto";
 import "nebius/msp/postgresql/v1alpha1/backup.proto";
 import "nebius/annotations.proto";
 
@@ -29,11 +28,6 @@ service BackupService {
   rpc ListByCluster(ListBackupsByClusterRequest) returns (ListBackupsResponse) {
     option (region_routing) = { nid: [ "cluster_id" ] };
   }
-
-  // Creates a new on-demand backup.
-  rpc Create(CreateBackupRequest) returns (common.v1alpha1.Operation) {
-    option (region_routing) = { nid: [ "cluster_id" ] };
-  }
 }
 
 message GetBackupRequest {
@@ -57,9 +51,4 @@ message ListBackupsByClusterRequest {
 message ListBackupsResponse {
   // List of backups.
   repeated Backup backups = 1;
-}
-
-message CreateBackupRequest {
-  // ID of the PostgreSQL cluster that holds backup.
-  string cluster_id = 1 [(buf.validate.field).required = true];
 }
