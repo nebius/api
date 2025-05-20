@@ -13,16 +13,22 @@ option java_outer_classname = "ClusterServiceProto";
 option java_package = "ai.nebius.pub.mk8s.v1";
 
 service ClusterService {
+  // Returns a specific mk8s cluster by its unique identifier.
   rpc Get(GetClusterRequest) returns (Cluster);
 
+  // Returns a specific mk8s cluster by its unique name.
   rpc GetByName(common.v1.GetByNameRequest) returns (Cluster);
 
+  // Returns a list of all mk8s clusters in the specified project.
   rpc List(ListClustersRequest) returns (ListClustersResponse);
 
+  // Creates a new mk8s cluster.
   rpc Create(CreateClusterRequest) returns (common.v1.Operation);
 
+  // Modifies an existing mk8s cluster.
   rpc Update(UpdateClusterRequest) returns (common.v1.Operation);
 
+  // Deletes an mk8s cluster.
   rpc Delete(DeleteClusterRequest) returns (common.v1.Operation);
 }
 
