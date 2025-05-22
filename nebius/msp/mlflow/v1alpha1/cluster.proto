@@ -48,6 +48,10 @@ message ClusterSpec {
 
   // ID of the vpc network.
   string network_id = 8 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+
+  // Size defines how much resources will be allocated to mlflow
+  // See supported sizes in the documentation. Default size is the smallest available in the region.
+  string size = 9 [(field_behavior) = NON_EMPTY_DEFAULT];
 }
 
 message MlflowClusterStatus {
