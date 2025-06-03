@@ -14,18 +14,27 @@ option java_outer_classname = "FilesystemServiceProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 service FilesystemService {
+  // Retrieves information about a filesystem by its ID.
   rpc Get(GetFilesystemRequest) returns (Filesystem);
 
+  // Retrieves information about a filesystem by its parent and name.
   rpc GetByName(common.v1.GetByNameRequest) returns (Filesystem);
 
+  // Lists all filesystems within a specified parent.
   rpc List(ListFilesystemsRequest) returns (ListFilesystemsResponse);
 
+  // Creates a new filesystem with the specified configuration.
+  // For details, see https://docs.nebius.com/compute/storage/manage
   rpc Create(CreateFilesystemRequest) returns (common.v1.Operation);
 
+  // Updates an existing filesystem with new configuration parameters.
+  // For details, see https://docs.nebius.com/compute/storage/manage#parameters
   rpc Update(UpdateFilesystemRequest) returns (common.v1.Operation);
 
+  // Deletes a disk by its ID.
   rpc Delete(DeleteFilesystemRequest) returns (common.v1.Operation);
 
+  // Lists all operations that were performed within a specific parent resource.
   rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse);
 }
 

@@ -35,6 +35,8 @@ message DiskSpec {
     NETWORK_SSD_IO_M3 = 4;
   }
 
+  // Size of the disk. The size must be within the limits for the selected disk type.
+  // For current limits, see https://docs.nebius.com/compute/storage/types#disks-types-comparison
   oneof size {
     option (buf.validate.oneof).required = true;
 
@@ -47,12 +49,20 @@ message DiskSpec {
     int64 size_gibibytes = 4;
   }
 
+  // Block size in bytes.
+  // The block size must be a power of two between 4096 bytes (4 KiB) and 131072 bytes (128 KiB).
+  // The default value is 4096 bytes (4 KiB).
   int64 block_size_bytes = 5 [(field_behavior) = IMMUTABLE];
 
+  // The type of disk defines the performance and reliability characteristics of the block device.
+  // For details, see https://docs.nebius.com/compute/storage/types#disks-types
   DiskType type = 6 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 
   DiskPlacementPolicy placement_policy = 7 [(field_behavior) = IMMUTABLE];
 
+  // Source for disk creation.
+  // Boot disk must be created from an image https://docs.nebius.com/compute/storage/manage#boot
+  // Additional disks can be created as an empty volume https://docs.nebius.com/compute/storage/manage#additional
   oneof source {
     string source_image_id = 8 [(field_behavior) = IMMUTABLE];
 

@@ -21,22 +21,37 @@ message Instance {
 }
 
 message InstanceSpec {
+  // Unique identifier of the service account associated with this instance.
+  // For details, see https://docs.nebius.dev/en/iam/about-iam/concepts/service-accounts
   string service_account_id = 1 [(field_behavior) = IMMUTABLE];
 
+  // Specification of compute resources allocated to the instance.
+  // For details, see https://docs.nebius.com/compute/virtual-machines/types
   ResourcesSpec resources = 2 [(buf.validate.field).required = true];
 
+  // If you want to interconnect several instances in a GPU cluster via NVIDIA InfiniBand,
+  // set the ID of an existing GPU cluster.
+  // You can only add the VM to the cluster when creating the VM.
+  // For details, see https://docs.nebius.com/compute/clusters/gpu
   InstanceGpuClusterSpec gpu_cluster = 3 [(field_behavior) = IMMUTABLE];
 
+  // List of network interfaces attached to the instance.
   repeated NetworkInterfaceSpec network_interfaces = 4 [(buf.validate.field) = { repeated: { max_items: 8 }, required: true }];
 
+  // Specified boot disk attached to the instance.
   AttachedDiskSpec boot_disk = 5 [(field_behavior) = IMMUTABLE];
 
+  // List of additional data disks attached to the instance beyond the boot disk.
   repeated AttachedDiskSpec secondary_disks = 6;
 
+  // List of Shared Filesystems attached to the instance.
   repeated AttachedFilesystemSpec filesystems = 7;
 
+  // Data in cloud-init format for customizing instance initialization.
+  // For details, see https://docs.nebius.com/compute/virtual-machines/manage#user-data
   string cloud_init_user_data = 8 [(sensitive) = true, (buf.validate.field) = { string: { max_len: 32768 } }];
 
+  // Indicates whether the instance should be stopped.
   bool stopped = 13;
 
   // Recovery policy defines how the instance will be treated in case of a failure. Common source of failure is a host failure, but it can be any other failure.

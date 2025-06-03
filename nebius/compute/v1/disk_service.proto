@@ -14,18 +14,27 @@ option java_outer_classname = "DiskServiceProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 service DiskService {
+  // Retrieves information about a disk by its ID.
   rpc Get(GetDiskRequest) returns (Disk);
 
+  // Retrieves information about a disk by its parent and name.
   rpc GetByName(common.v1.GetByNameRequest) returns (Disk);
 
+  // Lists all disks within a specified parent.
   rpc List(ListDisksRequest) returns (ListDisksResponse);
 
+  // Creates a new disk with the specified configuration.
+  // For details, see https://docs.nebius.com/compute/storage/manage
   rpc Create(CreateDiskRequest) returns (common.v1.Operation);
 
+  // Updates an existing disk with new configuration parameters.
+  // For details, see https://docs.nebius.com/compute/storage/manage#parameters
   rpc Update(UpdateDiskRequest) returns (common.v1.Operation);
 
+  // Deletes a disk by its ID.
   rpc Delete(DeleteDiskRequest) returns (common.v1.Operation);
 
+  // Lists all operations that were performed within a specific parent resource.
   rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse);
 }
 

@@ -14,18 +14,26 @@ option java_outer_classname = "GpuClusterServiceProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 service GpuClusterService {
+  // Retrieves the specified GPU Cluster by its ID.
   rpc Get(GetGpuClusterRequest) returns (GpuCluster);
 
+  // Retrieves the specified GPU Cluster by its parent and name.
   rpc GetByName(common.v1.GetByNameRequest) returns (GpuCluster);
 
+  // Lists GPU Clusters in the specified parent.
   rpc List(ListGpuClustersRequest) returns (ListGpuClustersResponse);
 
+  // Creates a new GPU Cluster.
+  // For details, see https://docs.nebius.com/compute/clusters/gpu#create-cluster
   rpc Create(CreateGpuClusterRequest) returns (common.v1.Operation);
 
+  // Modifies the configuration of an existing GPU Cluster.
   rpc Update(UpdateGpuClusterRequest) returns (common.v1.Operation);
 
+  // Deletes a GPU Cluster by its ID.
   rpc Delete(DeleteGpuClusterRequest) returns (common.v1.Operation);
 
+  // Lists all operations that were performed within a specific parent resource.
   rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse);
 }
 

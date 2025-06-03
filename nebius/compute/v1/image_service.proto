@@ -13,14 +13,20 @@ option java_outer_classname = "ImageServiceProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 service ImageService {
+  // Retrieves detailed information about a specific image by its ID.
   rpc Get(GetImageRequest) returns (Image);
 
+  // Retrieves detailed information about a specific image by its parent and name.
   rpc GetByName(common.v1.GetByNameRequest) returns (Image);
 
+  // Retrieves the most recent image from a specified family.
+  // Image families are used to organize related images and ensure easy access to the latest version.
   rpc GetLatestByFamily(GetImageLatestByFamilyRequest) returns (Image);
 
+  // Lists all images in a specific parent resource.
   rpc List(ListImagesRequest) returns (ListImagesResponse);
 
+  // Lists all operations that were performed within a specific parent resource.
   rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse);
 }
 

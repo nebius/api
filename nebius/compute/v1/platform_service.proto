@@ -12,8 +12,10 @@ option java_outer_classname = "PlatformServiceProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 service PlatformService {
+  // Retrieves detailed information about a specific compute platform by its parent and name.
   rpc GetByName(common.v1.GetByNameRequest) returns (Platform);
 
+  // Lists all compute platforms within a specified parent.
   rpc List(ListPlatformsRequest) returns (ListPlatformsResponse);
 }
 
