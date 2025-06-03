@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+package nebius.storage.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/storage/v1alpha1/transfer.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "TransferServiceProto";
+option java_package = "ai.nebius.pub.storage.v1alpha1";
+
+// TransferService provides functionality for creating and managing transfers
+// that migrate data from other S3 providers or across different regions of Nebius Object Storage.
+// Each transfer consists of consecutive iterations where the service lists objects in the source bucket and
+// moves those that need to be transferred according to the specified overwrite strategy.
+// After an iteration completes, the transfer will stop if its stop condition is met. Otherwise,
+// it will wait for the defined inter-iteration interval before starting the next iteration.
+service TransferService {
+  option (api_service_name) = "transfer.storage";
+
+  rpc Get(GetTransferRequest) returns (Transfer);
+
+  rpc GetByName(common.v1.GetByNameRequest) returns (Transfer);
+
+  rpc List(ListTransfersRequest) returns (ListTransfersResponse);
+
+  rpc Create(CreateTransferRequest) returns (common.v1.Operation) {
+    // Region routing is strictly enforced for the create method to prevent the creation of transfers to a different region.
+    // For example: if a user has buckets in both KCS and MAN and intends to create a transfer to the KCS region,
+    // setting the parent ID from MAN would incorrectly create the transfer to the MAN bucket.
+    option (region_routing) = { strict: true };
+  }
+
+  rpc Update(UpdateTransferRequest) returns (common.v1.Operation);
+
+  // Stop active transfer. If the transfer is currently moving data,
+  // it will be transitioned to the Stopping state and will move to the Stopped state once all processes have been stopped.
+  // If the transfer is waiting between iterations, it will stop immediately.
+  // Only transfer in Active state can be stopped.
+  rpc Stop(StopTransferRequest) returns (common.v1.Operation);
+
+  // Resume stopped or failed transfer.
+  rpc Resume(ResumeTransferRequest) returns (common.v1.Operation);
+
+  // Fully delete a transfer along with its history. Only stopped or failed transfers can be deleted.
+  rpc Delete(DeleteTransferRequest) returns (common.v1.Operation);
+
+  rpc GetIterationHistory(GetIterationHistoryRequest) returns (GetIterationHistoryResponse) {
+    option (region_routing) = { nid: [ "transfer_id" ] };
+  }
+}
+
+message GetTransferRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message ListTransfersRequest {
+  // Represents the container ID.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Specifies the maximum number of items to return in the response.
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+}
+
+message ListTransfersResponse {
+  // List of transfers returned in the response.
+  repeated Transfer items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}
+
+message CreateTransferRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  TransferSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message UpdateTransferRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  TransferSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message StopTransferRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message ResumeTransferRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message DeleteTransferRequest {
+  string id = 1 [(buf.validate.field).required = true];
+
+  int64 resource_version = 2;
+}
+
+message GetIterationHistoryRequest {
+  string transfer_id = 1 [(buf.validate.field).required = true];
+
+  // Specifies the maximum number of items to return in the response.
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+}
+
+message GetIterationHistoryResponse {
+  // List of transfer iterations sorted from newest to oldest.
+  repeated TransferIteration iterations = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}

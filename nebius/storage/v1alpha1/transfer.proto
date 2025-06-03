@@ -1,0 +1,186 @@
+syntax = "proto3";
+
+package nebius.storage.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "TransferProto";
+option java_package = "ai.nebius.pub.storage.v1alpha1";
+
+message Transfer {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  TransferSpec spec = 2 [(buf.validate.field).required = true];
+
+  TransferStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message TransferSpec {
+  SourceBucket source = 1 [(buf.validate.field).required = true];
+
+  message SourceBucket {
+    // The endpoint must be in the form of a URL, starting with the protocol (https),
+    // followed by the endpoint address without a trailing slash.
+    // Example: https://storage.us-central1.nebius.cloud
+    string endpoint = 1 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+
+    string bucket_name = 2 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+
+    string region = 3 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+
+    // Credentials for accessing the source bucket. These credentials must have list and get permissions.
+    // This parameter must be specified only during create operations.
+    BucketCredentials credentials = 4 [(field_behavior) = INPUT_ONLY];
+  }
+
+  DestinationBucket destination = 2 [(buf.validate.field).required = true];
+
+  message DestinationBucket {
+    string bucket_name = 1 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+
+    // Credentials for accessing the destination bucket. These credentials must have head and write permissions.
+    // This parameter must be specified only during create operations.
+    BucketCredentials credentials = 2 [(field_behavior) = INPUT_ONLY];
+  }
+
+  message BucketCredentials {
+    oneof credentials {
+      option (buf.validate.oneof).required = true;
+
+      CredentialsAnonymous anonymous = 1 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+      CredentialsAccessKey access_key = 2;
+    }
+
+    message CredentialsAnonymous {
+    }
+
+    message CredentialsAccessKey {
+      string access_key_id = 1 [(sensitive) = true, (buf.validate.field).required = true];
+
+      string secret_access_key = 2 [(sensitive) = true, (buf.validate.field).required = true];
+    }
+  }
+
+  // The stop condition is checked after every iteration. If the condition is met, the transfer will stop.
+  oneof stop_condition {
+    option (buf.validate.oneof).required = true;
+
+    StopConditionAfterOneIteration after_one_iteration = 3 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+    StopConditionAfterNEmptyIterations after_n_empty_iterations = 4;
+
+    // Infinite transfers do not stop automatically and can be stopped manually by the user.
+    StopConditionInfinite infinite = 5 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+  }
+
+  message StopConditionAfterOneIteration {
+  }
+
+  message StopConditionAfterNEmptyIterations {
+    // Number of consecutive iterations with zero transferred objects required to stop transfer.
+    uint32 empty_iterations_threshold = 1 [(buf.validate.field).required = true];
+  }
+
+  message StopConditionInfinite {
+  }
+
+  // Time to wait between transfer iterations. Default is 15 minutes if not specified.
+  google.protobuf.Duration inter_iteration_interval = 6 [(buf.validate.field) = { duration: { gte: { } } }];
+
+  // Overwrite strategy set logic of overwrite already existed objects in destination bucket.
+  OverwriteStrategy overwrite_strategy = 7 [(buf.validate.field).required = true];
+
+  enum OverwriteStrategy {
+    OVERWRITE_STRATEGY_UNSPECIFIED = 0;
+
+    // Never overwrite objects that exist in the destination.
+    // If object exists in destination bucket, skip it.
+    // Safest option to prevent data loss.
+    NEVER = 1;
+
+    // Overwrite only if source object is newer than destination.
+    // Comparison based on Last-Modified timestamp.
+    // Recommended for incremental sync scenarios.
+    IF_NEWER = 2;
+
+    // Always overwrite destination objects unconditionally.
+    // Use with caution - may cause data loss in destination.
+    // Suitable for full bucket synchronization.
+    ALWAYS = 3;
+  }
+}
+
+message TransferStatus {
+  State state = 1;
+
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    ACTIVE = 1;
+
+    STOPPING = 2;
+
+    STOPPED = 3;
+
+    FAILING = 4;
+
+    FAILED = 5;
+  }
+
+  // Error information if the transfer has failed.
+  string error = 2;
+
+  SuspensionState suspension_state = 3;
+
+  enum SuspensionState {
+    SUSPENSION_STATE_UNSPECIFIED = 0;
+
+    NOT_SUSPENDED = 1;
+
+    SUSPENDED = 2;
+  }
+
+  TransferIteration last_iteration = 4;
+}
+
+message TransferIteration {
+  int64 sequence_number = 1;
+
+  State state = 2;
+
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    IN_PROGRESS = 1;
+
+    COMPLETED = 2;
+
+    STOPPED = 3;
+
+    FAILED = 4;
+  }
+
+  // Human-readable error description. Populated only if state is FAILED.
+  string error = 3;
+
+  google.protobuf.Timestamp start_time = 4;
+
+  google.protobuf.Timestamp end_time = 5;
+
+  int64 objects_discovered_count = 6;
+
+  int64 objects_migrated_count = 7;
+
+  int64 objects_skipped_count = 8;
+
+  int64 objects_migrated_size = 9;
+
+  int64 average_throughput_bytes = 10;
+}

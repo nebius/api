@@ -78,6 +78,9 @@
   * [nebius.msp.spark.v1alpha1.SessionService](nebius/msp/spark/v1alpha1/session_service.proto)
 * tokens.iam.api.nebius.cloud:443
   * [nebius.iam.v1.TokenExchangeService](nebius/iam/v1/token_exchange_service.proto)
+* transfer.storage.api.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+  * [nebius.storage.v1alpha1.TransferService](nebius/storage/v1alpha1/transfer_service.proto)
 * vpc.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)

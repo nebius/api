@@ -29,6 +29,9 @@ message FilesystemSpec {
     NETWORK_HDD = 2;
   }
 
+  // Size of the disk. Only one size unit can be specified.
+  // The size must be within the limits for the selected disk type.
+  // For current limits, see https://docs.nebius.com/compute/storage/types#disks-types-comparison
   oneof size {
     option (buf.validate.oneof).required = true;
 
@@ -41,8 +44,13 @@ message FilesystemSpec {
     int64 size_gibibytes = 4;
   }
 
+  // Block size in bytes.
+  // The block size must be a power of two between 4096 bytes (4 KiB) and 131072 bytes (128 KiB).
+  // The default value is 4096 bytes (4 KiB).
   int64 block_size_bytes = 5 [(field_behavior) = IMMUTABLE];
 
+  // The Shared Filesystem type determines its limits and performance characteristics.
+  // For details, see https://docs.nebius.com/compute/storage/types#filesystems-types
   FilesystemType type = 6 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 }
 

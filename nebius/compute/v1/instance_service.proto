@@ -14,22 +14,32 @@ option java_outer_classname = "InstanceServiceProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 service InstanceService {
+  // Retrieves detailed information about a specific VM instance by its ID.
   rpc Get(GetInstanceRequest) returns (Instance);
 
+  // Retrieves detailed information about a specific VM instance by its parent and name.
   rpc GetByName(common.v1.GetByNameRequest) returns (Instance);
 
+  // Lists all VM instances within a specified parent.
   rpc List(ListInstancesRequest) returns (ListInstancesResponse);
 
+  // Creates a new VM instance based on the provided specification.
+  // For details, see https://docs.nebius.com/compute/virtual-machines/manage
   rpc Create(CreateInstanceRequest) returns (common.v1.Operation);
 
+  // Updates an existing VM instance with new configuration parameters.
   rpc Update(UpdateInstanceRequest) returns (common.v1.Operation);
 
+  // Deletes a VM instance by its ID.
   rpc Delete(DeleteInstanceRequest) returns (common.v1.Operation);
 
+  // Starts a stopped VM instance.
   rpc Start(StartInstanceRequest) returns (common.v1.Operation);
 
+  // Stops a running VM instance.
   rpc Stop(StopInstanceRequest) returns (common.v1.Operation);
 
+  // Lists all operations that were performed within a specific parent resource.
   rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse);
 }
 

@@ -20,6 +20,8 @@ message GpuCluster {
 }
 
 message GpuClusterSpec {
+  // The identifier of the physical InfiniBand fabric to connect GPU instances to.
+  // For details, see https://docs.nebius.com/compute/clusters/gpu#fabrics
   string infiniband_fabric = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 }
 
