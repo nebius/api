@@ -7,6 +7,7 @@ import "google/protobuf/duration.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/mk8s/v1alpha1/instance_template.proto";
+import "nebius/mk8s/v1alpha1/condition.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1alpha1";
 option java_multiple_files = true;
@@ -238,6 +239,8 @@ message NodeGroupStatus {
   // Total number of nodes that successfully joined the cluster and are ready to serve workloads.
   // Both outdated and up-to-date nodes are counted.
   int64 ready_node_count = 6;
+
+  repeated Condition conditions = 50;
 
   // Show that changes are in flight
   bool reconciling = 100;
