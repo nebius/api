@@ -23,6 +23,8 @@ message Disk {
 }
 
 message DiskSpec {
+  reserved 7;
+
   enum DiskType {
     UNSPECIFIED = 0;
 
@@ -52,19 +54,11 @@ message DiskSpec {
 
   DiskType type = 6 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 
-  DiskPlacementPolicy placement_policy = 7 [(field_behavior) = IMMUTABLE];
-
   oneof source {
     string source_image_id = 8 [(field_behavior) = IMMUTABLE];
 
     string source_image_family = 9 [(field_behavior) = IMMUTABLE];
   }
-}
-
-message DiskPlacementPolicy {
-  string placement_group_id = 1;
-
-  int64 placement_group_partition = 2;
 }
 
 message DiskStatus {

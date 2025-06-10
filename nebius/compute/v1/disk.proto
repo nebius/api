@@ -20,7 +20,7 @@ message Disk {
 }
 
 message DiskSpec {
-  reserved 9;
+  reserved 7, 9;
 
   // the list of available types will be clarified later, it is not final version
   enum DiskType {
@@ -58,8 +58,6 @@ message DiskSpec {
   // For details, see https://docs.nebius.com/compute/storage/types#disks-types
   DiskType type = 6 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 
-  DiskPlacementPolicy placement_policy = 7 [(field_behavior) = IMMUTABLE];
-
   // Source for disk creation.
   // Boot disk must be created from an image https://docs.nebius.com/compute/storage/manage#boot
   // Additional disks can be created as an empty volume https://docs.nebius.com/compute/storage/manage#additional
@@ -74,12 +72,6 @@ message SourceImageFamily {
   string image_family = 1 [(buf.validate.field).required = true];
 
   string parent_id = 2;
-}
-
-message DiskPlacementPolicy {
-  string placement_group_id = 1;
-
-  int64 placement_group_partition = 2;
 }
 
 message DiskStatus {
