@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package nebius.compute.v1alpha1;
 
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1alpha1/operation.proto";
 import "nebius/common/v1alpha1/operation_service.proto";
@@ -45,7 +46,13 @@ message ListFilesystemsRequest {
 
   string page_token = 3;
 
-  string filter = 4;
+  string filter = 4 [
+    deprecated = true,
+    (field_deprecation_details) = {
+      effective_at: "2025-06-16",
+      description: "it is not implemented, filtering could be done on client side"
+    }
+  ];
 }
 
 message CreateFilesystemRequest {
