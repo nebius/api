@@ -27,6 +27,10 @@ message FilesystemSpec {
     NETWORK_SSD = 1;
 
     NETWORK_HDD = 2;
+
+    WEKA = 3;
+
+    VAST = 4;
   }
 
   // Size of the disk. Only one size unit can be specified.

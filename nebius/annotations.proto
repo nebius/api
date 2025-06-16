@@ -10,12 +10,9 @@ option java_outer_classname = "AnnotationsProto";
 option java_package = "ai.nebius.pub";
 
 extend google.protobuf.ServiceOptions {
-  // by default API tools assume that every service is configured with address
-  //    in a format: <first-part-after-nebius-in-grpc-path>.<domain>
-  //    example: nebius.dns.v1alpha1.ZoneService => dns.<domain>
-  // this option is used to override the default behavior for private api domains
-  //    example for iam access: option (api_service_name) = "access-service.iam";
-  //    that leads to access-service.iam.<domain>
+  // Specifies the domain prefix for the service endpoint.
+  // For example, `option (api_service_name) = "compute";` makes the service
+  // accessible at `compute.api.nebius.cloud:443`.
   string api_service_name = 1191;
 
   // Contains additional information about the planned deprecation of a service.

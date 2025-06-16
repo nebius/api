@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.vpc.v1alpha1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/vpc/v1alpha1/scope.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1alpha1";
@@ -11,6 +12,8 @@ option java_outer_classname = "ScopeServiceProto";
 option java_package = "ai.nebius.pub.vpc.v1alpha1";
 
 service ScopeService {
+  option (api_service_name) = "vpc";
+
   rpc Get(GetScopeRequest) returns (Scope);
 
   rpc GetByName(GetScopeByNameRequest) returns (Scope);

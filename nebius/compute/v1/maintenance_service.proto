@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package nebius.compute.v1;
+
+import "nebius/annotations.proto";
+import "nebius/compute/v1/maintenance_event.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
+option java_multiple_files = true;
+option java_outer_classname = "MaintenanceServiceProto";
+option java_package = "ai.nebius.pub.compute.v1";
+
+service MaintenanceService {
+  // Returns only active maintenance event for the instance
+  rpc GetByInstance(GetMaintenanceEventByInstanceRequest) returns (MaintenanceEvent) {
+    option (region_routing) = { nid: [ "instance_id" ] };
+  }
+
+  // Returns all unfinished maintenance events for the parent
+  rpc ListActive(ListMaintenanceEventsRequest) returns (ListMaintenanceEventsResponse);
+}
+
+message GetMaintenanceEventByInstanceRequest {
+  string instance_id = 1;
+}
+
+message ListMaintenanceEventsRequest {
+  string parent_id = 1;
+
+  int64 page_size = 3;
+
+  string page_token = 4;
+}
+
+message ListMaintenanceEventsResponse {
+  repeated MaintenanceEvent items = 1;
+
+  string next_page_token = 2;
+}

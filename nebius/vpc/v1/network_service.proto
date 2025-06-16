@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.vpc.v1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
 import "nebius/vpc/v1/network.proto";
@@ -13,6 +14,8 @@ option java_outer_classname = "NetworkServiceProto";
 option java_package = "ai.nebius.pub.vpc.v1";
 
 service NetworkService {
+  option (api_service_name) = "vpc";
+
   rpc Get(GetNetworkRequest) returns (Network);
 
   rpc GetByName(GetNetworkByNameRequest) returns (Network);

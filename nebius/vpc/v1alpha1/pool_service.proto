@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.vpc.v1alpha1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/vpc/v1alpha1/pool.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1alpha1";
@@ -11,6 +12,8 @@ option java_outer_classname = "PoolServiceProto";
 option java_package = "ai.nebius.pub.vpc.v1alpha1";
 
 service PoolService {
+  option (api_service_name) = "vpc";
+
   rpc Get(GetPoolRequest) returns (Pool);
 
   rpc GetByName(GetPoolByNameRequest) returns (Pool);
