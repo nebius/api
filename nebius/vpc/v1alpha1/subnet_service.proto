@@ -12,6 +12,8 @@ option java_outer_classname = "SubnetServiceProto";
 option java_package = "ai.nebius.pub.vpc.v1alpha1";
 
 service SubnetService {
+  option (api_service_name) = "vpc";
+
   rpc Get(GetSubnetRequest) returns (Subnet);
 
   rpc GetByName(GetSubnetByNameRequest) returns (Subnet);

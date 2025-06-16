@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.vpc.v1alpha1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1alpha1/operation.proto";
 import "nebius/vpc/v1alpha1/allocation.proto";
@@ -13,6 +14,8 @@ option java_outer_classname = "AllocationServiceProto";
 option java_package = "ai.nebius.pub.vpc.v1alpha1";
 
 service AllocationService {
+  option (api_service_name) = "vpc";
+
   rpc Get(GetAllocationRequest) returns (Allocation);
 
   rpc GetByName(GetAllocationByNameRequest) returns (Allocation);

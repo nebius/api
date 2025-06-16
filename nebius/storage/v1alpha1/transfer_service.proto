@@ -62,7 +62,7 @@ message ListTransfersRequest {
   // Represents the container ID.
   string parent_id = 1 [(buf.validate.field).required = true];
 
-  // Specifies the maximum number of items to return in the response.
+  // Specifies the maximum number of items to return in the response. Default: 10.
   int64 page_size = 2;
 
   // Token for pagination, allowing the retrieval of the next set of results.
