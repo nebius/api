@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package nebius.audit.v1.common;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v1/common";
+option java_multiple_files = true;
+option java_outer_classname = "ActionTypeProto";
+option java_package = "ai.nebius.pub.audit.v1.common";
+
+extend google.protobuf.EnumValueOptions {
+  ActionType action_type = 2078;
+}
+
+enum ActionType {
+  ACTION_TYPE_UNSPECIFIED = 0;
+
+  ACTION_TYPE_READ = 1;
+
+  ACTION_TYPE_MODIFY = 2;
+}

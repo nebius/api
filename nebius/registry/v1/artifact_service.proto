@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.registry.v1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/operation.proto";
 import "nebius/registry/v1/artifact.proto";
 
@@ -12,6 +13,8 @@ option java_outer_classname = "ArtifactServiceProto";
 option java_package = "ai.nebius.pub.registry.v1";
 
 service ArtifactService {
+  option (api_service_name) = "registry";
+
   rpc Get(GetArtifactRequest) returns (Artifact);
 
   rpc List(ListArtifactsRequest) returns (ListArtifactsResponse);

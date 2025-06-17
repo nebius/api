@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.registry.v1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
 import "nebius/registry/v1/registry.proto";
@@ -13,6 +14,8 @@ option java_outer_classname = "RegistryServiceProto";
 option java_package = "ai.nebius.pub.registry.v1";
 
 service RegistryService {
+  option (api_service_name) = "registry";
+
   rpc Get(GetRegistryRequest) returns (Registry);
 
   rpc List(ListRegistriesRequest) returns (ListRegistriesResponse);

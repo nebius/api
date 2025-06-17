@@ -15,6 +15,8 @@ option java_outer_classname = "GpuClusterServiceProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 service GpuClusterService {
+  option (api_service_name) = "compute";
+
   // Retrieves the specified GPU Cluster by its ID.
   rpc Get(GetGpuClusterRequest) returns (GpuCluster);
 

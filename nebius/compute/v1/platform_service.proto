@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.compute.v1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/compute/v1/platform.proto";
 
@@ -12,6 +13,8 @@ option java_outer_classname = "PlatformServiceProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 service PlatformService {
+  option (api_service_name) = "compute";
+
   // Retrieves detailed information about a specific compute platform by its parent and name.
   rpc GetByName(common.v1.GetByNameRequest) returns (Platform);
 

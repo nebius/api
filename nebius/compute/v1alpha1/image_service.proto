@@ -18,6 +18,7 @@ option java_package = "ai.nebius.pub.compute.v1alpha1";
 service ImageService {
   // Migrate to compute/v1.
   option deprecated = true;
+  option (api_service_name) = "compute";
 
   rpc Get(GetImageRequest) returns (Image);
 

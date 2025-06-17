@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.msp.v1alpha1.resource;
 
 import "nebius/msp/v1alpha1/resource/preset.proto";
+import "nebius/annotations.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/msp/v1alpha1/resource";
 option java_multiple_files = true;
@@ -10,6 +11,8 @@ option java_outer_classname = "PresetServiceProto";
 option java_package = "ai.nebius.pub.msp.v1alpha1.resource";
 
 service PresetService {
+  option (api_service_name) = "msp-common"; // fake domain prefix with a special logic
+
   rpc List(ListPresetsRequest) returns (ListPresetsResponse);
 }
 

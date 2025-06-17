@@ -4,6 +4,7 @@ package nebius.compute.v1;
 
 import "google/protobuf/timestamp.proto";
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
 option java_multiple_files = true;
@@ -11,6 +12,8 @@ option java_outer_classname = "NodeServiceProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 service NodeService {
+  option (api_service_name) = "compute";
+
   // SetUnhealthy marks the node underlying the Compute VM as unhealthy,
   // which has the following effect:
   // 1. Scheduler makes its best effort not to assign new VMs to the unhealthy node,

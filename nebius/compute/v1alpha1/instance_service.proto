@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package nebius.compute.v1alpha1;
 
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1alpha1/operation.proto";
 import "nebius/common/v1alpha1/operation_service.proto";
@@ -18,6 +19,7 @@ option java_package = "ai.nebius.pub.compute.v1alpha1";
 service InstanceService {
   // Migrate to compute/v1.
   option deprecated = true;
+  option (api_service_name) = "compute";
 
   rpc Get(GetInstanceRequest) returns (Instance);
 
