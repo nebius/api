@@ -19,6 +19,7 @@ option java_package = "ai.nebius.pub.compute.v1alpha1";
 service DiskService {
   // Migrate to compute/v1.
   option deprecated = true;
+  option (api_service_name) = "compute";
 
   rpc Get(GetDiskRequest) returns (Disk);
 

@@ -15,6 +15,8 @@ option java_outer_classname = "DiskServiceProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 service DiskService {
+  option (api_service_name) = "compute";
+
   // Retrieves information about a disk by its ID.
   rpc Get(GetDiskRequest) returns (Disk);
 

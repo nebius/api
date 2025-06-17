@@ -6,6 +6,7 @@ import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
 import "nebius/audit/v2/authentication.proto";
 import "nebius/audit/v2/authorization.proto";
+import "nebius/audit/v2/region.proto";
 import "nebius/audit/v2/request.proto";
 import "nebius/audit/v2/resource.proto";
 import "nebius/audit/v2/response.proto";
@@ -59,4 +60,7 @@ message AuditEvent {
 
   // The async operation status
   Status status = 16 [(buf.validate.field).required = true];
+
+  // Region of an application
+  Region project_region = 17;
 }

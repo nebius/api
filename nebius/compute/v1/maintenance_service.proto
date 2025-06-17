@@ -11,6 +11,8 @@ option java_outer_classname = "MaintenanceServiceProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 service MaintenanceService {
+  option (api_service_name) = "compute";
+
   // Returns only active maintenance event for the instance
   rpc GetByInstance(GetMaintenanceEventByInstanceRequest) returns (MaintenanceEvent) {
     option (region_routing) = { nid: [ "instance_id" ] };

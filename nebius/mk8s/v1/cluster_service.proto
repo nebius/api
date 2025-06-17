@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.mk8s.v1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
 import "nebius/mk8s/v1/cluster.proto";
@@ -13,6 +14,8 @@ option java_outer_classname = "ClusterServiceProto";
 option java_package = "ai.nebius.pub.mk8s.v1";
 
 service ClusterService {
+  option (api_service_name) = "mk8s";
+
   // Returns a specific mk8s cluster by its unique identifier.
   rpc Get(GetClusterRequest) returns (Cluster);
 
