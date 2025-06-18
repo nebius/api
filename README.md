@@ -16,22 +16,15 @@ Using these tools can save time and reduce the complexity of managing authentica
 
 ## API Endpoints
 
-Nebius AI Cloud gRPC services are accessed via endpoints formatted as `{service-name}.{base-address}`.
-You can find a list of endpoints and services [here](endpoints.md). Below is an explanation of how these addresses are constructed:
+Nebius AI Cloud gRPC services are available at endpoints formatted as `{service-name}.api.nebius.cloud:443`.
+A complete list of available services and their endpoints can be found [here](endpoints.md).
 
-1. **Base Address**:
-   - The current base address is `api.nebius.cloud:443`, though additional base addresses will be introduced soon.
-1. **Service Name Derivation**:
-   - Services with `option (api_service_name)`:
-     - Some services explicitly define their name using this annotation (e.g., `option (api_service_name) = "foo.bar"`), this value becomes the `{service-name}` used in the address.
-     - For example, requests to `TokenExchangeService` ([iam](nebius/iam/v1/token_exchange_service.proto)) would be sent to: `tokens.iam.api.nebius.cloud:443`.
-   - Services without `option (api_service_name)`:
-     - For services lacking this annotation, the `{service-name}` is derived from the first level directory within the `.proto` file path.
-     - For instance, requests to `DiskService` (declared in [nebius/**compute**/v1/disk_service.proto](nebius/compute/v1/disk_service.proto)) would be directed to `compute.api.nebius.cloud:443`
-1. **Special Case**: `OperationService`
-   - `nebius.common.v1.OperationService` ([common](nebius/common/v1/operation_service.proto)) is an exception to the naming convention.
-   - When fetching the status of an operation returned by another service, use the original service's address.
-   - As an example, to fetch the status of an operation created by `DiskService` ([compute](nebius/compute/v1/disk_service.proto)), you would use: `compute.api.nebius.cloud:443`.
+The `{service-name}` corresponds to the `option (api_service_name)` value defined in the respective `.proto` file.
+For example, requests to `TokenExchangeService` ([iam](nebius/iam/v1/token_exchange_service.proto)) should be sent to `tokens.iam.api.nebius.cloud:443`.
+
+**Special Case**: the `OperationService` ([common](nebius/common/v1/operation_service.proto)) does not have a standalone endpoint.
+Instead, use the same endpoint as the service that initiated the operation.
+For instance, to check the status of an operation created by `DiskService` ([compute](nebius/compute/v1/disk_service.proto)), use `compute.api.nebius.cloud:443`.
 
 ## Authentication
 
