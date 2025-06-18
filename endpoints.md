@@ -42,6 +42,7 @@
   * [nebius.iam.v1.TenantUserAccountService](nebius/iam/v1/tenant_user_account_service.proto)
   * [nebius.iam.v1.TenantUserAccountWithAttributesService](nebius/iam/v1/tenant_user_account_with_attributes_service.proto)
   * [nebius.iam.v2.AccessKeyService](nebius/iam/v2/access_key_service.proto)
+  * [nebius.iam.v2.TenantService](nebius/iam/v2/tenant_service.proto)
 * cpl.storage.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.storage.v1.BucketService](nebius/storage/v1/bucket_service.proto)

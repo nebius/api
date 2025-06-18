@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package nebius.iam.v2;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/iam/v2/tenant.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v2";
+option java_multiple_files = true;
+option java_outer_classname = "TenantServiceProto";
+option java_package = "ai.nebius.pub.iam.v2";
+
+service TenantService {
+  option (api_service_name) = "cpl.iam";
+
+  rpc Get(GetTenantRequest) returns (Tenant);
+
+  rpc GetByName(GetTenantByNameRequest) returns (Tenant);
+
+  rpc List(ListTenantsRequest) returns (ListTenantsResponse);
+
+  rpc Update(UpdateTenantRequest) returns (common.v1.Operation);
+}
+
+message GetTenantRequest {
+  string id = 1;
+}
+
+message GetTenantByNameRequest {
+  // Only empty value is allowed. Field is needed for compatibility.
+  // parent_id parameter for tenants doesn't make real sense, because tenants are top-level objects.
+  string parent_id = 1;
+
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message UpdateTenantRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  TenantSpec spec = 2;
+
+  // Tenant name prefix. A few random characters will be added to this prefix.
+  string name_prefix = 3;
+}
+
+message ListTenantsRequest {
+  // Specifies the maximum number of items to return in the response.
+  // Default value: 10
+  optional int64 page_size = 1;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 2;
+
+  // A filter to narrow down the results based on specific criteria.
+  string filter = 3;
+}
+
+message ListTenantsResponse {
+  repeated Tenant items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}
