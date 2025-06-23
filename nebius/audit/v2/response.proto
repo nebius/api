@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package nebius.audit.v2;
 
+import "google/protobuf/struct.proto";
 import "google/rpc/code.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
@@ -15,4 +16,7 @@ message Response {
 
   // Error message if the call was not successful.
   string error_message = 2;
+
+  // The payload of the response.
+  google.protobuf.Struct payload = 3;
 }

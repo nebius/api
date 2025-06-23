@@ -59,9 +59,6 @@
 * mlflow.msp.api.nebius.cloud:443
   * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)
   * [nebius.msp.mlflow.v1alpha1.ClusterService](nebius/msp/mlflow/v1alpha1/cluster_service.proto)
-* msp-common.api.nebius.cloud:443
-  * [nebius.msp.v1alpha1.resource.PresetService](nebius/msp/v1alpha1/resource/preset_service.proto)
-  * [nebius.msp.v1alpha1.resource.TemplateService](nebius/msp/v1alpha1/resource/template_service.proto)
 * observability-agent-manager.api.nebius.cloud:443
   * [nebius.logging.agentmanager.v1.VersionService](nebius/logging/v1/agentmanager/version_service.proto)
 * postgresql.msp.api.nebius.cloud:443
