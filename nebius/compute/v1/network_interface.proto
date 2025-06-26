@@ -78,6 +78,9 @@ message NetworkInterfaceStatus {
 
   // MAC address
   string mac_address = 7;
+
+  // FQDN of the interface
+  string fqdn = 9;
 }
 
 message IPAddressStatus {
