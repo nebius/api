@@ -19,6 +19,7 @@ message MaintenanceEvent {
 }
 
 message MaintenanceEventSpec {
+  bool is_planned = 5 [(field_behavior) = IMMUTABLE]; // If the maintenance event is planned or not
 }
 
 message MaintenanceEventStatus {
