@@ -7,13 +7,32 @@ on:
 
 
 jobs:
-  build_and_push:
+  dispatch:
+    name: Dispatch event to PySDK
     runs-on: ubuntu-latest
     steps:
-      - name: Dispatch event to server
+      - name: Dispatch event to PySDK
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.TRIGGER_PYSDK_WORKFLOW_PAT }}
           repository: nebius/pysdk
           event-type: updated-${{ github.event.repository.name }}
+  
+  notify-slack-on-failure:
+    name: Notify Slack on failure
+    if: failure()
+    needs: [dispatch]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post text to a Slack channel
+        uses: slackapi/slack-github-action@v2.1.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_OAUTH_TOKEN }}
+          payload: |
+            channel: ${{ secrets.SLACK_CHANNEL }}
+            text: |
+              🚨 Workflow *${{ github.workflow }}* failed on <${{ github.server_url }}/${{ github.repository }}|${{ github.repository }}>
+              <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run>
+
         
