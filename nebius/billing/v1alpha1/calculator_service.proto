@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package nebius.billing.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/billing/v1alpha1/calculator.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/billing/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "CalculatorServiceProto";
+option java_package = "ai.nebius.pub.billing.v1alpha1";
+
+// Calculator service for estimating resource costs.
+service CalculatorService {
+  option (api_service_name) = "api.calculator.billing-data-plane";
+
+  // Estimates prices for a single resource.
+  // Returns both hourly and monthly cost estimates for the specified resource configuration.
+  rpc Estimate(EstimateRequest) returns (EstimateResponse);
+
+  // Estimates prices for multiple resources.
+  // Returns aggregated hourly and monthly cost estimates for all specified resources.
+  rpc EstimateBatch(EstimateBatchRequest) returns (EstimateBatchResponse);
+}
+
+message EstimateRequest {
+  // Resource specification for cost estimation.
+  // Must contain exactly one resource type.
+  ResourceSpec resource_spec = 1 [(buf.validate.field).required = true];
+}
+
+message EstimateResponse {
+  // Estimated hourly cost for the resource.
+  ResourceGroupCost hourly_cost = 10;
+
+  // Estimated monthly cost for the resource.
+  // Calculated as hourly_cost * 24 * 30 (720 hours) for resources running continuously.
+  ResourceGroupCost monthly_cost = 20;
+}
+
+message EstimateBatchRequest {
+  // List of resource specifications for cost estimation.
+  // Each resource will be priced individually and then aggregated into total costs.
+  repeated ResourceSpec resource_specs = 1 [(buf.validate.field).required = true];
+}
+
+message EstimateBatchResponse {
+  // Estimated hourly cost for all resources in the batch.
+  ResourceGroupCost hourly_cost = 10;
+
+  // Estimated monthly cost for all resources in the batch.
+  // Calculated as hourly_cost * 24 * 30 (720 hours) for resources running continuously.
+  ResourceGroupCost monthly_cost = 20;
+}

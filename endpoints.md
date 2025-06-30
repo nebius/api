@@ -1,5 +1,7 @@
 ## Services and their endpoints
 
+* api.calculator.billing-data-plane.api.nebius.cloud:443
+  * [nebius.billing.v1alpha1.CalculatorService](nebius/billing/v1alpha1/calculator_service.proto)
 * apps.msp.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.msp.serverless.v1alpha1.EndpointService](nebius/msp/serverless/v1alpha1/endpoint_service.proto)

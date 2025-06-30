@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package nebius.billing.v1alpha1;
+
+import "nebius/compute/v1/disk_service.proto";
+import "nebius/compute/v1/filesystem_service.proto";
+import "nebius/compute/v1/instance_service.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/billing/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "CalculatorProto";
+option java_package = "ai.nebius.pub.billing.v1alpha1";
+
+// Resource specification for cost estimation.
+// Contains the specifications for creating and updating different types of resources.
+message ResourceSpec {
+  oneof resource_spec {
+    nebius.compute.v1.CreateInstanceRequest compute_instance_spec = 100;
+
+    nebius.compute.v1.UpdateInstanceRequest compute_instance_update_spec = 101;
+
+    nebius.compute.v1.CreateDiskRequest compute_disk_spec = 102;
+
+    nebius.compute.v1.UpdateDiskRequest compute_disk_update_spec = 103;
+
+    nebius.compute.v1.CreateFilesystemRequest compute_filesystem_spec = 104;
+
+    nebius.compute.v1.UpdateFilesystemRequest compute_filesystem_update_spec = 105;
+  }
+}
+
+// Cost information for a group of resources.
+message ResourceGroupCost {
+  oneof cost_type {
+    // Fixed total cost calculation.
+    // Used when the total cost is deterministic and doesn't vary.
+    GeneralTotalCost general = 10;
+  }
+}
+
+// General total cost with a single fixed amount.
+// Used for resources with predictable, non-variable pricing.
+message GeneralTotalCost {
+  // Cost breakdown including all SKUs and their individual costs.
+  CostBreakdown total = 1;
+}
+
+// General resource cost for single-unit resources.
+// Used for resources like compute instances or disks where the unit count is not variable.
+message GeneralResourceCost {
+  // Cost breakdown for the resource including all SKU costs and total cost.
+  CostBreakdown total = 1;
+}
+
+// Detailed cost breakdown showing individual SKU costs and totals.
+message CostBreakdown {
+  // Total cost as a decimal string.
+  // Represents the sum of all SKU costs with full precision.
+  // Example: "42.123456789" for precise billing calculations.
+  string cost = 2;
+
+  // Total cost rounded up to 2 decimal places.
+  // Example: "42.13"
+  string cost_rounded = 3;
+}
