@@ -28,7 +28,7 @@ message ClusterSpec {
 
 message ControlPlaneSpec {
   // Desired Kubernetes version of the cluster. For now only acceptable format is
-  // `<major>.<minor>` like "1.30". Option for patch version update will be added later.
+  // `<major>.<minor>` like "1.31". Option for patch version update will be added later.
   string version = 1 [(buf.validate.field) = { string: { pattern: "|^\\d\\.\\d\\d$" } }];
 
   // Nebius VPC Subnet ID where control plane instances will be located.

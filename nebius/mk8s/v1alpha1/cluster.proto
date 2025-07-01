@@ -28,7 +28,7 @@ message ClusterSpec {
 
 message ControlPlaneSpec {
   // Version is desired Kubernetes version of the cluster. For now only acceptable format is
-  // `MAJOR.MINOR` like "1.30". Option for patch version update will be added later.
+  // `MAJOR.MINOR` like "1.31". Option for patch version update will be added later.
   string version = 1;
 
   // Subnet ID where control plane instances will be located.

@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package nebius.maintenance.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/maintenance/v1alpha1/maintenance.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/maintenance/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "MaintenanceServiceProto";
+option java_package = "ai.nebius.pub.maintenance.v1alpha1";
+
+// A set of methods for managing maintenance operations.
+service MaintenanceService {
+  option (api_service_name) = "maintenance.msp";
+
+  // Returns the specified maintenance operation.
+  // To get the list of upcoming and past maintenance operations, make a [List] request.
+  rpc Get(GetMaintenanceRequest) returns (Maintenance);
+
+  // Retrieves the list of maintenance operations that belong
+  // to the specified container.
+  rpc List(ListMaintenancesRequest) returns (ListMaintenancesResponse);
+}
+
+message ListMaintenancesRequest {
+  // Identifier of IAM container to list maintenance operations from.
+  string parent_id = 1 [(buf.validate.field).required = true];
+}
+
+message ListMaintenancesResponse {
+  // List of maintenance operations.
+  repeated Maintenance items = 1;
+}
+
+message GetMaintenanceRequest {
+  // ID of the maintenance operation to return.
+  // To get the maintenance ID use a [MaintenanceService.List] request.
+  string id = 1 [(buf.validate.field).required = true];
+}

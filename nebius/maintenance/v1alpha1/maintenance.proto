@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package nebius.maintenance.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/maintenance/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "MaintenanceProto";
+option java_package = "ai.nebius.pub.maintenance.v1alpha1";
+
+enum State {
+  STATE_UNSPECIFIED = 0;
+
+  // Maintenance operation is scheduled to be run in the future.
+  STATE_SCHEDULED = 1;
+
+  // Maintenance operation is currently in progress.
+  STATE_IN_PROGRESS = 2;
+
+  // Maintenance operation has been successfully completed.
+  STATE_FINISHED = 3;
+
+  // Maintenance operation has encountered an error and could not be completed.
+  STATE_ERROR = 4;
+
+  // Maintenance operation has been cancelled by the system.
+  STATE_CANCELLED = 5;
+}
+
+// Maintenance operations are initiated by Nebius Cloud infrastructure.
+// They are used to perform scheduled or urgent operations on Nebius Cloud resources,
+// such as Managed Services or Standalone Applications, that are necessary for
+// maintaining the service in an operable state. These operations run automatically,
+// without user intervention.
+message Maintenance {
+  // The metadata for the maintenance operation resource.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // Specifications for the maintenance operation.
+  MaintenanceSpec spec = 2 [(buf.validate.field).required = true];
+
+  // Current status of the maintenance operation.
+  MaintenanceStatus status = 3;
+}
+
+message MaintenanceSpec {
+  // Timestamp indicating when the maintenance operation is scheduled to run.
+  google.protobuf.Timestamp scheduled_at = 1 [(buf.validate.field).required = true];
+}
+
+message MaintenanceStatus {
+  // List of resources that are affected by this maintenance operation.
+  repeated Resource affected_resources = 1;
+
+  // Timestamp indicating when the maintenance operation started.
+  google.protobuf.Timestamp started_at = 2;
+
+  // Timestamp indicating when the maintenance operation finished.
+  google.protobuf.Timestamp finished_at = 3;
+
+  // Current state of the maintenance operation.
+  State state = 4 [(buf.validate.field).required = true];
+}
+
+message Resource {
+  // Unique identifier for the resource.
+  string id = 1 [(buf.validate.field).required = true];
+
+  // IAM container of the resource.
+  string parent_id = 2 [(buf.validate.field).required = true];
+}

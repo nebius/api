@@ -39,6 +39,15 @@ message BucketSpec {
   int64 max_size_bytes = 4;
 
   LifecycleConfiguration lifecycle_configuration = 5;
+
+  // Storage class to use by default for uploads to the bucket. It may be overridden by `x-amz-storage-class` header.
+  // If not set - STANDARD is used as a default storage class.
+  StorageClass default_storage_class = 9;
+
+  // Storage class to override any other storage class of uploading objects. It overrides the storage class regardless
+  // of how the original storage class was specified - either the default storage class
+  // or the one provided via the `x-amz-storage-class` header.
+  StorageClass override_storage_class = 10;
 }
 
 message BucketStatus {
