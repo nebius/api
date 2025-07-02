@@ -54,6 +54,7 @@ message ListAuditEventRequest {
   // resource.metadata.type
   // service.name
   // type
+  // status
   string filter = 6 [(sensitive) = true];
 }
 
