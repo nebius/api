@@ -52,7 +52,7 @@ message PublicIPAddress {
   // Describes different methods of public IP address allocation.
   oneof allocation {
     // Allocation identifier if it was created before.
-    string allocation_id = 1 [(field_behavior) = IMMUTABLE];
+    string allocation_id = 1;
   }
 
   // If false - Allocation will be created/deleted during NetworkInterface.Allocate/NetworkInterface.Deallocate

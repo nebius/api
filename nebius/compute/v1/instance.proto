@@ -59,6 +59,20 @@ message InstanceSpec {
   // If set to RECOVER, instance will be restarted, if possible. It could be restarted on the same host or on another host.
   // If set to FAIL, instance will be stopped and not restarted.
   InstanceRecoveryPolicy recovery_policy = 15 [(field_behavior) = IMMUTABLE];
+
+  PreemptibleSpec preemptible = 19 [(field_behavior) = IMMUTABLE];
+}
+
+message PreemptibleSpec {
+  enum PreemptionPolicy {
+    UNSPECIFIED = 0;
+
+    STOP = 1;
+  }
+
+  PreemptionPolicy on_preemption = 1 [(field_behavior) = IMMUTABLE];
+
+  int32 priority = 2 [(field_behavior) = IMMUTABLE];
 }
 
 message ResourcesSpec {
