@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package nebius.vpc.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/vpc/v1/target_group.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
+option java_multiple_files = true;
+option java_outer_classname = "TargetGroupServiceProto";
+option java_package = "ai.nebius.pub.vpc.v1";
+
+service TargetGroupService {
+  option (api_service_name) = "vpc";
+
+  rpc Get(GetTargetGroupRequest) returns (TargetGroup);
+
+  rpc Update(UpdateTargetGroupRequest) returns (common.v1.Operation);
+}
+
+message GetTargetGroupRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message UpdateTargetGroupRequest {
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name",
+          message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters.",
+          expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+        }
+      ]
+    }
+  ];
+
+  TargetGroupSpec spec = 2;
+}

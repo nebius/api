@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package nebius.vpc.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
+option java_multiple_files = true;
+option java_outer_classname = "TargetGroupProto";
+option java_package = "ai.nebius.pub.vpc.v1";
+
+// Target group represents the set of resources that receive traffic from a load balancer listener
+message TargetGroup {
+  // Metadata for the TargetGroup resource.
+  // `metadata.parent_id` represents IAM container
+  common.v1.ResourceMetadata metadata = 1;
+
+  // Specification of the TargetGroup.
+  TargetGroupSpec spec = 2;
+
+  // Status of the TargetGroup.
+  TargetGroupStatus status = 3;
+}
+
+message TargetGroupSpec {
+  // Targets of the TargetGroup
+  repeated Target targets = 1;
+}
+
+// Represents the target which can receive traffic from a load balancer listener
+message Target {
+  oneof target {
+    option (buf.validate.oneof).required = true;
+
+    // Compute instance used as a target
+    ComputeInstance compute_instance = 1;
+  }
+}
+
+// Target representing compute instance
+message ComputeInstance {
+  // Compute instance id to send traffic to
+  string id = 1 [(buf.validate.field).required = true];
+
+  // Name of the compute instance's NetworkInterface to send traffic to. If not specified the first one will be used.
+  string network_interface_name = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
+}
+
+message TargetGroupStatus {
+  // LoadBalancer ids target group is attached to
+  repeated string load_balancer_ids = 1;
+
+  // Statuses of specified targets
+  repeated TargetStatus target_statuses = 2;
+}
+
+message TargetStatus {
+  string compute_instance_id = 1;
+
+  TargetState target_state = 2;
+
+  enum TargetState {
+    TARGET_STATE_UNSPECIFIED = 0;
+
+    // The target exists and ready to receive traffic
+    READY = 1;
+
+    // The target exists, but not ready to receive traffic (i.e. network interface is not allocated)
+    DISABLED = 2;
+
+    // The target does not exist anymore (i.e. network interface was deleted)
+    DELETED = 3;
+  }
+}
