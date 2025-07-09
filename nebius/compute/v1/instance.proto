@@ -61,6 +61,20 @@ message InstanceSpec {
   InstanceRecoveryPolicy recovery_policy = 15 [(field_behavior) = IMMUTABLE];
 
   PreemptibleSpec preemptible = 19 [(field_behavior) = IMMUTABLE];
+
+  // Instance's hostname. Used to generate default DNS record in format `<hostname>.<network_id>.compute.internal.`
+  // or `<instance_id>.<network_id>.compute.internal.` if hostname is not specified.
+  string hostname = 20 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "hostname.valid",
+          message: "value must be a valid hostname",
+          expression: "this == '' || this.matches('^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$')"
+        }
+      ]
+    }
+  ];
 }
 
 message PreemptibleSpec {

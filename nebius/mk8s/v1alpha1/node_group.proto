@@ -69,6 +69,8 @@ message NodeTemplate {
   //
   // `resource.serviceaccount.issueAccessToken` permission is required to use this field.
   string service_account_id = 10;
+
+  PreemptibleSpec preemptible = 15 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
 }
 
 message NodeMetadataTemplate {
@@ -141,6 +143,9 @@ message NodeGroupAutoscalingSpec {
       }
     ]
   };
+}
+
+message PreemptibleSpec {
 }
 
 // See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
