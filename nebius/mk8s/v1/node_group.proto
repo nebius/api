@@ -89,6 +89,8 @@ message NodeTemplate {
   //
   // `resource.serviceaccount.issueAccessToken` permission is required to use this field.
   string service_account_id = 10;
+
+  PreemptibleSpec preemptible = 15 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
 }
 
 message NodeMetadataTemplate {
@@ -228,6 +230,9 @@ message PercentOrCount {
 
     int64 count = 2 [(buf.validate.field) = { int64: { gte: 0 } }];
   }
+}
+
+message PreemptibleSpec {
 }
 
 message NodeGroupStatus {
