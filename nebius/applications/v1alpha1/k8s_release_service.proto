@@ -22,6 +22,8 @@ service K8sReleaseService {
 
   rpc Create(CreateK8sReleaseRequest) returns (common.v1.Operation);
 
+  rpc Update(UpdateK8sReleaseRequest) returns (common.v1.Operation);
+
   rpc Delete(DeleteK8sReleaseRequest) returns (common.v1.Operation);
 }
 
@@ -42,6 +44,12 @@ message ListK8sReleasesRequest {
 }
 
 message CreateK8sReleaseRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  K8sReleaseSpec spec = 2;
+}
+
+message UpdateK8sReleaseRequest {
   common.v1.ResourceMetadata metadata = 1;
 
   K8sReleaseSpec spec = 2;
