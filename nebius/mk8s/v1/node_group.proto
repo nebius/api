@@ -90,6 +90,8 @@ message NodeTemplate {
   // `resource.serviceaccount.issueAccessToken` permission is required to use this field.
   string service_account_id = 10;
 
+  // Configures whether the nodes in the group are preemptible.
+  // Set to empty value to enable preemptible nodes.
   PreemptibleSpec preemptible = 15 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
 }
 
