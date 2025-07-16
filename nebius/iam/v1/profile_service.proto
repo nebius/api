@@ -15,6 +15,7 @@ option java_package = "ai.nebius.pub.iam.v1";
 service ProfileService {
   option (api_service_name) = "cpl.iam";
 
+  // Returns the current user's profile.
   rpc Get(GetProfileRequest) returns (GetProfileResponse);
 }
 
