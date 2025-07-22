@@ -75,6 +75,9 @@ message InstanceSpec {
       ]
     }
   ];
+
+  // NVLink partition ID associated with the VM
+  string nvl_partition_id = 21;
 }
 
 message PreemptibleSpec {
@@ -84,9 +87,9 @@ message PreemptibleSpec {
     STOP = 1;
   }
 
-  PreemptionPolicy on_preemption = 1 [(field_behavior) = IMMUTABLE];
+  PreemptionPolicy on_preemption = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 
-  int32 priority = 2 [(field_behavior) = IMMUTABLE];
+  int32 priority = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 }
 
 message ResourcesSpec {

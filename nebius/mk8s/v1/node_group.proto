@@ -272,7 +272,13 @@ message NodeGroupStatus {
   // Both outdated and up-to-date nodes are counted.
   int64 ready_node_count = 6;
 
-  repeated Condition conditions = 50;
+  repeated Condition conditions = 50 [
+    deprecated = true,
+    (field_deprecation_details) = {
+      effective_at: "2025-08-01",
+      description: "it is not implemented well, messages should be used instead"
+    }
+  ];
 
   // Show that there are changes are in flight.
   bool reconciling = 100;
