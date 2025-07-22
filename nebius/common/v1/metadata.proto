@@ -26,7 +26,6 @@ message ResourceMetadata {
   // Positive and monotonically increases on each resource spec change (but *not* on each change of the
   // resource's container(s) or status).
   // Service allows zero value or current.
-  //
   int64 resource_version = 4 [(buf.validate.field) = { int64: { gte: 0 } }];
 
   // Timestamp indicating when the resource was created.
@@ -36,7 +35,6 @@ message ResourceMetadata {
   google.protobuf.Timestamp updated_at = 6 [(field_behavior) = OUTPUT_ONLY];
 
   // Labels associated with the resource.
-  //
   map<string, string> labels = 7;
 }
 

@@ -27,7 +27,7 @@ message Registry {
 message RegistrySpec {
   string description = 1;
 
-  int32 images_count = 2 [(field_behavior) = OUTPUT_ONLY]; //  Registry.Type type = 2;
+  int32 images_count = 2 [(field_behavior) = OUTPUT_ONLY]; // Registry.Type type = 2;
 }
 
 message RegistryStatus {

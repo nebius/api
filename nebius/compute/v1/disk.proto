@@ -66,6 +66,10 @@ message DiskSpec {
 
     SourceImageFamily source_image_family = 10 [(field_behavior) = IMMUTABLE];
   }
+
+  // Defines how data on the disk is encrypted. By default, no encryption is applied.
+  // This field applies for disks with NETWORK_SSD_NON_REPLICATED and NETWORK_SSD_IO_M3 types only.
+  DiskEncryption disk_encryption = 11 [(field_behavior) = IMMUTABLE];
 }
 
 message SourceImageFamily {
@@ -115,4 +119,16 @@ message DiskStatus {
   int64 block_size_bytes = 8;
 
   SourceImageCPUArchitecture source_image_cpu_architecture = 9;
+}
+
+message DiskEncryption {
+  enum DiskEncryptionType {
+    // No encryption is applied unless explicitly specified.
+    DISK_ENCRYPTION_UNSPECIFIED = 0;
+
+    // Enables encryption using the platform's default root key from KMS.
+    DISK_ENCRYPTION_MANAGED = 1;
+  }
+
+  DiskEncryptionType type = 1;
 }
