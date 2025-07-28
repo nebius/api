@@ -60,6 +60,8 @@ message InstanceSpec {
   // If set to FAIL, instance will be stopped and not restarted.
   InstanceRecoveryPolicy recovery_policy = 15 [(field_behavior) = IMMUTABLE];
 
+  // Include these parameters to create a Preemptible VM and omit them to create a Regular VM
+  // For details, see https://docs.nebius.com/compute/virtual-machines/preemptible
   PreemptibleSpec preemptible = 19 [(field_behavior) = IMMUTABLE];
 
   // Instance's hostname. Used to generate default DNS record in format `<hostname>.<network_id>.compute.internal.`
@@ -87,8 +89,12 @@ message PreemptibleSpec {
     STOP = 1;
   }
 
+  // Specifies what happens when the VM is preempted. The only supported value is STOP:
+  // Compute stops the VM without deleting or restarting it.
   PreemptionPolicy on_preemption = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 
+  // The value can range from 1 to 5, where 5 indicates the highest priority.
+  // Affects the order in which Compute tries to preempt VMs, but does not guarantee the exact order.
   int32 priority = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 }
 
@@ -103,6 +109,10 @@ message ResourcesSpec {
 }
 
 message InstanceGpuClusterSpec {
+  // If you want to interconnect several instances in a GPU cluster via NVIDIA InfiniBand,
+  // set the ID of an existing GPU cluster.
+  // You can only add the VM to the cluster when creating the VM.
+  // For details, see https://docs.nebius.com/compute/clusters/gpu
   string id = 1;
 }
 
