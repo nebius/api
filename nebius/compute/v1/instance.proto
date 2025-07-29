@@ -77,9 +77,6 @@ message InstanceSpec {
       ]
     }
   ];
-
-  // NVLink partition ID associated with the VM
-  string nvl_partition_id = 21;
 }
 
 message PreemptibleSpec {

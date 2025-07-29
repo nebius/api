@@ -18,12 +18,16 @@ extend google.protobuf.ServiceOptions {
   // Contains additional information about the planned deprecation of a service.
   // Used along with `option deprecated = true`.
   DeprecationDetails service_deprecation_details = 1194;
+
+  ServicePySDKSettings service_py_sdk = 1195;
 }
 
 extend google.protobuf.MethodOptions {
   // Contains additional information about the planned deprecation of a method.
   // Used along with `option deprecated = true`.
   DeprecationDetails method_deprecation_details = 1194;
+
+  MethodPySDKSettings method_py_sdk = 1195;
 
   // Defines custom region routing rules for a method.
   //
@@ -67,6 +71,8 @@ extend google.protobuf.MessageOptions {
   // Contains additional information about the planned deprecation of a message.
   // Used along with `option deprecated = true`.
   DeprecationDetails message_deprecation_details = 1194;
+
+  MessagePySDKSettings message_py_sdk = 1195;
 }
 
 extend google.protobuf.FieldOptions {
@@ -84,17 +90,55 @@ extend google.protobuf.FieldOptions {
   // Contains additional information about the planned deprecation of a field.
   // Used along with `[deprecated = true]`.
   DeprecationDetails field_deprecation_details = 1194;
+
+  FieldPySDKSettings field_py_sdk = 1195;
 }
 
 extend google.protobuf.OneofOptions {
   // Field behavior describes how oneof behaves on input or output.
   repeated FieldBehavior oneof_behavior = 1191;
+
+  OneofPySDKSettings oneof_py_sdk = 1192;
+}
+
+extend google.protobuf.EnumOptions {
+  EnumPySDKSettings enum_py_sdk = 1191;
 }
 
 extend google.protobuf.EnumValueOptions {
   // Contains additional information about the planned deprecation of enum value.
   // Used along with `[deprecated = true]`.
   DeprecationDetails enum_value_deprecation_details = 1194;
+
+  EnumValuePySDKSettings enum_value_py_sdk = 1195;
+}
+
+message ServicePySDKSettings {
+  string name = 3;
+}
+
+message MethodPySDKSettings {
+  string name = 3;
+}
+
+message FieldPySDKSettings {
+  string name = 1;
+}
+
+message MessagePySDKSettings {
+  string name = 1;
+}
+
+message OneofPySDKSettings {
+  string name = 1;
+}
+
+message EnumPySDKSettings {
+  string name = 1;
+}
+
+message EnumValuePySDKSettings {
+  string name = 1;
 }
 
 enum ResourceBehavior {
