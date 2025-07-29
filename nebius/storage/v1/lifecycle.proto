@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package nebius.storage.v1;
 
+import "nebius/storage/v1/base.proto";
 import "nebius/annotations.proto";
 import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
@@ -57,6 +58,14 @@ message LifecycleRule {
   // Specifies the days since the initiation of an incomplete multipart upload that
   // the system will wait before permanently removing all parts of the upload.
   LifecycleAbortIncompleteMultipartUpload abort_incomplete_multipart_upload = 6;
+
+  // Specifies the transition for the lifecycle of an object in the form of date or days and
+  // target storage class to transit object to.
+  LifecycleTransition transition = 7;
+
+  // Spicifies the transition for the lifecycle of a noncurrent object.
+  // It works only on a bucket that has versioning enabled (or suspended).
+  LifecycleNoncurrentVersionTransition noncurrent_version_transition = 8;
 }
 
 message LifecycleFilter {
@@ -100,4 +109,29 @@ message LifecycleAbortIncompleteMultipartUpload {
   // Specifies the days since the initiation of an incomplete multipart upload that
   // the system will wait before permanently removing all parts of the upload.
   int32 days_after_initiation = 1 [(buf.validate.field) = { int32: { lte: 18250, gte: 1 } }];
+}
+
+message LifecycleTransition {
+  oneof transited_with {
+    // Indicates at what date the object will be transited. The time is always midnight UTC.
+    google.protobuf.Timestamp date = 1;
+
+    // Amount of days since object was uploaded before it's transited to a new storage class.
+    // The value must be a non-zero positive integer.
+    int32 days = 2 [(buf.validate.field) = { int32: { lte: 18250, gte: 1 } }];
+  }
+
+  // Target storage class to transit to.
+  StorageClass storage_class = 3;
+}
+
+message LifecycleNoncurrentVersionTransition {
+  // Specifies how many noncurrent versions the system will retain without transition.
+  optional int32 newer_noncurrent_versions = 1;
+
+  // Specifies the number of days an object is noncurrent before the system will transit it.
+  int32 noncurrent_days = 2 [(buf.validate.field) = { int32: { lte: 18250, gte: 1 } }];
+
+  // Target storage class to transit to.
+  StorageClass storage_class = 3;
 }
