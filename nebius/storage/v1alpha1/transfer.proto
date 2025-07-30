@@ -37,6 +37,15 @@ message TransferSpec {
     // Credentials for accessing the source bucket. These credentials must have list and get permissions.
     // This parameter must be specified only during create operations.
     BucketCredentials credentials = 4 [(field_behavior) = INPUT_ONLY];
+
+    // Limiters applied to source bucket operations. These limits include all operations
+    // required for transfer (HeadObject, GetObject, ListObjects). For details about
+    // which operations are used, see public documentation: http://docs.nebius.com/object-storage/transfer/quickstart#background.
+    //
+    // Note: Since the service performs comparable request volumes and data transfers
+    // to both source and destination, these limits will indirectly constrain
+    // destination operations as well.
+    Limiters limiters = 5;
   }
 
   DestinationBucket destination = 2 [(buf.validate.field).required = true];
@@ -66,6 +75,14 @@ message TransferSpec {
 
       string secret_access_key = 2 [(sensitive) = true, (buf.validate.field).required = true];
     }
+  }
+
+  message Limiters {
+    // Maximum bandwidth in bytes per second. If set to zero, default limit will be applied.
+    uint64 bandwidth_bytes_per_second = 1;
+
+    // Maximum number of requests per second. If set to zero, default limit will be applied.
+    uint64 requests_per_second = 2;
   }
 
   // The stop condition is checked after every iteration. If the condition is met, the transfer will stop.

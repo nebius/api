@@ -68,7 +68,6 @@ message DiskSpec {
   }
 
   // Defines how data on the disk is encrypted. By default, no encryption is applied.
-  // This field applies for disks with NETWORK_SSD_NON_REPLICATED and NETWORK_SSD_IO_M3 types only.
   DiskEncryption disk_encryption = 11 [(field_behavior) = IMMUTABLE];
 }
 
@@ -127,6 +126,8 @@ message DiskEncryption {
     DISK_ENCRYPTION_UNSPECIFIED = 0;
 
     // Enables encryption using the platform's default root key from KMS.
+    // Available for blank disks only.
+    // Available for disks with NETWORK_SSD_NON_REPLICATED and NETWORK_SSD_IO_M3 types only.
     DISK_ENCRYPTION_MANAGED = 1;
   }
 
