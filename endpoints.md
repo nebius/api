@@ -29,7 +29,7 @@
   * [nebius.iam.v1.AccessKeyService](nebius/iam/v1/access_key_service.proto)
   * [nebius.iam.v1.AccessPermitService](nebius/iam/v1/access_permit_service.proto)
   * [nebius.iam.v1.AuthPublicKeyService](nebius/iam/v1/auth_public_key_service.proto)
-  * [nebius.iam.v1.FederatedCredentialsService](nebius/iam/v1/federated_credentilas_service.proto)
+  * [nebius.iam.v1.FederatedCredentialsService](nebius/iam/v1/federated_credentials_service.proto)
   * [nebius.iam.v1.FederationCertificateService](nebius/iam/v1/federation_certificate_service.proto)
   * [nebius.iam.v1.FederationService](nebius/iam/v1/federation_service.proto)
   * [nebius.iam.v1.GroupMembershipService](nebius/iam/v1/group_membership_service.proto)

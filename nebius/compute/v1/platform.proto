@@ -45,4 +45,5 @@ message PresetResources {
 }
 
 message PlatformStatus {
+  bool allowed_for_preemptibles = 3;
 }
