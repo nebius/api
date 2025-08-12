@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package nebius.billing.v1alpha1;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/billing/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "OfferTypeProto";
+option java_package = "ai.nebius.pub.billing.v1alpha1";
+
+// OfferType is a enum that specifies the type of offer.
+enum OfferType {
+  OFFER_TYPE_UNSPECIFIED = 0;
+
+  // Contract price is a special price for SKU.
+  OFFER_TYPE_CONTRACT_PRICE = 1;
+}
