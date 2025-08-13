@@ -28,12 +28,7 @@ service TransferService {
 
   rpc List(ListTransfersRequest) returns (ListTransfersResponse);
 
-  rpc Create(CreateTransferRequest) returns (common.v1.Operation) {
-    // Region routing is strictly enforced for the create method to prevent the creation of transfers to a different region.
-    // For example: if a user has buckets in both KCS and MAN and intends to create a transfer to the KCS region,
-    // setting the parent ID from MAN would incorrectly create the transfer to the MAN bucket.
-    option (region_routing) = { strict: true };
-  }
+  rpc Create(CreateTransferRequest) returns (common.v1.Operation);
 
   rpc Update(UpdateTransferRequest) returns (common.v1.Operation);
 
@@ -49,9 +44,7 @@ service TransferService {
   // Fully delete a transfer along with its history. Only stopped or failed transfers can be deleted.
   rpc Delete(DeleteTransferRequest) returns (common.v1.Operation);
 
-  rpc GetIterationHistory(GetIterationHistoryRequest) returns (GetIterationHistoryResponse) {
-    option (region_routing) = { nid: [ "transfer_id" ] };
-  }
+  rpc GetIterationHistory(GetIterationHistoryRequest) returns (GetIterationHistoryResponse);
 }
 
 message GetTransferRequest {

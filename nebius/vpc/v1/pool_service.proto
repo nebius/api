@@ -22,9 +22,7 @@ service PoolService {
 
   rpc List(ListPoolsRequest) returns (ListPoolsResponse);
 
-  rpc ListBySourcePool(ListPoolsBySourcePoolRequest) returns (ListPoolsResponse) {
-    option (region_routing) = { nid: [ "pool_id" ] };
-  }
+  rpc ListBySourcePool(ListPoolsBySourcePoolRequest) returns (ListPoolsResponse);
 
   rpc Create(CreatePoolRequest) returns (common.v1.Operation);
 

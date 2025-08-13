@@ -4,7 +4,6 @@ package nebius.common.v1alpha1;
 
 import "buf/validate/validate.proto";
 import "nebius/common/v1alpha1/operation.proto";
-import "nebius/annotations.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1alpha1";
 
@@ -22,9 +21,7 @@ service OperationService {
   rpc Get(GetOperationRequest) returns (Operation);
 
   // Lists operations for the specified resource.
-  rpc List(ListOperationsRequest) returns (ListOperationsResponse) {
-    option (region_routing) = { nid: [ "resource_id" ] };
-  }
+  rpc List(ListOperationsRequest) returns (ListOperationsResponse);
 }
 
 message GetOperationRequest {

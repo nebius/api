@@ -28,41 +28,6 @@ extend google.protobuf.MethodOptions {
   DeprecationDetails method_deprecation_details = 1194;
 
   MethodPySDKSettings method_py_sdk = 1195;
-
-  // Defines custom region routing rules for a method.
-  //
-  // By default, the API Gateway searches for the NID in the following proto message fields (in order):
-  //  - `id`
-  //  - `parent_id`
-  //  - `metadata.id`
-  //  - `metadata.parent_id`
-  //
-  // If a valid NID is found, the request is routed to the associated region by routing code.
-  // Otherwise, the request is routed to the local region.
-  // These default rules generally cover most use cases.
-  //
-  // To customize the routing behavior, use the `region_routing` option:
-  //  - To specify a custom field path(s) for the NID, use the `nid` field.
-  //  - To return an INVALID_ARGUMENT error instead of forwarding to the local region, set `strict` to `true`.
-  //  - To completely disable region routing, set `disabled` to `true`.
-  //
-  // Examples:
-  //
-  //    service MyService {
-  //      rpc DefaultRouting(Request) returns (Response);
-  //      rpc CustomRoutingField(Request) returns (Response) {
-  //        option (region_routing).nid = "path.to.resource_id";
-  //      };
-  //      rpc SeveralFieldsToSearch(Request) returns (Response) {
-  //        option (region_routing).nid = "path.to.resource_id";
-  //        option (region_routing).nid = "path.to.parent_id";
-  //        option (region_routing).strict = true;
-  //      };
-  //      rpc DisabledRouting(Request) returns (Response) {
-  //        option (region_routing).disabled = true;
-  //      };
-  //    }
-  RegionRouting region_routing = 50003;
 }
 
 extend google.protobuf.MessageOptions {
@@ -159,22 +124,6 @@ enum ResourceBehavior {
   // it is created. It is strongly recommended to do srvices with renaming
   // capability, as the guidelines suggest.
   IMMUTABLE_NAME = 3;
-}
-
-message RegionRouting {
-  // A list of fields to extract the NID from, in order of priority.
-  // The API Gateway will check each field in sequence and use the first valid NID it finds.
-  // This overrides the default NID lookup order: `id`, `parent_id`, `metadata.id`, `metadata.parent_id`.
-  // If the field contains a non-empty list of strings, all NIDs in the array must be valid and have the same routing code.
-  repeated string nid = 1;
-
-  // If true, region routing is disabled for the method.
-  // When this is set, requests will not be forwarded to a different region, even if an NID is present.
-  bool disabled = 2;
-
-  // In strict mode, the API Gateway returns an INVALID_ARGUMENT error to the user when a routing error occurs,
-  // rather than forwarding the request to the local region.
-  bool strict = 3;
 }
 
 enum FieldBehavior {

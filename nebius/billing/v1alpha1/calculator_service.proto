@@ -5,6 +5,7 @@ package nebius.billing.v1alpha1;
 import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
 import "nebius/billing/v1alpha1/calculator.proto";
+import "nebius/billing/v1alpha1/offer_type.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/billing/v1alpha1";
 option java_multiple_files = true;
@@ -28,6 +29,9 @@ message EstimateRequest {
   // Resource specification for cost estimation.
   // Must contain exactly one resource type.
   ResourceSpec resource_spec = 1 [(buf.validate.field).required = true];
+
+  // Type of offers to be applied to the cost estimate.
+  repeated OfferType offer_types = 10;
 }
 
 message EstimateResponse {
@@ -43,6 +47,9 @@ message EstimateBatchRequest {
   // List of resource specifications for cost estimation.
   // Each resource will be priced individually and then aggregated into total costs.
   repeated ResourceSpec resource_specs = 1 [(buf.validate.field).required = true];
+
+  // Type of offers to be applied to the cost estimate.
+  repeated OfferType offer_types = 10;
 }
 
 message EstimateBatchResponse {

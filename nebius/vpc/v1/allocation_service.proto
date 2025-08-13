@@ -22,9 +22,7 @@ service AllocationService {
 
   rpc List(ListAllocationsRequest) returns (ListAllocationsResponse);
 
-  rpc ListByPool(ListAllocationsByPoolRequest) returns (ListAllocationsResponse) {
-    option (region_routing) = { nid: [ "pool_id" ] };
-  }
+  rpc ListByPool(ListAllocationsByPoolRequest) returns (ListAllocationsResponse);
 
   rpc Create(CreateAllocationRequest) returns (common.v1.Operation);
 

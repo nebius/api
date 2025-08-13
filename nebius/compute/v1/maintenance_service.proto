@@ -14,9 +14,7 @@ service MaintenanceService {
   option (api_service_name) = "compute";
 
   // Returns only active maintenance event for the instance
-  rpc GetByInstance(GetMaintenanceEventByInstanceRequest) returns (MaintenanceEvent) {
-    option (region_routing) = { nid: [ "instance_id" ] };
-  }
+  rpc GetByInstance(GetMaintenanceEventByInstanceRequest) returns (MaintenanceEvent);
 
   // Returns all unfinished maintenance events for the parent
   rpc ListActive(ListMaintenanceEventsRequest) returns (ListMaintenanceEventsResponse);

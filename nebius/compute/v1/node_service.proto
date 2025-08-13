@@ -26,9 +26,7 @@ service NodeService {
   //
   // To use this rpc one needs to obtain `compute.node.setUnhealthy` permission
   // for the VM's parent container. The permission is granted to the TSA inside the VM.
-  rpc SetUnhealthy(NodeSetUnhealthyRequest) returns (NodeSetUnhealthyResponse) {
-    option (region_routing) = { nid: [ "instance_id" ] };
-  }
+  rpc SetUnhealthy(NodeSetUnhealthyRequest) returns (NodeSetUnhealthyResponse);
 }
 
 message NodeSetUnhealthyRequest {

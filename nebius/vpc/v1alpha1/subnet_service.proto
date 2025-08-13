@@ -20,9 +20,7 @@ service SubnetService {
 
   rpc List(ListSubnetsRequest) returns (ListSubnetsResponse);
 
-  rpc ListByNetwork(ListSubnetsByNetworkRequest) returns (ListSubnetsResponse) {
-    option (region_routing) = { nid: [ "network_id" ] };
-  }
+  rpc ListByNetwork(ListSubnetsByNetworkRequest) returns (ListSubnetsResponse);
 }
 
 message GetSubnetRequest {
