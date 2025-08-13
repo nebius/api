@@ -17,9 +17,7 @@ service VersionService {
 
   // GetVersion retrieves version information and receives instructions for agent updates
   // or maintenance based on the current state and health of the agent.
-  rpc GetVersion(GetVersionRequest) returns (GetVersionResponse) {
-    option (region_routing) = { nid: [ "instance_id" ] };
-  }
+  rpc GetVersion(GetVersionRequest) returns (GetVersionResponse);
 }
 
 // Type of the agent in the system.

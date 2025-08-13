@@ -18,27 +18,19 @@ service BackupService {
 
   // Returns the specified PostgreSQL Cluster backup.
   // To get the list of available PostgreSQL Cluster backups, make a [List] or [ListByCluster] request.
-  rpc Get(GetBackupRequest) returns (Backup) {
-    option (region_routing) = { nid: [ "cluster_id" ] };
-  }
+  rpc Get(GetBackupRequest) returns (Backup);
 
   // Retrieves the list of PostgreSQL Cluster backups by project.
   rpc List(ListBackupsRequest) returns (ListBackupsResponse);
 
   // Retrieves the list of PostgreSQL Cluster backups by cluster.
-  rpc ListByCluster(ListBackupsByClusterRequest) returns (ListBackupsResponse) {
-    option (region_routing) = { nid: [ "cluster_id" ] };
-  }
+  rpc ListByCluster(ListBackupsByClusterRequest) returns (ListBackupsResponse);
 
   // Creates a new on-demand backup.
-  rpc Create(CreateBackupRequest) returns (common.v1alpha1.Operation) {
-    option (region_routing) = { nid: [ "cluster_id" ] };
-  }
+  rpc Create(CreateBackupRequest) returns (common.v1alpha1.Operation);
 
   // Deletes an on-demand backup.
-  rpc Delete(DeleteBackupRequest) returns (common.v1alpha1.Operation) {
-    option (region_routing) = { nid: [ "cluster_id" ] };
-  }
+  rpc Delete(DeleteBackupRequest) returns (common.v1alpha1.Operation);
 }
 
 message GetBackupRequest {
