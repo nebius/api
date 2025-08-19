@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: bufbuild/buf-action@v1.2.0
+      - uses: bufbuild/buf-action@v1.3.0
         with:
           setup_only: true
       - run: buf build --error-format github-actions
