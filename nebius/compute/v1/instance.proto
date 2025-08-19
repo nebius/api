@@ -154,7 +154,7 @@ message AttachedFilesystemSpec {
   AttachMode attach_mode = 1 [(buf.validate.field).required = true];
 
   // Specifies the user-defined identifier, allowing to use it as a device in mount command.
-  string mount_tag = 2 [(buf.validate.field).required = true];
+  string mount_tag = 2 [(buf.validate.field) = { string: { max_len: 37 }, required: true }];
 
   oneof type {
     option (buf.validate.oneof).required = true;
