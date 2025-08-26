@@ -21,7 +21,7 @@ message GroupMembership {
 
   GroupMembershipSpec spec = 2 [(buf.validate.field).required = true];
 
-  GroupMembershipStatus status = 3 [(field_behavior) = OUTPUT_ONLY]; // Dummy field for compliance with terraform resource generator.
+  GroupMembershipStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
 
   google.protobuf.Timestamp revoke_at = 4 [(field_behavior) = OUTPUT_ONLY];
 }
@@ -32,6 +32,11 @@ message GroupMembershipSpec {
 }
 
 message GroupMembershipStatus {
+  oneof group_member_status {
+    TenantUserAccountStatus tenant_user_account_status = 1;
+
+    ServiceAccountStatus service_account_status = 2;
+  }
 }
 
 message GroupMemberKind {
