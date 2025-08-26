@@ -14,3 +14,20 @@ message UserAccountExternalId {
 
   string federation_id = 2;
 }
+
+message UserAccountStatus {
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    // usual state when federated user can log into the system and view/manage granted resources in one or more tenants
+    ACTIVE = 1;
+
+    // federated user can be blocked (manually or by any specific automated process), in this state user cannot log into the system
+    INACTIVE = 2;
+
+    // federated user can be deleted/forgot, in this state user cannot log into the system and various internal removal interactions are in progress
+    DELETING = 3;
+  }
+
+  State state = 1;
+}

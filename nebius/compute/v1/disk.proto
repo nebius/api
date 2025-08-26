@@ -89,7 +89,11 @@ message DiskStatus {
 
     DELETING = 4;
 
+    // Indicates that error happened during disk creation, and the disk cannot be recovered.
     ERROR = 5;
+
+    // Indicates that an error has occurred during the disk's life cycle, and the disk is broken or unhealthy, but can still be recovered.
+    BROKEN = 6;
   }
 
   enum SourceImageCPUArchitecture {
