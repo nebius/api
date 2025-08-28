@@ -41,6 +41,10 @@ message NodeSetUnhealthyRequest {
   string instance_id = 1 [(buf.validate.field).required = true];
 
   HealthCheckInfo health_check_info = 2 [(buf.validate.field).required = true];
+
+  // If set to true, the call performs the authorization and limit checks, but does not mark node unhealthy.
+  // False by default
+  bool dry_run = 3;
 }
 
 message NodeSetUnhealthyResponse {
