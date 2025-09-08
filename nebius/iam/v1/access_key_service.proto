@@ -20,7 +20,7 @@ service AccessKeyService {
   option deprecated = true;
 
   option (service_deprecation_details) = {
-    effective_at: "2025-09-01",
+    effective_at: "2026-09-01",
     description: "Access keys API v1 is deprecated, use the v2 version instead. Keys produced by API v1 are available using v2."
   };
 

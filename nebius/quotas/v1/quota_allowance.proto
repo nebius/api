@@ -30,6 +30,9 @@ message QuotaAllowanceStatus {
     // Quota is allocated and can be used.
     STATE_ACTIVE = 2;
 
+    // Quota is allocated but cannot be used any longer
+    STATE_FROZEN = 3;
+
     // Quota has been removed and is no longer allocated.
     STATE_DELETED = 10;
   }

@@ -14,6 +14,13 @@ option java_outer_classname = "JobServiceProto";
 option java_package = "ai.nebius.pub.msp.spark.v1alpha1";
 
 service JobService {
+  option deprecated = true;
+
+  option (service_deprecation_details) = {
+    effective_at: "2025-08-12",
+    description: "Nebius AI Cloud no longer supports the service. Instead, use Application for Apache Spark™ Connect in Standalone Applications."
+  };
+
   option (api_service_name) = "sp.msp";
 
   // Returns the specified job.
