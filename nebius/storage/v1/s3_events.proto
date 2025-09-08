@@ -1,0 +1,252 @@
+syntax = "proto3";
+
+package nebius.storage.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
+option java_multiple_files = true;
+option java_outer_classname = "S3EventsProto";
+option java_package = "ai.nebius.pub.storage.v1";
+
+message CompleteMultipartUploadRequestParameters {
+  string bucket_name = 1;
+
+  string object_key = 2;
+
+  message Part {
+    int32 part_number = 1;
+
+    string etag = 2;
+  }
+
+  repeated Part parts = 3;
+}
+
+message CompleteMultipartUploadResponse {
+  string bucket_name = 1;
+
+  string object_key = 2;
+
+  string etag = 3;
+}
+
+// ----------------------------------------
+
+message CopyObjectRequestParameters {
+  message Source {
+    string bucket_name = 1;
+
+    string object_key = 2;
+
+    string version = 3;
+  }
+
+  Source source = 1;
+
+  message Target {
+    string bucket_name = 1;
+
+    string object_key = 2;
+  }
+
+  Target target = 2;
+}
+
+message CopyObjectResponse {
+  string etag = 1;
+
+  google.protobuf.Timestamp last_modified = 2;
+}
+
+// ----------------------------------------
+
+message DeleteObjectRequestParameters {
+  string bucket_name = 1;
+
+  string object_key = 2;
+
+  string version = 3;
+}
+
+message DeleteObjectResponse {
+  bool delete_marker = 1;
+}
+
+message DeleteObjectsRequestParameters {
+  string bucket_name = 1;
+
+  string object_key = 2;
+
+  string version = 3;
+}
+
+// ----------------------------------------
+
+message DeleteObjectsResponse {
+  message DeleteSuccess {
+    bool delete_marker = 1;
+
+    string object_key = 2;
+
+    string version = 3;
+  }
+
+  repeated DeleteSuccess deleted = 1;
+
+  message DeleteError {
+    string code = 1;
+
+    string message = 2;
+
+    string object_key = 3;
+
+    string version = 4;
+  }
+
+  repeated DeleteError errors = 2;
+}
+
+// ----------------------------------------
+
+message ObjectRequestParameters {
+  string bucket_name = 1;
+
+  string object_key = 2;
+
+  string version = 3;
+}
+
+message ObjectResponse {
+  string etag = 1;
+
+  string version = 2;
+
+  google.protobuf.Timestamp last_modified = 3;
+}
+
+// ----------------------------------------
+
+message ListObjectVersionsRequestParameters {
+  string bucket_name = 1;
+
+  string prefix = 2;
+
+  string key_marker = 3;
+
+  int32 version_id_marker = 4;
+
+  int32 limit = 5;
+
+  string delimiter = 6;
+}
+
+message ListObjectVersionsResponse {
+  message VersionView {
+    string etag = 1;
+
+    bool latest = 2;
+
+    string object_key = 3;
+
+    google.protobuf.Timestamp last_modified = 4;
+
+    int64 size = 5;
+
+    string version_id = 6;
+
+    string storage_class = 7;
+  }
+
+  repeated VersionView versions = 1;
+
+  message DeleteMarkerView {
+    bool latest = 1;
+
+    string object_key = 2;
+
+    google.protobuf.Timestamp last_modified = 3;
+
+    string version_id = 4;
+  }
+
+  repeated DeleteMarkerView delete_markers = 2;
+
+  repeated string common_prefixes = 3;
+
+  bool truncated = 4;
+
+  string next_key_marker = 5;
+
+  int32 next_version_id_marker = 6;
+}
+
+// ----------------------------------------
+
+message ListObjectsRequestParameters {
+  string bucket_name = 1;
+
+  string prefix = 2;
+
+  string delimiter = 3;
+
+  string start_after = 4;
+
+  int32 limit = 5;
+}
+
+message ListObjectsResponse {
+  message ObjectView {
+    string etag = 1;
+
+    string object_key = 2;
+
+    google.protobuf.Timestamp last_modified = 3;
+
+    int64 size = 4;
+
+    string storage_class = 5;
+  }
+
+  repeated ObjectView objects = 1;
+
+  repeated string common_prefixes = 2;
+
+  bool truncated = 3;
+}
+
+// ----------------------------------------
+
+message PostObjectRequestParameters {
+  string bucket_name = 1;
+
+  string object_key = 2;
+
+  int64 size = 3;
+}
+
+message PostObjectResponse {
+  string etag = 1;
+
+  string version = 2;
+}
+
+// ----------------------------------------
+
+message PutObjectRequestParameters {
+  string bucket_name = 1;
+
+  string object_key = 2;
+
+  int64 size = 3;
+
+  string storage_class = 4;
+
+  string expected_md5 = 5;
+}
+
+message PutObjectResponse {
+  string etag = 1;
+
+  string version = 2;
+}
