@@ -27,6 +27,9 @@ service ClusterService {
   rpc Update(UpdateClusterRequest) returns (common.v1alpha1.Operation);
 
   rpc Delete(DeleteClusterRequest) returns (common.v1alpha1.Operation);
+
+  // ListControlPlaneVersions returns all k8s release versions available in Nebius API.
+  rpc ListControlPlaneVersions(ListClusterControlPlaneVersionsRequest) returns (ListClusterControlPlaneVersionsResponse);
 }
 
 message CreateClusterRequest {
@@ -75,4 +78,16 @@ message UpdateClusterRequest {
 
 message DeleteClusterRequest {
   string id = 1 [(buf.validate.field).required = true];
+}
+
+message ListClusterControlPlaneVersionsRequest {
+}
+
+message ListClusterControlPlaneVersionsResponse {
+  repeated ClusterControlPlaneVersion items = 1;
+}
+
+message ClusterControlPlaneVersion {
+  // Format of the version includes only MAJOR.MINOR, the same as can be passed to cluster creation API. For example "1.31".
+  string version = 1;
 }
