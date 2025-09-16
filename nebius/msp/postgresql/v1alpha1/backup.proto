@@ -30,4 +30,7 @@ message Backup {
 
   // Is the backup an on-demand manual backup.
   bool on_demand = 7;
+
+  // Size of the backup in bytes.
+  int64 size_bytes = 8;
 }

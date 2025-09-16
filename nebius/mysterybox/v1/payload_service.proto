@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package nebius.mysterybox.v1;
+
+import "nebius/mysterybox/v1/payload.proto";
+import "nebius/annotations.proto";
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/mysterybox/v1";
+option java_multiple_files = true;
+option java_outer_classname = "PayloadServiceProto";
+option java_package = "ai.nebius.pub.mysterybox.v1";
+
+service PayloadService {
+  option (api_service_name) = "dpl.mysterybox";
+
+  // Returns the secret's payload in its decrypted format.
+  rpc Get(GetPayloadRequest) returns (SecretPayload);
+
+  // Returns the secret's payload value by key in its decrypted format.
+  rpc GetByKey(GetPayloadByKeyRequest) returns (SecretPayloadEntry);
+}
+
+message GetPayloadRequest {
+  string secret_id = 1;
+
+  // Desired version of the secret. If not provided, the primary version of the secret will be returned.
+  string version_id = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
+}
+
+message GetPayloadByKeyRequest {
+  string secret_id = 1;
+
+  // Desired version of the secret. If not provided, the primary version of the secret will be returned.
+  string version_id = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
+
+  // Payload's key to be retrieved.
+  string key = 3 [(buf.validate.field).required = true];
+}
+
+message SecretPayload {
+  // Secret's version related to returned payload.
+  string version_id = 1;
+
+  repeated Payload data = 2;
+}
+
+message SecretPayloadEntry {
+  // Secret's version related to returned payload.
+  string version_id = 1;
+
+  Payload data = 2;
+}

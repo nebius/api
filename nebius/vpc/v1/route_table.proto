@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package nebius.vpc.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
+option java_multiple_files = true;
+option java_outer_classname = "RouteTableProto";
+option java_package = "ai.nebius.pub.vpc.v1";
+
+// RouteTable represents a routing configuration for a VPC network.
+// Each route table can be associated with multiple subnets
+// and contains rules for routing traffic to different destinations.
+message RouteTable {
+  // `metadata.parent_id` represents the Project.
+  common.v1.ResourceMetadata metadata = 1;
+
+  // Specification of the route table's configuration.
+  RouteTableSpec spec = 2;
+
+  // Current status of the route table.
+  RouteTableStatus status = 3;
+}
+
+message RouteTableSpec {
+  // ID of the VPC network this route table belongs to.
+  string network_id = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+}
+
+message RouteTableStatus {
+  // State indicates the current operational state of the route table.
+  enum State {
+    // The state is unknown or not yet set.
+    STATE_UNSPECIFIED = 0;
+
+    // The route table is configured and operational.
+    READY = 10;
+  }
+
+  // Current state of the route table.
+  State state = 1;
+
+  // Indicates if this is the default route table for the network.
+  // Only one route table can be default per network.
+  bool default = 2;
+
+  // Information about which subnets are using this route table.
+  RouteTableAssignment assignment = 3;
+}
+
+message RouteTableAssignment {
+  // List of subnet IDs that use this route table for their routing configuration.
+  repeated string subnets = 1;
+}

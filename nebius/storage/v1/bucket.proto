@@ -47,7 +47,13 @@ message BucketSpec {
   // Storage class to override any other storage class of uploading objects. It overrides the storage class regardless
   // of how the original storage class was specified - either the default storage class
   // or the one provided via the `x-amz-storage-class` header.
-  StorageClass override_storage_class = 10;
+  StorageClass override_storage_class = 10 [
+    deprecated = true,
+    (field_deprecation_details) = { effective_at: "2025-12-01", description: "Use `default_storage_class` with `force_storage_class` instead" }
+  ];
+
+  // Flag to force usage of default_storage_class, ignoring `x-amz-storage-class` header.
+  bool force_storage_class = 11;
 }
 
 message BucketStatus {

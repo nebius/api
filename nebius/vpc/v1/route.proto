@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package nebius.vpc.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
+option java_multiple_files = true;
+option java_outer_classname = "RouteProto";
+option java_package = "ai.nebius.pub.vpc.v1";
+
+// Routes determine how network traffic is directed within a VPC network,
+// specifying the path that traffic should take based on destination addresses.
+message Route {
+  // `metadata.parent_id` represents the RouteTable.
+  common.v1.ResourceMetadata metadata = 1;
+
+  // Specification of the route's configuration.
+  RouteSpec spec = 2;
+
+  // Current status of the route.
+  RouteStatus status = 3;
+}
+
+message RouteSpec {
+  // Optional description of the route.
+  string description = 1;
+
+  // Destination for the route.
+  // Each destination CIDR must be unique within a route table.
+  // When multiple routes match a destination IP, the route with the longest
+  // matching prefix (most specific match) is selected.
+  DestinationMatch destination = 2 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+
+  // Next hop configuration specifying where to send matching traffic.
+  NextHop next_hop = 3 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+}
+
+message DestinationMatch {
+  // Destination CIDR block in IPv4 format (e.g., "0.0.0.0/0" for default route, "192.168.100.0/24" for specific subnet).
+  // The CIDR notation specifies the range of IP addresses that this route will match.
+  // Must be unique within a route table.
+  string cidr = 1 [
+    (field_behavior) = IMMUTABLE,
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "string.valid_cidr",
+          message: "destination.cidr must be a valid and specified CIDR",
+          expression: "this.matches('^([0-9]{1,3}\\\\.){3}[0-9]{1,3}/[0-9]+$') && this.isIpPrefix(4, true)"
+        }
+      ],
+      required: true
+    }
+  ];
+}
+
+message NextHop {
+  // Configuration for the next hop, which must be one of the following options.
+  oneof next_hop {
+    option (buf.validate.oneof).required = true;
+
+    // Forward traffic to a specific IP allocation (/32 address only).
+    // The allocation must be from the same network as the route table.
+    // The allocation must be assigned to either a Compute instance or a Load Balancer.
+    // Warning: If the allocation exists but is not assigned to any resource,
+    // traffic will be forwarded to a "black hole" and dropped.
+    AllocationNextHop allocation = 1;
+
+    // Use the default egress gateway for outbound traffic.
+    // Note: For VMs with public addresses (Floating IPs/FIPs), the FIP-specific route
+    // takes precedence over this default egress gateway route.
+    bool default_egress_gateway = 2;
+  }
+}
+
+// AllocationNextHop specifies an IP allocation as the next hop.
+message AllocationNextHop {
+  // ID of the IP allocation to use as the next hop.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message RouteStatus {
+  enum State {
+    // The state is unknown or not yet set.
+    STATE_UNSPECIFIED = 0;
+
+    // The route is configured and operational.
+    READY = 10;
+  }
+
+  // Current state of the route.
+  State state = 1;
+
+  // Detailed status of the next hop configuration.
+  NextHopState next_hop = 2;
+}
+
+message NextHopState {
+  // Current state of the next hop configuration.
+  oneof next_hop {
+    // Status of an allocation-based next hop.
+    AllocationNextHopState allocation = 1;
+
+    // Status of the default egress gateway configuration.
+    DefaultEgressGatewayState default_egress_gateway = 2;
+  }
+}
+
+message AllocationNextHopState {
+  // The CIDR of the allocation being used as the next hop.
+  string cidr = 1;
+}
+
+message DefaultEgressGatewayState {
+}
