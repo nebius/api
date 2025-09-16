@@ -43,6 +43,11 @@ message SubnetSpec {
     (field_behavior) = NON_EMPTY_DEFAULT,
     (field_behavior) = MEANINGFUL_EMPTY_VALUE
   ];
+
+  // ID of the custom route table to associate with this subnet.
+  // Must be one of the route tables associated with network.
+  // If not specified, the subnet will use the network's default route table.
+  string route_table_id = 5;
 }
 
 message IPv4PrivateSubnetPools {
@@ -122,4 +127,18 @@ message SubnetStatus {
 
   // CIDR blocks.
   repeated string ipv4_public_cidrs = 3;
+
+  // Information about the route table associated with this subnet.
+  // Can be either a custom route table or the network's default route table.
+  SubnetAssociatedRouteTable route_table = 5;
+}
+
+message SubnetAssociatedRouteTable {
+  // ID of the route table.
+  string id = 1;
+
+  // Indicates whether this is the network's default route table.
+  // If true, this is the default route table inherited from the network.
+  // If false, this is a custom route table explicitly associated with the subnet via spec.
+  bool default = 2;
 }

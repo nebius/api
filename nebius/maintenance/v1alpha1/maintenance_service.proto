@@ -4,6 +4,7 @@ package nebius.maintenance.v1alpha1;
 
 import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 import "nebius/maintenance/v1alpha1/maintenance.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/maintenance/v1alpha1";
@@ -22,6 +23,9 @@ service MaintenanceService {
   // Retrieves the list of maintenance operations that belong
   // to the specified container.
   rpc List(ListMaintenancesRequest) returns (ListMaintenancesResponse);
+
+  // Updates the specified maintenance operation.
+  rpc Update(UpdateMaintenanceRequest) returns (UpdateMaintenanceResponse);
 }
 
 message ListMaintenancesRequest {
@@ -38,4 +42,28 @@ message GetMaintenanceRequest {
   // ID of the maintenance operation to return.
   // To get the maintenance ID use a [MaintenanceService.List] request.
   string id = 1 [(buf.validate.field).required = true];
+}
+
+message UpdateMaintenanceRequest {
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "update_maintenance.metadata",
+        message: "'metadata' must have 'id'",
+        expression: "has(this.metadata.id)"
+      }
+    ]
+  };
+
+  // Metadata associated with the maintenance operation.
+  // Must include ID of the maintenance operation to update.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // Updated specification for the maintenance operation.
+  MaintenanceSpec spec = 2;
+}
+
+message UpdateMaintenanceResponse {
+  // Updated maintenance operation.
+  Maintenance maintenance = 1;
 }

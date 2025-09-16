@@ -63,6 +63,9 @@ message MaintenanceStatus {
 
   // Current state of the maintenance operation.
   State state = 4 [(buf.validate.field).required = true];
+
+  // Indicates whether the maintenance operation's scheduled_at time can be changed.
+  bool reschedulable = 5;
 }
 
 message Resource {

@@ -45,12 +45,18 @@
   * [nebius.iam.v1.TenantUserAccountWithAttributesService](nebius/iam/v1/tenant_user_account_with_attributes_service.proto)
   * [nebius.iam.v2.AccessKeyService](nebius/iam/v2/access_key_service.proto)
   * [nebius.iam.v2.TenantService](nebius/iam/v2/tenant_service.proto)
+* cpl.mysterybox.api.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+  * [nebius.mysterybox.v1.SecretService](nebius/mysterybox/v1/secret_service.proto)
+  * [nebius.mysterybox.v1.SecretVersionService](nebius/mysterybox/v1/secret_version_service.proto)
 * cpl.storage.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.storage.v1.BucketService](nebius/storage/v1/bucket_service.proto)
 * deployment-manager.mkt.api.nebius.cloud:443
   * [nebius.applications.v1alpha1.K8sReleaseService](nebius/applications/v1alpha1/k8s_release_service.proto)
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+* dpl.mysterybox.api.nebius.cloud:443
+  * [nebius.mysterybox.v1.PayloadService](nebius/mysterybox/v1/payload_service.proto)
 * maintenance.msp.api.nebius.cloud:443
   * [nebius.maintenance.v1alpha1.MaintenanceService](nebius/maintenance/v1alpha1/maintenance_service.proto)
 * mk8s.api.nebius.cloud:443
@@ -75,11 +81,6 @@
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.registry.v1.ArtifactService](nebius/registry/v1/artifact_service.proto)
   * [nebius.registry.v1.RegistryService](nebius/registry/v1/registry_service.proto)
-* sp.msp.api.nebius.cloud:443
-  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
-  * [nebius.msp.spark.v1alpha1.ClusterService](nebius/msp/spark/v1alpha1/cluster_service.proto)
-  * [nebius.msp.spark.v1alpha1.JobService](nebius/msp/spark/v1alpha1/job_service.proto)
-  * [nebius.msp.spark.v1alpha1.SessionService](nebius/msp/spark/v1alpha1/session_service.proto)
 * tokens.iam.api.nebius.cloud:443
   * [nebius.iam.v1.TokenExchangeService](nebius/iam/v1/token_exchange_service.proto)
 * transfer.storage.api.nebius.cloud:443
@@ -91,6 +92,8 @@
   * [nebius.vpc.v1.AllocationService](nebius/vpc/v1/allocation_service.proto)
   * [nebius.vpc.v1.NetworkService](nebius/vpc/v1/network_service.proto)
   * [nebius.vpc.v1.PoolService](nebius/vpc/v1/pool_service.proto)
+  * [nebius.vpc.v1.RouteService](nebius/vpc/v1/route_service.proto)
+  * [nebius.vpc.v1.RouteTableService](nebius/vpc/v1/route_table_service.proto)
   * [nebius.vpc.v1.SubnetService](nebius/vpc/v1/subnet_service.proto)
   * [nebius.vpc.v1.TargetGroupService](nebius/vpc/v1/target_group_service.proto)
   * [nebius.vpc.v1alpha1.AllocationService](nebius/vpc/v1alpha1/allocation_service.proto)
