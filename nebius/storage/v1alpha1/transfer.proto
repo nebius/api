@@ -109,7 +109,10 @@ message TransferSpec {
   }
 
   // Time to wait between transfer iterations. Default is 15 minutes if not specified.
-  google.protobuf.Duration inter_iteration_interval = 6 [(buf.validate.field) = { duration: { gte: { } } }];
+  google.protobuf.Duration inter_iteration_interval = 6 [
+    (buf.validate.field) = { duration: { gte: { } } },
+    (field_behavior) = NON_EMPTY_DEFAULT
+  ];
 
   // Overwrite strategy set logic of overwrite already existed objects in destination bucket.
   OverwriteStrategy overwrite_strategy = 7 [(buf.validate.field).required = true];
