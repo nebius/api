@@ -58,12 +58,6 @@ message Operation {
   // (e.g. a routine maintenance operation visible to the user), the [resource_id] must be empty.
   string resource_id = 7;
 
-  // Additional information about the progress of an operation, e.g., a progress percentage.
-  // MAY be absent while the operation is running, MUST be absent after the operation has completed.
-  //
-  // Type of message that's stored inside [progress_data] is service-dependent.
-  google.protobuf.Any progress_data = 9;
-
   // The status of this operation. Set when this operation is completed.
   // See https://github.com/grpc/grpc/blob/master/src/proto/grpc/status/status.proto.
   //
@@ -75,4 +69,9 @@ message Operation {
   // - [status.code] must belong to an Operation-compatible subset of GRPC codes:
   //   OK, CANCELLED, PERMISSION_DENIED, RESOURCE_EXHAUSTED, FAILED_PRECONDITION, ABORTED, INTERNAL
   google.rpc.Status status = 10 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+  // Extra information about this operation's progress. MAY be absent while the operation is running, MUST be absent after the operation has completed.
+  //
+  // Type of message that's stored inside [progress_data] is service-dependent.
+  google.protobuf.Any progress_data = 9;
 }
