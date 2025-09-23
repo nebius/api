@@ -117,6 +117,9 @@ message ModulesHealth {
 
   // Health status of the Cilium pipeline module.
   ModuleHealth cilium_pipeline = 4;
+
+  // Health status of the VM applications pipeline module.
+  ModulesHealth vmapps_pipeline = 5;
 }
 
 // Health status information for an individual module.

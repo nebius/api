@@ -25,7 +25,7 @@ service QuotaAllowanceService {
 }
 
 message ListQuotaAllowancesRequest {
-  // ID of the Tenant or Project to list quotas for.
+  // ID of the Container to list quotas for.
   string parent_id = 1 [(buf.validate.field).required = true];
 
   // Page size. Must be between [1...1000].
@@ -50,7 +50,7 @@ message ListQuotaAllowancesResponse {
 }
 
 message GetByNameRequest {
-  // ID of the Tenant or Project to list quotas for.
+  // ID of the Container to list quotas for.
   string parent_id = 1 [(buf.validate.field).required = true];
 
   // Name of the quota.
