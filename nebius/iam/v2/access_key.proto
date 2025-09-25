@@ -29,6 +29,23 @@ message AccessKeySpec {
   google.protobuf.Timestamp expires_at = 2 [(field_behavior) = IMMUTABLE];
 
   string description = 3;
+
+  // Specifies how the secret will be delivered upon creation. This field is immutable — it cannot be changed after the resource is created.
+  SecretDeliveryMode secret_delivery_mode = 4 [(field_behavior) = IMMUTABLE];
+}
+
+enum SecretDeliveryMode {
+  // If not specified, the default behaviour will be applied. Currently it's INLINE, later will be EXPLICIT.
+  UNSPECIFIED = 0;
+
+  // The secret value will be returned directly in the API response
+  INLINE = 1;
+
+  // The secret will be delivered via a MysteryBox secret, in case of terraform it is recommended to use that enum
+  MYSTERY_BOX = 2;
+
+  // The secret value will be accessible via a separate method GetSecret
+  EXPLICIT = 3;
 }
 
 message AccessKeyStatus {
