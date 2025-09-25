@@ -6,6 +6,7 @@ import "buf/validate/validate.proto";
 import "google/protobuf/duration.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/resource_event.proto";
 import "nebius/mk8s/v1/instance_template.proto";
 import "nebius/mk8s/v1/condition.proto";
 
@@ -306,6 +307,8 @@ message NodeGroupStatus {
       description: "it is not implemented well, messages should be used instead"
     }
   ];
+
+  repeated common.v1.RecurrentResourceEvent events = 61;
 
   // Show that there are changes are in flight.
   bool reconciling = 100;

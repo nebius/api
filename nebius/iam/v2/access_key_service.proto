@@ -20,6 +20,8 @@ service AccessKeyService {
 
   rpc Get(GetAccessKeyRequest) returns (AccessKey);
 
+  rpc GetSecret(GetAccessKeySecretRequest) returns (GetAccessKeySecretResponse);
+
   rpc List(ListAccessKeysRequest) returns (ListAccessKeysResponse);
 
   rpc Update(UpdateAccessKeyRequest) returns (common.v1.Operation);
@@ -48,6 +50,10 @@ message CreateAccessKeyRequest {
 }
 
 message GetAccessKeyRequest {
+  string id = 1;
+}
+
+message GetAccessKeySecretRequest {
   string id = 1;
 }
 
@@ -113,6 +119,12 @@ message DeleteAccessKeyRequest {
 
 message DeleteAccessKeyByAwsIdRequest {
   string aws_access_key_id = 1;
+}
+
+message GetAccessKeySecretResponse {
+  string aws_access_key_id = 1;
+
+  string secret = 2 [(sensitive) = true];
 }
 
 message ListAccessKeysResponse {

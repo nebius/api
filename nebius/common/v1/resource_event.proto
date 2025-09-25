@@ -46,3 +46,15 @@ message ResourceEvent {
     ERROR = 4;
   }
 }
+
+// A resource event that has occurred (more or less in the same way) multiple times across a service-defined aggregation interval
+message RecurrentResourceEvent {
+  // Time of the first occurrence of a recurrent event
+  google.protobuf.Timestamp first_occurred_at = 1 [(buf.validate.field).required = true];
+
+  // Last occurrence of a recurrent event
+  ResourceEvent last_occurrence = 2 [(buf.validate.field).required = true];
+
+  // The number of times this event has occurred between `first_occurred_at` and `last_occurrence.occurred_at`. Must be > 0
+  int64 occurrence_count = 3 [(buf.validate.field) = { int64: { gt: 0 } }];
+}
