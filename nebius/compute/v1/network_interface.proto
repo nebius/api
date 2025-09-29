@@ -39,6 +39,9 @@ message NetworkInterfaceSpec {
 
   // Public IPv4 address associated with the interface.
   PublicIPAddress public_ip_address = 4 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+  // Assign ranges of IP addresses as aliases
+  repeated IPAlias aliases = 6;
 }
 
 // Describes an IPv4 address.
@@ -61,6 +64,11 @@ message PublicIPAddress {
   bool static = 3;
 }
 
+message IPAlias {
+  // ID of allocation
+  string allocation_id = 1 [(buf.validate.field).required = true];
+}
+
 // Describes the status of a network interface.
 message NetworkInterfaceStatus {
   // The index of the network interface
@@ -75,6 +83,9 @@ message NetworkInterfaceStatus {
 
   // Effective Public IPv4 address
   PublicIPAddressStatus public_ip_address = 4;
+
+  // Effective IP Aliases
+  IPAliasesStatus aliases = 6;
 
   // MAC address
   string mac_address = 7;
@@ -102,4 +113,8 @@ message PublicIPAddressStatus {
   // If true  - Allocation will be created/deleted during NetworkInterface.Create/NetworkInterface.Delete
   // False by default
   bool static = 3;
+}
+
+message IPAliasesStatus {
+  repeated string cidrs = 2;
 }
