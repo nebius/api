@@ -65,6 +65,8 @@ message TransferSpec {
       CredentialsAnonymous anonymous = 1 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
 
       CredentialsAccessKey access_key = 2;
+
+      AzureAccessKey azure_access_key = 3;
     }
 
     message CredentialsAnonymous {
@@ -74,6 +76,12 @@ message TransferSpec {
       string access_key_id = 1 [(sensitive) = true, (buf.validate.field).required = true];
 
       string secret_access_key = 2 [(sensitive) = true, (buf.validate.field).required = true];
+    }
+
+    message AzureAccessKey {
+      string account_name = 2 [(sensitive) = true, (buf.validate.field).required = true];
+
+      string access_key = 1 [(sensitive) = true, (buf.validate.field).required = true];
     }
   }
 
