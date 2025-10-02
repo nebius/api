@@ -24,23 +24,25 @@ message Pool {
 }
 
 message PoolSpec {
-  // ID of source pool. Current pool will be created with the same scope.
-  // Pool is a root-pool if this field is empty
+  // ID of the source pool.
+  // CIDR blocks of a pool must be within the range defined by its source pool.
   string source_pool_id = 1 [(field_behavior) = IMMUTABLE];
 
-  // IP version for the Pool.
+  // IP version of the pool.
   IpVersion version = 3 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 
+  // Configures whether the pool is private or public.
+  // Only public pools IP addresses are routable in the Internet.
   IpVisibility visibility = 5 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 
-  // CIDR blocks.
+  // CIDR blocks defined by the pool.
   repeated PoolCidr cidrs = 4;
 }
 
 message PoolCidr {
-  // CIDR block.
-  // May be a prefix length (such as /24) for non-top-level pools
-  // or a CIDR-formatted string (such as 10.1.2.0/24).
+  // A CIDR block (e.g., "10.1.2.0/24") or a prefix length (e.g., "/24").
+  // If prefix length is specified, the CIDR block will be auto-allocated from
+  // the available space in the parent pool.
   string cidr = 1 [
     (buf.validate.field) = {
       cel: [
@@ -59,24 +61,26 @@ message PoolCidr {
     }
   ];
 
-  // State of the Cidr.
-  // Default state is AVAILABLE
+  // Controls provisioning of IP addresses from the CIDR block to other pools
+  // or allocations. Defaults to AVAILABLE.
   AddressBlockState state = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
 
-  // Maximum mask length for allocation from this cidr including creation of sub-pools
-  // Default max_mask_length is 32 for IPv4 and 128 for IPv6
+  // Maximum mask length for this pool child pools and allocations.
+  // Default max_mask_length is 32 for IPv4.
   int64 max_mask_length = 3 [
     (field_behavior) = NON_EMPTY_DEFAULT,
     (buf.validate.field) = { int64: { lte: 128, gte: 0 } }
   ];
 }
 
+// Controls provisioning of IP addresses from this pool to other pools
+// or allocations. Defaults to AVAILABLE.
 enum AddressBlockState {
-  STATE_UNSPECIFIED = 0; // Default, unspecified state.
+  STATE_UNSPECIFIED = 0; // Not used, mandated by the protocol.
 
-  AVAILABLE = 1; // Allocation from range is available.
+  AVAILABLE = 1; // Default state. Provision of the IP addresses from this CIDR block is allowed.
 
-  DISABLED = 2; // New allocation would not be created.
+  DISABLED = 2; // Provision of the IP addresses from this CIDR block is denied.
 }
 
 message PoolStatus {

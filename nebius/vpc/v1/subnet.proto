@@ -27,46 +27,41 @@ message Subnet {
 }
 
 message SubnetSpec {
-  // Network ID.
+  // ID of the network this subnet belongs to.
   string network_id = 1 [(buf.validate.field).required = true];
 
-  // Pools for private ipv4 addresses.
-  // Default is 'use_network_pools = true'
-  IPv4PrivateSubnetPools ipv4_private_pools = 2 [
-    (field_behavior) = NON_EMPTY_DEFAULT,
-    (field_behavior) = MEANINGFUL_EMPTY_VALUE
-  ];
+  // Private IPv4 address pools for this subnet.
+  // If unspecified, pools from the associated network are used.
+  IPv4PrivateSubnetPools ipv4_private_pools = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
 
-  // Pools for public ipv4 addresses.
-  // Default is 'use_network_pools = true'
-  IPv4PublicSubnetPools ipv4_public_pools = 3 [
-    (field_behavior) = NON_EMPTY_DEFAULT,
-    (field_behavior) = MEANINGFUL_EMPTY_VALUE
-  ];
+  // Public IPv4 address pools for this subnet.
+  // If unspecified, pools from the associated network are used.
+  IPv4PublicSubnetPools ipv4_public_pools = 3 [(field_behavior) = NON_EMPTY_DEFAULT];
 
-  // ID of the custom route table to associate with this subnet.
-  // Must be one of the route tables associated with network.
-  // If not specified, the subnet will use the network's default route table.
+  // ID of the route table to associate with the subnet.
+  // If unspecified, the network's default route table is used.
   string route_table_id = 5;
 }
 
 message IPv4PrivateSubnetPools {
-  // Pools for private ipv4 allocations in subnet
-  // Must be empty if 'use_network_pools = true'
+  // List of private IPv4 CIDR blocks for this subnet.
+  // Must not overlap with other resources in the network
+  // Must be empty if `use_network_pools` is true.
   repeated SubnetPool pools = 1;
 
-  // Allow using of private ipv4 pools which are specified in network
-  // Must be false if 'pools' is not empty
+  // If true, inherit private IPv4 pools from the network. Defaults to true.
+  // Must be false if `pools` is specified.
   bool use_network_pools = 2;
 }
 
 message IPv4PublicSubnetPools {
-  // Pools for public ipv4 allocations in subnet
-  // Must be empty if 'use_network_pools = true'
+  // List of public IPv4 CIDR blocks for this subnet.
+  // Must not overlap with other resources in the network.
+  // Must be empty if `use_network_pools` is true.
   repeated SubnetPool pools = 1;
 
-  // Allow using of public ipv4 pools which are specified in network
-  // Must be false if 'pools' is not empty
+  // If true, inherit public IPv4 pools from the network.
+  // Must be false if `pools` is specified.
   bool use_network_pools = 2;
 }
 
@@ -75,8 +70,9 @@ message SubnetPool {
 }
 
 message SubnetCidr {
-  // CIDR block.
-  // May be a prefix length (such as /24) or a CIDR-formatted string (such as 10.1.2.0/24).
+  // A CIDR block (e.g., "10.1.2.0/24") or a prefix length (e.g., "/24").
+  // If prefix length is specified, the CIDR block will be auto-allocated
+  // from the network's available space.
   string cidr = 1 [
     (buf.validate.field) = {
       cel: [
@@ -95,12 +91,10 @@ message SubnetCidr {
     }
   ];
 
-  // State of the Cidr.
-  // Default state is AVAILABLE
+  // Controls provisioning of IP addresses from the CIDR block . Defaults to AVAILABLE.
   AddressBlockState state = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
 
-  // Maximum mask length for allocation from this cidr
-  // Default max_mask_length is 32 for IPv4 and 128 for IPv6
+  // Maximum mask length for an allocation from this block. Defaults to /32 for IPv4.
   int64 max_mask_length = 3 [
     (field_behavior) = NON_EMPTY_DEFAULT,
     (buf.validate.field) = { int64: { lte: 128, gte: 0 } }
