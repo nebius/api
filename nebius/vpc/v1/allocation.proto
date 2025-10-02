@@ -20,26 +20,29 @@ message Allocation {
   // Specifications for the allocation, detailing its name and IP configuration.
   AllocationSpec spec = 2;
 
-  // Contains the current status of the allocation, indicating its state and any additional details.
+  // Contains the current status of the allocation, indicating its state and
+  // any additional details.
   AllocationStatus status = 3;
 }
 
 message AllocationSpec {
-  // Holds the IP specifications for the allocation, including the type of IP (IPv4 or IPv6) and its corresponding configuration.
+  // IP specifications for the allocation.
   oneof ip_spec {
     option (buf.validate.oneof).required = true;
 
-    IPv4PrivateAllocationSpec ipv4_private = 1 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+    IPv4PrivateAllocationSpec ipv4_private = 1;
 
-    IPv4PublicAllocationSpec ipv4_public = 2 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+    IPv4PublicAllocationSpec ipv4_public = 2;
   }
 }
 
+// Private IPv4 address configuration for the allocation.
 message IPv4PrivateAllocationSpec {
-  // CIDR block for IPv4 Allocation.
-  // May be a single IP address (such as 10.2.3.4),
-  // a prefix length (such as /24) or a CIDR-formatted string (such as 10.1.2.0/24).
-  // Random address (/32) from pool would be allocated if field is omitted.
+  // A single IP address (e.g 10.1.2.1), a CIDR block (e.g., "10.1.2.0/24") or
+  // a prefix length (e.g., "/32").
+  // If prefix length is specified, the CIDR block will be auto-allocated from
+  // the available space in the pool or subnet.
+  // If not specified, defaults to "/32".
   string cidr = 1 [
     (buf.validate.field) = {
       cel: [
@@ -57,20 +60,25 @@ message IPv4PrivateAllocationSpec {
     option (buf.validate.oneof).required = true;
     option (oneof_behavior) = IMMUTABLE;
 
-    // Subnet ID.
-    // Required same subnet to use allocation in subnet-resources (e.g. Network Interface)
+    // ID of the subnet that allocation will be associated with.
+    // IP address of the allocation must be within a CIDR block associated
+    // with this subnet.
+    // In order to assign an allocation to a resource (i.e. network interface)
+    // both must be associated with the same subnet.
     string subnet_id = 2 [(field_behavior) = IMMUTABLE];
 
-    // Pool for the IPv4 private allocation.
+    // ID of the pool that allocation will receive its IP address from.
     string pool_id = 3 [(field_behavior) = IMMUTABLE];
   }
 }
 
+// Public IPv4 address configuration for the allocation.
 message IPv4PublicAllocationSpec {
-  // CIDR block for IPv4 Allocation.
-  // May be a single IP address (such as 10.2.3.4),
-  // a prefix length (such as /32) or a CIDR-formatted string (such as 10.1.2.0/32).
-  // Random address (/32) from pool would be allocated if field is omitted.
+  // A single IP address (e.g. 1.2.3.4), a CIDR block (e.g., "1.2.3.4/24")
+  // or a prefix length (e.g., "/32").
+  // If prefix length is specified, the CIDR block will be auto-allocated from
+  // the available space in the pool or subnet.
+  // If not specified, defaults to "/32".
   string cidr = 1 [
     (buf.validate.field) = {
       cel: [
@@ -88,11 +96,14 @@ message IPv4PublicAllocationSpec {
     option (buf.validate.oneof).required = true;
     option (oneof_behavior) = IMMUTABLE;
 
-    // Subnet ID.
-    // Required same subnet to use allocation in subnet-resources (e.g. Network Interface)
+    // ID of the subnet that allocation will be associated with.
+    // IP address of the allocation must be within a CIDR block associated with
+    // this subnet.
+    // Assigning an allocation to a resource (i.e. network interface) requires
+    // both to be associated with the same subnet.
     string subnet_id = 2 [(field_behavior) = IMMUTABLE];
 
-    // Pool for the IPv4 public allocation.
+    // ID of the pool that allocation will receive its IP address from.
     string pool_id = 3 [(field_behavior) = IMMUTABLE];
   }
 }

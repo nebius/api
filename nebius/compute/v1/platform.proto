@@ -26,6 +26,8 @@ message PlatformSpec {
   string human_readable_name = 4;
 
   bool allow_preset_change = 5;
+
+  string short_human_readable_name = 10;
 }
 
 message Preset {
@@ -42,6 +44,8 @@ message PresetResources {
   int32 memory_gibibytes = 3;
 
   int32 gpu_count = 4;
+
+  int32 gpu_memory_gibibytes = 6;
 }
 
 message PlatformStatus {

@@ -27,11 +27,13 @@ message Network {
 }
 
 message NetworkSpec {
-  // Pools for private ipv4 addresses.
+  // Pools for private IPv4 addresses.
   // Default private pools will be created if not specified.
+  // Default private pools are referred here
+  // https://docs.nebius.com/vpc/addressing/available-addresses
   IPv4PrivateNetworkPools ipv4_private_pools = 1 [(field_behavior) = NON_EMPTY_DEFAULT];
 
-  // Pools for public ipv4 addresses.
+  // Pools for public IPv4 addresses.
   // Default public pool will be used if not specified.
   IPv4PublicNetworkPools ipv4_public_pools = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
 }
@@ -45,7 +47,7 @@ message IPv4PublicNetworkPools {
 }
 
 message NetworkPool {
-  // ID of the IP address pool.
+  // ID of the pool.
   string id = 1 [(buf.validate.field).required = true];
 }
 

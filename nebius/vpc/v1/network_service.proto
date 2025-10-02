@@ -36,12 +36,14 @@ message GetNetworkRequest {
 }
 
 message GetNetworkByNameRequest {
+  // ID of the project.
   string parent_id = 1 [(buf.validate.field).required = true];
 
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListNetworksRequest {
+  // ID of the project.
   string parent_id = 1 [(buf.validate.field).required = true];
 
   int64 page_size = 2;
