@@ -77,6 +77,9 @@ message QuotaAllowanceStatus {
     // Quota region is unreachable, the current usage is therefore unknown.
     // Please, retry the request later.
     USAGE_STATE_UNKNOWN = 3;
+
+    // Quota usage is not applicable
+    USAGE_STATE_NOT_APPLICABLE = 4;
   }
 
   // Current state of the quota usage.
