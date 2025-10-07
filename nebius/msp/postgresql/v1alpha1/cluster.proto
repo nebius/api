@@ -37,7 +37,7 @@ message ConnectionPoolerConfig {
   // Mode that the connection pooler is working in.
   PoolingMode pooling_mode = 1;
 
-  // Maximum number of connections in the pool for a single database.
+  // Maximum number of connections in the pool for a single user/database pair.
   optional int64 max_pool_size = 2 [(buf.validate.field) = { int64: { lte: 12800, gte: 5 } }];
 }
 
