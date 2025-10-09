@@ -63,7 +63,7 @@ message LifecycleRule {
   // target storage class to transit object to.
   LifecycleTransition transition = 7;
 
-  // Spicifies the transition for the lifecycle of a noncurrent object.
+  // Specifies the transition for the lifecycle of a noncurrent object.
   // It works only on a bucket that has versioning enabled (or suspended).
   LifecycleNoncurrentVersionTransition noncurrent_version_transition = 8;
 }
