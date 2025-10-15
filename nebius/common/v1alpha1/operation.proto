@@ -9,16 +9,15 @@ import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1alpha1";
-
-// Migrate to common/v1.
 option deprecated = true;
+option (file_deprecation_details) = { description: "migrate to common/v1" };
 option java_multiple_files = true;
 option java_outer_classname = "OperationProto";
 option java_package = "ai.nebius.pub.common.v1alpha1";
 
 message Operation {
-  // Migrate to common/v1.
   option deprecated = true;
+  option (message_deprecation_details) = { description: "migrate to common/v1" };
 
   // ID of the operation.
   string id = 1;

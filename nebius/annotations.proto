@@ -9,6 +9,12 @@ option java_multiple_files = true;
 option java_outer_classname = "AnnotationsProto";
 option java_package = "ai.nebius.pub";
 
+extend google.protobuf.FileOptions {
+  // Contains additional information about the planned deprecation of a file.
+  // Used along with `option deprecated = true`.
+  DeprecationDetails file_deprecation_details = 1194;
+}
+
 extend google.protobuf.ServiceOptions {
   // Specifies the domain prefix for the service endpoint.
   // For example, `option (api_service_name) = "compute";` makes the service
@@ -68,6 +74,10 @@ extend google.protobuf.OneofOptions {
 
 extend google.protobuf.EnumOptions {
   EnumPySDKSettings enum_py_sdk = 1191;
+
+  // Contains additional information about the planned deprecation of an enum.
+  // Used along with `option deprecated = true`.
+  DeprecationDetails enum_deprecation_details = 1194;
 }
 
 extend google.protobuf.EnumValueOptions {
