@@ -47,3 +47,11 @@ message ListRequest {
   // Token for pagination, allowing the retrieval of the next set of results.
   string page_token = 3;
 }
+
+message UpdateVersionRequest {
+  // ID of the entity to stop.
+  string id = 1 [(buf.validate.field).required = true];
+
+  // New version string.
+  string version = 2 [(buf.validate.field).required = true];
+}
