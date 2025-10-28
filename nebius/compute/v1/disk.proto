@@ -108,6 +108,12 @@ message DiskStatus {
 
   string state_description = 2;
 
+  // Current read-write owner (instance ID).
+  // May refer to an instance in any state, including stopped
+  // (this semantics is preserved for backward compatibility).
+  // Reassigned on disk detach, instance deletion, or ownership transfer.
+  // Ownership transfer occurs when this disk is explicitly attached to another instance
+  // or when a VM with this disk attached starts while the current owner is stopped.
   string read_write_attachment = 3;
 
   repeated string read_only_attachments = 4;
