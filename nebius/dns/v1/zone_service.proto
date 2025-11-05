@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package nebius.dns.v1;
+
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/dns/v1/zone.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/dns/v1";
+option java_multiple_files = true;
+option java_outer_classname = "ZoneServiceProto";
+option java_package = "ai.nebius.pub.dns.v1";
+
+// Service for managing DNS zones (`Zone` resources)
+service ZoneService {
+  option (api_service_name) = "dns";
+
+  // Gets the DNS zone with the specified ID
+  rpc Get(GetZoneRequest) returns (Zone);
+
+  // Gets the DNS zone by its parent IAM container (`metadata.parent_id`) and `metadata.name`
+  rpc GetByName(common.v1.GetByNameRequest) returns (Zone);
+
+  // Lists DNS zones in the specified parent IAM container
+  rpc List(ListZonesRequest) returns (ListZonesResponse);
+}

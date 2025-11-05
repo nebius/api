@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+package nebius.dns.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/dns/v1";
+option java_multiple_files = true;
+option java_outer_classname = "ZoneProto";
+option java_package = "ai.nebius.pub.dns.v1";
+
+// API Resource: *DNS zone*, a container for DNS data
+//
+// Each DNS zone starts at a particular domain within the hierarchical DNS namespace tree, e.g., `example.com.`, and can also include its subdomains, e.g., `sales.example.com.`
+// DNS Zones contain *Resource Records* (RRs), which are individual information entries about the domain(s), e.g., a domain's IP address
+// See the [graphical explanation of DNS zones and Resource Records on Wikipedia](https://en.wikipedia.org/wiki/Domain_Name_System#/media/File:Domain_name_space.svg)
+//
+// A Resource Record is represented in this API by the `Record` API Resource which is managed by the `RecordService`
+message Zone {
+  // DNS zone metadata
+  // `metadata.parent_id` must be an IAM Container ID
+  common.v1.ResourceMetadata metadata = 1;
+
+  // DNS zone specification, including its domain name and scope
+  ZoneSpec spec = 2;
+
+  // DNS zone status, including e.g. the number of records in the zone
+  ZoneStatus status = 3;
+}
+
+// DNS Zone specification
+message ZoneSpec {
+  // Fully qualified domain name of this zone, including `.` at the end
+  string domain_name = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "domain_name_format",
+          message: "domain_name must be a fully-qualified domain name with '.' at the end, e.g. 'x.y.z.'",
+          expression: "size(this) < 253 && this.matches('^[a-z0-9][-a-z0-9.]*[.]$')"
+        }
+      ],
+      required: true
+    }
+  ];
+
+  // Scope for this zone
+  // The scope is chosen at zone creation time and cannot be changed, but scope's attributes can sometimes be changed
+  oneof scope {
+    option (buf.validate.oneof).required = true;
+
+    // A VPC zone, which is only visible from a virtual network (VPC)
+    VpcZoneScope vpc = 12;
+  }
+
+  // Custom SOA (Start of Authority) record specification for the zone
+  SoaSpec soa_spec = 30;
+}
+
+// VPC zone scope specification
+message VpcZoneScope {
+  // ID of the virtual network that this zone's records will be visible from
+  // This value cannot be changed after creating the zone
+  string primary_network_id = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+}
+
+// Custom SOA (Start of Authority) record specification for the zone
+message SoaSpec {
+  // Specifies TTL, in seconds, for caching `NXDOMAIN` ("record not found") DNS responses from this zone (*negative caching*)
+  // Set this TTL to a low value if you frequently delete and recreate records instead of updating them
+  // *Note:* Values of less than `5` will be ignored, and a default negative caching TTL will be used instead
+  int64 negative_ttl = 30;
+}
+
+// DNS zone status
+message ZoneStatus {
+  // Number of records in this zone. May be 0 if not calculated (e.g., in listings)
+  int64 record_count = 20;
+
+  // Indicates whether there is a running Operation for this Zone
+  bool reconciling = 100;
+}
+
+// Request to get the DNS zone by its ID and, optionally, its resource version
+message GetZoneRequest {
+  // Zone ID
+  string id = 1 [(buf.validate.field).required = true];
+
+  // Optional: expected zone version (`metadata.resource_version`)
+  // - If specified, the requested version will be returned if possible (if the version has changed, you will get a `FAILED_PRECONDITION` error)
+  // - If not specified or set to `0`, the latest zone version will be returned
+  int64 resource_version = 2 [(buf.validate.field) = { int64: { gte: 0 } }];
+}
+
+// Request to list DNS zones in the specified parent IAM container
+message ListZonesRequest {
+  // Parent IAM container ID
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Page size
+  // If not specified or set to `0`, a default page size of `100` will be used
+  int64 page_size = 2;
+
+  // An opaque listing continuation token
+  // - If not specified or empty, the first page of results will be returned
+  // - If specified, the next page of results (as identified by the token) will be returned
+  string page_token = 3;
+}
+
+// Response with a single page of DNS zone listing results
+message ListZonesResponse {
+  // This page's items
+  repeated Zone items = 1;
+
+  // An opaque listing continuation token that can be used to return the next page of listing results
+  // If `next_page_token` is empty, this is the last result page
+  string next_page_token = 2;
+}

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package nebius.dns.v1;
+
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/dns/v1/record.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/dns/v1";
+option java_multiple_files = true;
+option java_outer_classname = "RecordServiceProto";
+option java_package = "ai.nebius.pub.dns.v1";
+
+// Service for managing DNS records (`Record` resources)
+service RecordService {
+  option (api_service_name) = "dns";
+
+  // Gets the DNS record with the specified ID
+  rpc Get(GetRecordRequest) returns (Record);
+
+  // Gets the DNS record by its parent DNS zone (`metadata.parent_id`) and `metadata.name`
+  rpc GetByName(common.v1.GetByNameRequest) returns (Record);
+
+  // Lists DNS records in the specified DNS zone
+  rpc List(ListRecordsRequest) returns (ListRecordsResponse);
+}
