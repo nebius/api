@@ -1,0 +1,153 @@
+syntax = "proto3";
+
+package nebius.dns.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/dns/v1";
+option java_multiple_files = true;
+option java_outer_classname = "RecordProto";
+option java_package = "ai.nebius.pub.dns.v1";
+
+// API Resource: DNS *Resource Record* (RR), an information entry about a specific domain
+//
+// Each record is contained within a DNS zone, which is a container for DNS data of a specific domain, and, possibly, its subdomains
+// DNS zones are represented in this API by the `Zone` API Resource which is managed by the `ZoneService`
+message Record {
+  // DNS record metadata
+  // `metadata.parent_id` must be a DNS zone ID
+  common.v1.ResourceMetadata metadata = 1;
+
+  // DNS record specification, including its relative name, type, data and TTL
+  RecordSpec spec = 2;
+
+  // DNS record status, including e.g. its effective FQDN (fully-qualified domain name)
+  RecordStatus status = 3;
+}
+
+// DNS record specification
+message RecordSpec {
+  // Zone-relative name of this record (e.g., `www` for `www.<parent zone's domain name>`)
+  // Use `@` for records in zone apex (that is, records that have the same domain name as the zone itself)
+  // To see the resolved absolute domain name, see `Record.status.effective_fqdn`
+  string relative_name = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "relative_name_format",
+          message: "relative_name must be '@' for zone apex, or a valid relative domain name (e.g. 'a.x-y.zzz')",
+          expression: "size(this) < 253 && this.matches('^(?:@|(?:[*]|[a-z0-9_](?:[a-z0-9-_]{0,60}[a-z0-9_])*)(?:[.][a-z0-9_](?:[a-z0-9-_]{0,60}[a-z0-9_])*)*)$')"
+        }
+      ],
+      required: true
+    },
+    (field_behavior) = IMMUTABLE
+  ];
+
+  // Record type
+  RecordType type = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+
+  // Record TTL. If absent or negative, will be assumed to be the default value (`600`)
+  int64 ttl = 3;
+
+  // Record data in text format
+  //
+  // This should be the RDATA part of this Resource Record's [presentation (zonefile) format](https://datatracker.ietf.org/doc/html/rfc9499#name-resource-records). E.g., `10 xyz.tuv` for a `@ 600 IN MX 10 xyz.tuv.` resource record in a zonefile
+  string data = 4 [(buf.validate.field).required = true];
+
+  // Mark this record as delete-protected
+  // Delete-protected records can *only* be deleted by explicitly calling `RecordService/Delete` API with `force` flag set to `true`
+  bool deletion_protection = 6;
+
+  // DNS Record type
+  enum RecordType {
+    // Record type is not specified
+    RECORD_TYPE_UNSPECIFIED = 0;
+
+    // `A` record: IPv4 address
+    A = 1;
+
+    // `AAAA` record: IPv6 address
+    AAAA = 2;
+
+    // `PTR` record: mapping from IP address to a domain name
+    PTR = 3;
+
+    // `CNAME` record: an alias for a *canonical domain name*
+    CNAME = 4;
+
+    // `MX` record: mail server information (domain name, priority)
+    MX = 5;
+
+    // `TXT` record: text data, typically used to verify e-mail addresses, websites and TLS certificates
+    TXT = 6;
+
+    // `SRV` record: information about a network service (domain name, port, weight)
+    SRV = 7;
+
+    // `NS` record: domain name of an authoritative nameserver for this DNS zone, or one of its subzones
+    NS = 8;
+
+    // `SOA` record: administrative information about this DNS zone
+    SOA = 9;
+
+    // `CAA` record: certificate issuance settings for this DNS zone and its subzones
+    CAA = 10;
+
+    // `SVCB` record: service binding. See [RFC 9460, section 2.3](https://www.rfc-editor.org/rfc/rfc9460.html#section-2.3)
+    SVCB = 11;
+
+    // `HTTPS` record: service binding with HTTPS protocol configuration. See [RFC 9460, section 9.1](https://www.rfc-editor.org/rfc/rfc9460.html#section-9.1)
+    HTTPS = 12;
+  }
+}
+
+// DNS record status
+message RecordStatus {
+  // Domain name of this record's parent zone including `.` at the end, e.g. `example.com.`
+  string zone_domain_name = 1;
+
+  // Fully-qualified domain name of this record including `.` at the end, e.g. `www.example.com.`
+  string effective_fqdn = 2;
+
+  // Indicates whether there is a running Operation for this Record
+  bool reconciling = 100;
+}
+
+// Request to get the DNS record by its ID and, optionally, its resource version
+message GetRecordRequest {
+  // Record ID
+  string id = 1 [(buf.validate.field).required = true];
+
+  // Optional: expected record version (`metadata.resource_version`)
+  // - If specified, the requested version will be returned if possible (if the version has changed, you will get a `FAILED_PRECONDITION` error)
+  // - If not specified or set to `0`, the latest version will be returned
+  int64 resource_version = 2 [(buf.validate.field) = { int64: { gte: 0 } }];
+}
+
+// Request to list DNS records in the specified parent DNS zone
+message ListRecordsRequest {
+  // Parent DNS zone ID
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Page size
+  // If not specified or set to `0`, a default page size of `100` will be used
+  int64 page_size = 2;
+
+  // An opaque listing continuation token
+  // - If not specified or empty, the first page of results will be returned
+  // - If specified, the next page of results (as identified by the token) will be returned
+  string page_token = 3;
+}
+
+// Response with a single page of DNS record listing results
+message ListRecordsResponse {
+  // This page's items
+  repeated Record items = 1;
+
+  // An opaque listing continuation token that can be used to return the next page of listing results
+  // If `next_page_token` is empty, this is the last result page
+  string next_page_token = 2;
+}
