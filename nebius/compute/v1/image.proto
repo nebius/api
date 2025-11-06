@@ -31,6 +31,7 @@ message ImageSpec {
 
   string image_family = 2 [(field_behavior) = IMMUTABLE];
 
+  // part of identifier into the image family
   string version = 3 [(field_behavior) = IMMUTABLE];
 
   CPUArchitecture cpu_architecture = 6 [(field_behavior) = IMMUTABLE];

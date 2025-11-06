@@ -146,6 +146,11 @@ message AllocationDetails {
 
   // The IP version of this allocation (IPv4 or IPv6).
   IpVersion version = 4;
+
+  // ID of the subnet associated with this allocation.
+  // Populated when created with explicit subnet_id, from a subnet-specific pool,
+  // or when assigned to a resource.
+  string subnet_id = 5;
 }
 
 message Assignment {
