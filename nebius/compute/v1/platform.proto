@@ -45,7 +45,10 @@ message PresetResources {
 
   int32 gpu_count = 4;
 
-  int32 gpu_memory_gibibytes = 6;
+  int32 gpu_memory_gibibytes = 6 [
+    deprecated = true,
+    (field_deprecation_details) = { effective_at: "2026-01-10", description: "Use field 'platform.spec.gpu_memory_gibibytes' instead" }
+  ];
 }
 
 message PlatformStatus {

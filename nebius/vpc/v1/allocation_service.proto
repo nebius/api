@@ -24,6 +24,8 @@ service AllocationService {
 
   rpc ListByPool(ListAllocationsByPoolRequest) returns (ListAllocationsResponse);
 
+  rpc ListBySubnet(ListAllocationsBySubnetRequest) returns (ListAllocationsResponse);
+
   rpc Create(CreateAllocationRequest) returns (common.v1.Operation);
 
   rpc Update(UpdateAllocationRequest) returns (common.v1.Operation);
@@ -53,6 +55,14 @@ message ListAllocationsRequest {
 
 message ListAllocationsByPoolRequest {
   string pool_id = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
+message ListAllocationsBySubnetRequest {
+  string subnet_id = 1 [(buf.validate.field).required = true];
 
   int64 page_size = 2;
 
