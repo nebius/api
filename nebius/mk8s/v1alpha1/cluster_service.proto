@@ -9,11 +9,17 @@ import "nebius/common/v1alpha1/operation.proto";
 import "nebius/mk8s/v1alpha1/cluster.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1alpha1";
+
+// Migrate to v1.
+option deprecated = true;
+option (file_deprecation_details) = { description: "migrate to v1" };
 option java_multiple_files = true;
 option java_outer_classname = "ClusterServiceProto";
 option java_package = "ai.nebius.pub.mk8s.v1alpha1";
 
 service ClusterService {
+  option deprecated = true;
+  option (service_deprecation_details) = { description: "Cluster v1alpha1 API is deprecated, please migrate to v1." };
   option (api_service_name) = "mk8s";
 
   rpc Get(GetClusterRequest) returns (Cluster);
