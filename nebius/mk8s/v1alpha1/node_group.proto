@@ -10,6 +10,10 @@ import "nebius/mk8s/v1alpha1/instance_template.proto";
 import "nebius/mk8s/v1alpha1/condition.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1alpha1";
+
+// Migrate to v1.
+option deprecated = true;
+option (file_deprecation_details) = { description: "migrate to v1" };
 option java_multiple_files = true;
 option java_outer_classname = "NodeGroupProto";
 option java_package = "ai.nebius.pub.mk8s.v1alpha1";
