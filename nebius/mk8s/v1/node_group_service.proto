@@ -30,6 +30,40 @@ service NodeGroupService {
   rpc Delete(DeleteNodeGroupRequest) returns (common.v1.Operation);
 
   rpc Upgrade(UpgradeNodeGroupRequest) returns (common.v1.Operation);
+
+  rpc GetCompatibilityMatrix(GetNodeGroupCompatibilityMatrixRequest) returns (NodeGroupCompatibilityMatrix);
+}
+
+message GetNodeGroupCompatibilityMatrixRequest {
+  // Cluster kubernetes version.
+  string cluster_kubernetes_version = 1 [(buf.validate.field).required = true];
+
+  // Hardware platform for which the capabilities are requested.
+  string platform = 2;
+}
+
+message NodeGroupCompatibilityMatrix {
+  // List of available versions.
+  repeated NodeGroupCompatibilityVersion versions = 1;
+}
+
+message NodeGroupCompatibilityVersion {
+  // Kubernetes version.
+  string kubernetes_version = 1;
+
+  // List of available images.
+  repeated NodeGroupCompatibilityVersionItem items = 2;
+}
+
+message NodeGroupCompatibilityVersionItem {
+  // Operating system.
+  string os = 1;
+
+  // Drivers preset name.
+  string drivers_preset = 3;
+
+  // Hardware platforms.
+  repeated string compatible_platforms = 5;
 }
 
 message CreateNodeGroupRequest {

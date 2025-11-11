@@ -44,6 +44,9 @@ message NodeGroupSpec {
   NodeTemplate template = 3 [(buf.validate.field).required = true];
 
   NodeGroupDeploymentStrategy strategy = 4;
+
+  // Parameters for nodes auto repair.
+  NodeGroupAutoRepairSpec auto_repair = 6;
 }
 
 message NodeTemplate {
@@ -251,6 +254,39 @@ message PercentOrCount {
 
     int64 count = 2;
   }
+}
+
+message NodeGroupAutoRepairSpec {
+  // Conditions that determine whether a node should be auto repaired.
+  repeated NodeAutoRepairCondition conditions = 4;
+}
+
+message NodeAutoRepairCondition {
+  // Node condition type.
+  string type = 1 [(buf.validate.field).required = true];
+
+  // Node condition status.
+  ConditionStatus status = 2;
+
+  oneof trigger {
+    option (buf.validate.oneof).required = true;
+
+    // The duration after which the node is automatically repaired if the condition remains in the specified status.
+    google.protobuf.Duration timeout = 3;
+
+    // When true, disables the default auto-repair condition rules.
+    bool disabled = 4;
+  }
+}
+
+enum ConditionStatus {
+  CONDITION_STATUS_UNSPECIFIED = 0;
+
+  TRUE = 1;
+
+  FALSE = 2;
+
+  UNKNOWN = 3;
 }
 
 message NodeGroupStatus {
