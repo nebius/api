@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package nebius.iam.v2;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/iam/v2/project.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v2";
+option java_multiple_files = true;
+option java_outer_classname = "ProjectServiceProto";
+option java_package = "ai.nebius.pub.iam.v2";
+
+service ProjectService {
+  option (api_service_name) = "cpl.iam";
+
+  // Creates a new project.
+  rpc Create(CreateProjectRequest) returns (common.v1.Operation);
+
+  // Retrieves a project by its ID.
+  rpc Get(GetProjectRequest) returns (Project);
+
+  // Retrieves a project by its name within a specified parent.
+  rpc GetByName(GetProjectByNameRequest) returns (Project);
+
+  // Lists projects under a specified parent.
+  rpc List(ListProjectsRequest) returns (ListProjectsResponse);
+
+  // Updates an existing project.
+  rpc Update(UpdateProjectRequest) returns (common.v1.Operation);
+
+  // Deletes a project by its ID.
+  rpc Delete(DeleteProjectRequest) returns (common.v1.Operation);
+}
+
+message CreateProjectRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  ProjectSpec spec = 2;
+}
+
+message GetProjectRequest {
+  // Identifier of project to retrieve.
+  string id = 1;
+}
+
+message GetProjectByNameRequest {
+  // Identifier of the project parent container.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Name of the project to retrieve.
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListProjectsRequest {
+  // Identifier of container to list projects from.
+  string parent_id = 1;
+
+  // Specifies the maximum number of items to return in the response.
+  // Default value: 10
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+
+  // A filter to narrow down the results based on specific criteria.
+  string filter = 4;
+}
+
+message UpdateProjectRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  ProjectSpec spec = 2;
+}
+
+message DeleteProjectRequest {
+  // Identifier of project to delete.
+  string id = 1;
+}
+
+message ListProjectsResponse {
+  repeated Project items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}

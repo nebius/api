@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package nebius.iam.v2;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v2";
+option java_multiple_files = true;
+option java_outer_classname = "ProjectProto";
+option java_package = "ai.nebius.pub.iam.v2";
+
+message Project {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  ProjectSpec spec = 2 [(buf.validate.field).required = true];
+
+  ProjectStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message ProjectSpec {
+  // Name of the region where project resources will be created.
+  // Example: "eu-north1".
+  string region = 1;
+}
+
+message ProjectStatus {
+  enum ProjectState {
+    STATE_UNSPECIFIED = 0;
+
+    CREATING = 1;
+
+    ACTIVE = 2;
+
+    PURGING = 3;
+  }
+
+  // Current state of the project.
+  ProjectState project_state = 1;
+}
