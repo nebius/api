@@ -28,6 +28,8 @@ message PlatformSpec {
   bool allow_preset_change = 5;
 
   string short_human_readable_name = 10;
+
+  int32 gpu_memory_gibibytes = 11;
 }
 
 message Preset {

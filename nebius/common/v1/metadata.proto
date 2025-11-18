@@ -41,7 +41,7 @@ message ResourceMetadata {
 // if service supports uniqueness of ResourceMetadata.name within tuple (scope) <resource_type, parent_id>
 // it also must have grpc method GetByName
 message GetByNameRequest {
-  string parent_id = 1;
+  string parent_id = 1 [(buf.validate.field).required = true];
 
-  string name = 2;
+  string name = 2 [(buf.validate.field).required = true];
 }
