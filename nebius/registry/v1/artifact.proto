@@ -51,4 +51,7 @@ message Artifact {
   google.protobuf.Timestamp created_at = 8;
 
   google.protobuf.Timestamp updated_at = 9;
+
+  // List of tags associated with the artifact. Example: ["v1.0", "latest", "stable"].
+  repeated string tags = 10;
 }
