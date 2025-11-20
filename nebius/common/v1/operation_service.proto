@@ -10,9 +10,12 @@ option java_multiple_files = true;
 option java_outer_classname = "OperationServiceProto";
 option java_package = "ai.nebius.pub.common.v1";
 
+// Service for reading operations.
 service OperationService {
+  // Returns the current state of the specified operation.
   rpc Get(GetOperationRequest) returns (Operation);
 
+  // Lists operations for the specified resource.
   rpc List(ListOperationsRequest) returns (ListOperationsResponse);
 }
 

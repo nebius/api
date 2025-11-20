@@ -8,7 +8,6 @@ import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/resource_event.proto";
 import "nebius/mk8s/v1/instance_template.proto";
-import "nebius/mk8s/v1/condition.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1";
 option java_multiple_files = true;
@@ -342,14 +341,6 @@ message NodeGroupStatus {
   // Total number of nodes that successfully joined the cluster and are ready to serve workloads.
   // Both outdated and up-to-date nodes are counted.
   int64 ready_node_count = 6;
-
-  repeated Condition conditions = 50 [
-    deprecated = true,
-    (field_deprecation_details) = {
-      effective_at: "2025-08-01",
-      description: "it is not implemented well, messages should be used instead"
-    }
-  ];
 
   repeated common.v1.RecurrentResourceEvent events = 61;
 

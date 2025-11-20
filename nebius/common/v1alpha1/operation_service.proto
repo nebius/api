@@ -13,6 +13,7 @@ option java_multiple_files = true;
 option java_outer_classname = "OperationServiceProto";
 option java_package = "ai.nebius.pub.common.v1alpha1";
 
+// Service for reading operations.
 service OperationService {
   option deprecated = true;
   option (service_deprecation_details) = { description: "migrate to common/v1" };
