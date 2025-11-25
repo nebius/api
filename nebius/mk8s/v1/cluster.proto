@@ -35,6 +35,7 @@ message ControlPlaneSpec {
   // Also will be default NodeGroup subnet.
   string subnet_id = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
 
+  // Specification of endpoints of cluster control plane.
   ControlPlaneEndpointsSpec endpoints = 3;
 
   // Number of instances in etcd cluster.
@@ -45,8 +46,7 @@ message ControlPlaneSpec {
 }
 
 message ControlPlaneEndpointsSpec {
-  // Specification of public endpoint for control plane.
-  // Set value to empty, to enable it.
+  // Public endpoint specification. When set, a public endpoint is created.
   PublicEndpointSpec public_endpoint = 1 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
 }
 
