@@ -23,6 +23,9 @@ service FederationCertificateService {
 
   rpc Update(UpdateFederationCertificateRequest) returns (common.v1.Operation);
 
+  // Replaces all federation's certificates with provided in the request. Certificates which are not presented will be removed.
+  rpc UpdateBulk(UpdateBulkFederationCertificateRequest) returns (common.v1.Operation);
+
   rpc Delete(DeleteFederationCertificateRequest) returns (common.v1.Operation);
 }
 
@@ -52,6 +55,14 @@ message UpdateFederationCertificateRequest {
   common.v1.ResourceMetadata metadata = 1;
 
   FederationCertificateSpec spec = 2;
+}
+
+message UpdateBulkFederationCertificateRequest {
+  // Represents the parent federation ID. All certificates in update should have identical parent id.
+  string federation_id = 1;
+
+  // If target certificate contains id - the existing one will be updates, otherwise the new one will be created.
+  repeated UpdateFederationCertificateRequest updates = 2;
 }
 
 message DeleteFederationCertificateRequest {

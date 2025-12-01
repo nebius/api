@@ -45,4 +45,5 @@ message SamlSettings {
 }
 
 message FederationStatus {
+  int32 users_count = 1;
 }
