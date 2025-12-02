@@ -12,8 +12,6 @@ option java_outer_classname = "FederationProto";
 option java_package = "ai.nebius.pub.iam.v1";
 
 message Federation {
-  option (resource_behavior) = UNNAMED;
-
   common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
 
   FederationSpec spec = 2 [(buf.validate.field).required = true];
