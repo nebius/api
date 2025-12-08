@@ -9,6 +9,8 @@ option java_multiple_files = true;
 option java_outer_classname = "S3EventsProto";
 option java_package = "ai.nebius.pub.storage.v1";
 
+// ----------------------------------------
+
 message CompleteMultipartUploadRequestParameters {
   string bucket_name = 1;
 
