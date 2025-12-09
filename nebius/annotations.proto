@@ -63,6 +63,16 @@ extend google.protobuf.FieldOptions {
   DeprecationDetails field_deprecation_details = 1194;
 
   FieldPySDKSettings field_py_sdk = 1195;
+
+  // Field NID settings for fields annotated with this option.
+  // When present on string fields (including lists and maps), values are treated as NIDs and
+  // warnings are emitted when they are not valid. These warnings are separate from server-side validation.
+  //
+  // For metadata fields, this describes which parent resource types are allowed in
+  // `metadata.parent_id`. For string fields, this describes which resource types are allowed
+  // in the NID itself.
+  // See `NIDFieldSettings` for more details.
+  NIDFieldSettings nid = 1196;
 }
 
 extend google.protobuf.OneofOptions {
@@ -183,4 +193,16 @@ message DeprecationDetails {
 
   // A description to help users understand the reason for deprecation and suggest alternatives
   string description = 2;
+}
+
+message NIDFieldSettings {
+  // Fields annotated with this option are treated as NIDs.
+  // `resource` lists allowed NID resource types (prefixes). Leave empty to accept any type.
+  // Validation only produces warnings.
+  repeated string resource = 1;
+
+  // For metadata fields, `parent_resource` lists allowed parent resource types for `metadata.parent_id`.
+  // Leave empty to allow any type. Validation only produces warnings.
+  // Typically set on the resource message; request-level overrides are supported.
+  repeated string parent_resource = 2;
 }
