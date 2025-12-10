@@ -34,6 +34,14 @@ message ProjectStatus {
     ACTIVE = 2;
 
     PURGING = 3;
+
+    CREATED = 4;
+
+    ACTIVATING = 5;
+
+    PARKING = 6;
+
+    PARKED = 7;
   }
 
   // Current state of the project.

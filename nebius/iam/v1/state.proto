@@ -26,6 +26,14 @@ enum State {
 
   PURGED = 8;
 
+  CREATED = 9;
+
+  ACTIVATING = 10;
+
+  PARKING = 11;
+
+  PARKED = 12;
+
   // DRAFT = 1000;
   CREATING = 1001;
 }

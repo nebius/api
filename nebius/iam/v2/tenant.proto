@@ -29,6 +29,14 @@ message TenantStatus {
     CREATING = 1;
 
     ACTIVE = 2;
+
+    CREATED = 3;
+
+    ACTIVATING = 4;
+
+    PARKING = 5;
+
+    PARKED = 6;
   }
 
   TenantState tenant_state = 1;
