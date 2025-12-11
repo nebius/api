@@ -4,6 +4,7 @@ package nebius.compute.v1;
 
 import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
 option java_multiple_files = true;
@@ -62,4 +63,13 @@ message ImageStatus {
 
   // Indicates whether there is an ongoing operation
   bool reconciling = 5;
+
+  // Impossible create a disk using image family after the deprecation time, but still possible to create disk using image id.
+  message ImageFamilyDeprecationStatus {
+    google.protobuf.Timestamp deprecated_at = 1;
+
+    string message = 2;
+  }
+
+  ImageFamilyDeprecationStatus image_family_deprecation = 6;
 }
