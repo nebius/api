@@ -4,6 +4,8 @@ package nebius.quotas.v1;
 
 import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
 import "nebius/quotas/v1/quota_allowance.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/quotas/v1";
@@ -11,19 +13,52 @@ option java_multiple_files = true;
 option java_outer_classname = "QuotaAllowanceServiceProto";
 option java_package = "ai.nebius.pub.quotas.v1";
 
+// Manages quota allowances for tenants and projects, including listing, retrieval, and lifecycle operations.
 service QuotaAllowanceService {
   option (api_service_name) = "quota-dispatcher.billing-cpl";
 
-  // Lists quotas by an ID of a Tenant or a Project.
+  // Lists quota allowances for the specified Tenant or Project.
   rpc List(ListQuotaAllowancesRequest) returns (ListQuotaAllowancesResponse);
 
-  // Gets a quota by its ID.
+  // Gets a quota allowance by its ID.
   rpc Get(GetQuotaAllowanceRequest) returns (QuotaAllowance);
 
-  // Gets a quota by an ID of a Tenant or a Project, its region, and name.
+  // Gets a quota allowance for a Tenant or Project by container ID, region, and name.
   rpc GetByName(GetByNameRequest) returns (QuotaAllowance);
+
+  // Creates a quota allowance for a Project.
+  // If the quota already exists, its value is replaced with the provided one.
+  rpc Create(CreateQuotaAllowanceRequest) returns (common.v1.Operation);
+
+  // Updates a quota allowance by its ID.
+  rpc Update(UpdateQuotaAllowanceRequest) returns (common.v1.Operation);
+
+  // Deletes a quota by its ID.
+  // This is used to reset the quota value. It does not remove the quota entry.
+  rpc Delete(DeleteQuotaAllowanceRequest) returns (common.v1.Operation);
 }
 
+// Request to create a quota allowance with the specified spec and metadata.
+message CreateQuotaAllowanceRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  QuotaAllowanceSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+// Request to update an existing quota allowance using its metadata and the new spec.
+message UpdateQuotaAllowanceRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  QuotaAllowanceSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+// Request to delete a quota allowance by its identifier.
+message DeleteQuotaAllowanceRequest {
+  // ID of the quota.
+  string id = 1 [(buf.validate.field).required = true, (field_behavior) = IDENTIFIER];
+}
+
+// Request to list quota allowances under a container with pagination support.
 message ListQuotaAllowancesRequest {
   // ID of the Container to list quotas for.
   string parent_id = 1 [(buf.validate.field).required = true];
@@ -36,19 +71,22 @@ message ListQuotaAllowancesRequest {
   string page_token = 3;
 }
 
+// Request to get a quota allowance by its identifier.
 message GetQuotaAllowanceRequest {
   // ID of the quota.
   string id = 1 [(buf.validate.field).required = true, (field_behavior) = IDENTIFIER];
 }
 
+// Response containing quota allowances and pagination token.
 message ListQuotaAllowancesResponse {
-  // List of quotas on this result page.
+  // List of quota allowances on this result page.
   repeated QuotaAllowance items = 1;
 
   // Listing continuation token for the next page of results.
   string next_page_token = 2;
 }
 
+// Request to get a quota allowance by container, name, and region.
 message GetByNameRequest {
   // ID of the Container to list quotas for.
   string parent_id = 1 [(buf.validate.field).required = true];

@@ -29,7 +29,12 @@ message PlatformSpec {
 
   string short_human_readable_name = 10;
 
-  int32 gpu_memory_gibibytes = 11;
+  int32 gpu_memory_gibibytes = 11 [
+    deprecated = true,
+    (field_deprecation_details) = { effective_at: "2026-02-10", description: "Use field 'gpu_memory_gigabytes' instead" }
+  ];
+
+  int32 gpu_memory_gigabytes = 12;
 }
 
 message Preset {

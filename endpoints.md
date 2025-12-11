@@ -80,6 +80,7 @@
   * [nebius.msp.postgresql.v1alpha1.BackupService](nebius/msp/postgresql/v1alpha1/backup_service.proto)
   * [nebius.msp.postgresql.v1alpha1.ClusterService](nebius/msp/postgresql/v1alpha1/cluster_service.proto)
 * quota-dispatcher.billing-cpl.api.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.quotas.v1.QuotaAllowanceService](nebius/quotas/v1/quota_allowance_service.proto)
 * registry.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
