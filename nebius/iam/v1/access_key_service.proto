@@ -13,15 +13,15 @@ option java_multiple_files = true;
 option java_outer_classname = "AccessKeyServiceProto";
 option java_package = "ai.nebius.pub.iam.v1";
 
-// Access keys API v1 is depricated. It's known to malfunction under certain conditions.
-// Use Access keys API v2 instead. Access keys create by API v1 are available using Access keys API v2.
+// Access keys management [deprecated]
 service AccessKeyService {
   option (api_service_name) = "cpl.iam";
   option deprecated = true;
 
   option (service_deprecation_details) = {
     effective_at: "2026-09-01",
-    description: "Access keys API v1 is deprecated, use the v2 version instead. Keys produced by API v1 are available using v2."
+    description: "Access keys v1 API is deprecated. Please use the v2 API instead. All existing keys remain accessible through the v2 API.",
+    description_cli: "Please use the 'iam v2 access-key' command instead. All existing keys remain accessible through the new command."
   };
 
   rpc Create(CreateAccessKeyRequest) returns (common.v1.Operation);
