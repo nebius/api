@@ -191,8 +191,13 @@ message DeprecationDetails {
   // The date when this method, service, message or field will stop working (format: YYYY-MM-DD)
   string effective_at = 1;
 
-  // A description to help users understand the reason for deprecation and suggest alternatives
+  // A description to help users understand the reason for deprecation and suggest alternatives.
+  // By default, this message will be shown in the CLI, Terraform, and SDKs as is.
   string description = 2;
+
+  // Override base description for CLI, specify possible alternative method
+  // Example: "Please use the 'iam v2 access-key' command instead. All existing keys remain accessible through the new command."
+  string description_cli = 3;
 }
 
 message NIDFieldSettings {
