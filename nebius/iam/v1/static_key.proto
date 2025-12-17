@@ -36,6 +36,8 @@ message StaticKeySpec {
     CONTAINER_REGISTRY = 2;
 
     AI_STUDIO = 3;
+
+    TRACTO = 4;
   }
 }
 

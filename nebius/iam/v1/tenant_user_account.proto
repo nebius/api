@@ -114,7 +114,7 @@ message TenantUserAccountStatus {
   // once invitation is accepted it looses this reference (and internally gets a reference to their global federated user account)
   string invitation_id = 2;
 
-  // currently can only accept the values: custom, unknown, google, github.
+  // the federation id of the linked user account. Could be empty in a case of a tenant user account belongs to an invitation which wasn't accepted.
   string federation_id = 3;
 
   // user account state can help distinguish case when account is blocked globally

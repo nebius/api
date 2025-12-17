@@ -56,6 +56,20 @@ message ListAuditEventRequest {
   // type
   // status
   string filter = 6 [(sensitive) = true];
+
+  // Type of audit event to filter by.
+  EventType event_type = 7;
+}
+
+enum EventType {
+  // Unspecified event type.
+  EVENT_TYPE_UNSPECIFIED = 0;
+
+  // Control plane events.
+  CONTROL_PLANE = 1;
+
+  // Data plane events (S3).
+  DATA_PLANE = 2;
 }
 
 message ListAuditEventResponse {

@@ -54,6 +54,22 @@ message BucketSpec {
 
   // Flag to force usage of default_storage_class, ignoring `x-amz-storage-class` header.
   bool force_storage_class = 11;
+
+  // Object audit logging specifies which requests must be logged - none, all or mutational only.
+  ObjectAuditLogging object_audit_logging = 12;
+
+  enum ObjectAuditLogging {
+    OBJECT_AUDIT_LOGGING_UNSPECIFIED = 0;
+
+    // Logging is disabled.
+    NONE = 1;
+
+    // Logging enabled only for mutating requests.
+    MUTATE_ONLY = 2;
+
+    // Logging enabled for all requests.
+    ALL = 3;
+  }
 }
 
 message BucketStatus {
