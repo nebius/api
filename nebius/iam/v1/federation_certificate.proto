@@ -39,6 +39,8 @@ message FederationCertificateStatus {
 
   State state = 1;
 
+  string fingerprint = 2;
+
   string algorithm = 3;
 
   int64 key_size = 4;
