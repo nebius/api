@@ -33,7 +33,7 @@ message ListTenantUserAccountsRequest {
 
   // Specifies the maximum number of items to return in the response.
   // Default value: 10
-  optional int64 page_size = 2;
+  int64 page_size = 2;
 
   // Token for pagination, allowing the retrieval of the next set of results.
   string page_token = 3;

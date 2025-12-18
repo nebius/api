@@ -24,7 +24,10 @@ message FederationSpec {
 
   reserved 3;
 
-  bool active = 4;
+  bool active = 4 [
+    deprecated = true,
+    (field_deprecation_details) = { description: "'active' field ignored. Use 'Activate/Deactivate' methods to manage federation state. A newly created federation is always active by default." }
+  ];
 
   oneof settings {
     option (buf.validate.oneof).required = true;
@@ -43,6 +46,16 @@ message SamlSettings {
 }
 
 message FederationStatus {
+  enum State {
+    UNSPECIFIED = 0;
+
+    ACTIVE = 1;
+
+    INACTIVE = 2;
+  }
+
+  State state = 3;
+
   int32 users_count = 1;
 
   int32 certificates_count = 2;

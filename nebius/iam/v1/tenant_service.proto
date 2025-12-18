@@ -25,7 +25,7 @@ message GetTenantRequest {
 message ListTenantsRequest {
   // Specifies the maximum number of items to return in the response.
   // Default value: 10
-  optional int64 page_size = 1;
+  int64 page_size = 1;
 
   // Token for pagination, allowing the retrieval of the next set of results.
   string page_token = 2;
