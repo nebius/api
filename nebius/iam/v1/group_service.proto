@@ -49,7 +49,7 @@ message ListGroupsRequest {
   string parent_id = 1 [(buf.validate.field).required = true];
 
   // Default value: 10
-  optional int64 page_size = 2;
+  int64 page_size = 2;
 
   string page_token = 3;
 

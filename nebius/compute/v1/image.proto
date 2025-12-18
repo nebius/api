@@ -36,6 +36,15 @@ message ImageSpec {
   string version = 3 [(field_behavior) = IMMUTABLE];
 
   CPUArchitecture cpu_architecture = 6 [(field_behavior) = IMMUTABLE];
+
+  // human readable name for image family
+  string image_family_human_readable = 7 [(field_behavior) = IMMUTABLE];
+
+  // list of platforms where this image is recommended to use
+  repeated string recommended_platforms = 8 [(field_behavior) = IMMUTABLE];
+
+  // list of platforms where this image is not supported with explanation
+  map<string, string> unsupported_platforms = 9 [(field_behavior) = IMMUTABLE];
 }
 
 message ImageStatus {
