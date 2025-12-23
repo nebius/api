@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package nebius.compute.v1;
 
+import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation_service.proto";
@@ -31,6 +32,12 @@ service ImageService {
 
   // Lists all operations that were performed within a specific parent resource.
   rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse);
+
+  // Lists all public images available in a specific region. Regions doc https://docs.nebius.com/overview/regions
+  // Public images can contain specific labels in metadata like:
+  // "os_name: Ubuntu", "os_version: 22.04 LTS", "linux_kernel: 5.15", "cuda_toolkit: 13.0"
+  // "nvidia_gpu_drivers: 550", "networking_package: OFED 23.10"
+  rpc ListPublic(ListPublicRequest) returns (ListImagesResponse);
 }
 
 message GetImageRequest {
@@ -63,4 +70,14 @@ message ListImagesResponse {
   repeated Image items = 1;
 
   string next_page_token = 2;
+}
+
+message ListPublicRequest {
+  // Region name (eu-north2, us-central1, eu-west1, etc.)
+  // For details, see https://docs.nebius.com/overview/regions
+  string region = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
 }
