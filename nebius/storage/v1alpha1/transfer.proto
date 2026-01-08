@@ -34,6 +34,13 @@ message TransferSpec {
 
     string region = 3 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
 
+    // Prefix to filter objects in the source bucket. Only objects whose keys start with this prefix will be transferred.
+    // During transfer, the resulting object key in the destination bucket is computed
+    // by removing source.prefix from the original key and then prepending destination.prefix (if provided).
+    // Important: This transformation may result in an empty object key or one that exceeds allowed length limits.
+    // Use prefixes that guarantee valid resulting object keys for your objects after transformation.
+    string prefix = 6 [(field_behavior) = IMMUTABLE];
+
     // Credentials for accessing the source bucket. These credentials must have list and get permissions.
     // This parameter must be specified only during create operations.
     BucketCredentials credentials = 4 [(field_behavior) = INPUT_ONLY];
@@ -52,6 +59,13 @@ message TransferSpec {
 
   message DestinationBucket {
     string bucket_name = 1 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+
+    // Prefix to add to the beginning of each transferred object key in the destination bucket.
+    // During transfer, the resulting object key in the destination bucket is computed
+    // by removing source.prefix (if provided) from the original key and then prepending destination.prefix.
+    // Important: This transformation may result in an empty object key or one that exceeds allowed length limits.
+    // Use prefixes that guarantee valid resulting object keys for your objects after transformation.
+    string prefix = 3 [(field_behavior) = IMMUTABLE];
 
     // Credentials for accessing the destination bucket. These credentials must have head and write permissions.
     // This parameter must be specified only during create operations.

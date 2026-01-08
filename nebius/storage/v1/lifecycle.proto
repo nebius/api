@@ -100,7 +100,14 @@ message LifecycleAccessFilter {
 
     // User agents to match. Condition is satisfied if the request's user agent contains any of these substrings.
     // An empty list matches all user agents.
-    repeated string user_agents = 3 [(buf.validate.field) = { repeated: { max_items: 100 } }];
+    repeated string user_agents = 3 [
+      (buf.validate.field) = {
+        repeated: {
+          max_items: 100,
+          items: { string: { max_len: 200 } }
+        }
+      }
+    ];
 
     enum Type {
       TYPE_UNSPECIFIED = 0;
