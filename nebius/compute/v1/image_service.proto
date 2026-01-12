@@ -5,6 +5,7 @@ package nebius.compute.v1;
 import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
 import "nebius/common/v1/operation_service.proto";
 import "nebius/compute/v1/image.proto";
 import "nebius/compute/v1/operation_service.proto";
@@ -29,6 +30,9 @@ service ImageService {
 
   // Lists all images in a specific parent resource.
   rpc List(ListImagesRequest) returns (ListImagesResponse);
+
+  // Creates a new image resource.
+  rpc Create(CreateImageRequest) returns (common.v1.Operation);
 
   // Lists all operations that were performed within a specific parent resource.
   rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse);
@@ -64,6 +68,12 @@ message ListImagesRequest {
       description: "it is not implemented, filtering could be done on client side"
     }
   ];
+}
+
+message CreateImageRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  ImageSpec spec = 2;
 }
 
 message ListImagesResponse {
