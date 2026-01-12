@@ -128,6 +128,13 @@ message DiskStatus {
   int64 block_size_bytes = 8;
 
   SourceImageCPUArchitecture source_image_cpu_architecture = 9;
+
+  message LockState {
+    repeated string images = 1;
+  }
+
+  // Indicates resources that prevent the disk from being attached as read-write.
+  LockState lock_state = 11;
 }
 
 message DiskEncryption {
