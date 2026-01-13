@@ -41,7 +41,10 @@ message ListMaintenancesResponse {
 message GetMaintenanceRequest {
   // ID of the maintenance operation to return.
   // To get the maintenance ID use a [MaintenanceService.List] request.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = { resource: [ "maintenance" ] }
+  ];
 }
 
 message UpdateMaintenanceRequest {
@@ -57,7 +60,10 @@ message UpdateMaintenanceRequest {
 
   // Metadata associated with the maintenance operation.
   // Must include ID of the maintenance operation to update.
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = { resource: [ "maintenance" ] }
+  ];
 
   // Updated specification for the maintenance operation.
   MaintenanceSpec spec = 2;

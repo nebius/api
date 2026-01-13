@@ -55,12 +55,18 @@ service ClusterService {
 message GetClusterRequest {
   // ID of the PostgreSQL Cluster resource to return.
   // To get the cluster ID use a [ClusterService.List] request.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = { resource: [ "postgresql" ] }
+  ];
 }
 
 message GetClusterForBackupRequest {
   // ID of the PostgreSQL cluster that holds backup.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = { resource: [ "postgresql" ] }
+  ];
 
   // ID of the backup for which source cluster is requested.
   string backup_id = 2 [(buf.validate.field).required = true];
@@ -107,7 +113,10 @@ message RestoreClusterRequest {
   string backup_id = 3 [(buf.validate.field).required = true];
 
   // ID of the PostgreSQL cluster to restore from.
-  string source_cluster_id = 4 [(buf.validate.field).required = true];
+  string source_cluster_id = 4 [
+    (buf.validate.field).required = true,
+    (nid) = { resource: [ "postgresql" ] }
+  ];
 
   // Timestamp for point in time recovery.
   google.protobuf.Timestamp recovery_time = 5;
@@ -116,7 +125,7 @@ message RestoreClusterRequest {
 message DeleteClusterRequest {
   // ID of the PostgreSQL cluster to delete.
   // To get the PostgreSQL cluster ID, use a [ClusterService.List] request.
-  string id = 1;
+  string id = 1 [(nid) = { resource: [ "postgresql" ] }];
 }
 
 message UpdateClusterRequest {
@@ -130,11 +139,17 @@ message UpdateClusterRequest {
 message StopClusterRequest {
   // ID of the PostgreSQL Cluster resource to pause.
   // To get the cluster ID use a [ClusterService.List] request.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = { resource: [ "postgresql" ] }
+  ];
 }
 
 message StartClusterRequest {
   // ID of the PostgreSQL Cluster resource to resume.
   // To get the cluster ID use a [ClusterService.List] request.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = { resource: [ "postgresql" ] }
+  ];
 }

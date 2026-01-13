@@ -41,13 +41,20 @@ message ClusterSpec {
   ];
 
   // Id of the service account that will be used to access S3 bucket (and create one if not provided).
-  string service_account_id = 6 [(buf.validate.field).required = true];
+  string service_account_id = 6 [
+    (buf.validate.field).required = true,
+    (nid) = { resource: [ "serviceaccount" ] }
+  ];
 
   // Name of the Nebius S3 bucket for MLflow artifacts. If not provided, will be created under the same parent.
   string storage_bucket_name = 7;
 
   // ID of the vpc network.
-  string network_id = 8 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string network_id = 8 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE,
+    (nid) = { resource: [ "vpcnetwork" ] }
+  ];
 
   // Size defines how much resources will be allocated to mlflow
   // See supported sizes in the documentation. Default size is the smallest available in the region.

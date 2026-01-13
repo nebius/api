@@ -34,7 +34,10 @@ service ClusterService {
 
 message GetClusterRequest {
   // ID of the cluster to retrieve.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = { resource: [ "mlflow" ] }
+  ];
 }
 
 message GetClusterByNameRequest {
@@ -89,5 +92,8 @@ message CreateClusterRequest {
 
 message DeleteClusterRequest {
   // ID of the cluster to delete.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = { resource: [ "mlflow" ] }
+  ];
 }
