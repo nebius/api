@@ -49,7 +49,11 @@ message ClusterSpec {
   ];
 
   // Network ID in which the cluster is created.
-  string network_id = 6 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+  string network_id = 6 [
+    (field_behavior) = IMMUTABLE,
+    (buf.validate.field).required = true,
+    (nid) = { resource: [ "vpcnetwork" ] }
+  ];
 
   ConfigSpec config = 3 [(buf.validate.field).required = true];
 
