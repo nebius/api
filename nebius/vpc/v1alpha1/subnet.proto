@@ -55,29 +55,33 @@ message SubnetPoolSpec {
 message SubnetCidr {
   // CIDR block.
   // May be a prefix length (such as /24) or a CIDR-formatted string (such as 10.1.2.0/24).
-  string cidr = 1 [
-    (buf.validate.field) = {
-      cel: [
-        {
-          id: "string.valid_cidr",
-          message: "value must be a valid IP address, CIDR or mask",
-          expression: "this == '' || this.matches('^/([0-9]|[1-9][0-9]|1[0-2][0-8])$') || this.isIp() || this.isIpPrefix(true)"
-        },
-        {
-          id: "string.ip_empty",
-          message: "value is empty, which is not a valid IP address",
-          expression: "this != ''"
-        }
-      ],
-      required: true
-    }
-  ];
+  string cidr = 1 [(buf.validate.field) = {
+    cel: [
+      {
+        id: "string.valid_cidr"
+        message: "value must be a valid IP address, CIDR or mask"
+        expression: "this == '' || this.matches('^/([0-9]|[1-9][0-9]|1[0-2][0-8])$') || this.isIp() || this.isIpPrefix(true)"
+      },
+      {
+        id: "string.ip_empty"
+        message: "value is empty, which is not a valid IP address"
+        expression: "this != ''"
+      }
+    ]
+    required: true
+  }];
 
   // State of the Cidr.
   PoolCidrState state = 2 [(buf.validate.field).required = true];
 
   // Maximum mask length for allocation from this cidr
-  int64 allowed_mask = 3 [(buf.validate.field) = { int64: { lte: 128, gte: 0 }, required: true }];
+  int64 allowed_mask = 3 [(buf.validate.field) = {
+    int64: {
+      lte: 128
+      gte: 0
+    }
+    required: true
+  }];
 }
 
 message SubnetStatus {

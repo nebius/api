@@ -13,7 +13,10 @@ option java_package = "ai.nebius.pub.compute.v1";
 // Describes the specification of a network interface.
 message NetworkInterfaceSpec {
   // Subnet ID
-  string subnet_id = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string subnet_id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   // Interface name
   // Value of this field configures the name of the network interface inside VM's OS.
@@ -21,10 +24,10 @@ message NetworkInterfaceSpec {
   string name = 2 [
     (buf.validate.field) = {
       string: {
-        min_len: 1,
-        max_len: 60,
+        min_len: 1
+        max_len: 60
         pattern: "^[0-9a-z][0-9a-z-]*$"
-      },
+      }
       required: true
     },
     (field_behavior) = IMMUTABLE

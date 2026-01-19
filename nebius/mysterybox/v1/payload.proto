@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package nebius.mysterybox.v1;
 
-import "nebius/annotations.proto";
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/mysterybox/v1";
 option java_multiple_files = true;
@@ -13,7 +13,10 @@ option java_package = "ai.nebius.pub.mysterybox.v1";
 // Represents the secret's content as key-value pair.
 message Payload {
   // Non-confidential key of the payload entry.
-  string key = 1 [(sensitive) = true, (buf.validate.field).required = true];
+  string key = 1 [
+    (sensitive) = true,
+    (buf.validate.field).required = true
+  ];
 
   oneof payload {
     option (buf.validate.oneof).required = true;
@@ -21,13 +24,23 @@ message Payload {
     // The text data to encrypt and store in the version of the secret.
     string string_value = 12 [
       (sensitive) = true,
-      (buf.validate.field) = { string: { min_len: 1, max_len: 65536 } }
+      (buf.validate.field) = {
+        string: {
+          min_len: 1
+          max_len: 65536
+        }
+      }
     ];
 
     // The binary data to encrypt and store in the version of the secret.
     bytes binary_value = 13 [
       (sensitive) = true,
-      (buf.validate.field) = { bytes: { min_len: 1, max_len: 65536 } }
+      (buf.validate.field) = {
+        bytes: {
+          min_len: 1
+          max_len: 65536
+        }
+      }
     ];
   }
 }

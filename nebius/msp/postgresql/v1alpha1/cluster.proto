@@ -3,12 +3,12 @@ syntax = "proto3";
 package nebius.msp.postgresql.v1alpha1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
-import "nebius/msp/v1alpha1/cluster.proto";
 import "nebius/msp/postgresql/v1alpha1/config/postgresql.proto";
 import "nebius/msp/postgresql/v1alpha1/template.proto";
+import "nebius/msp/v1alpha1/cluster.proto";
 import "nebius/msp/v1alpha1/resource/template.proto";
-import "nebius/annotations.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/msp/postgresql/v1alpha1";
 option java_multiple_files = true;
@@ -38,21 +38,30 @@ message ConnectionPoolerConfig {
   PoolingMode pooling_mode = 1;
 
   // Maximum number of connections in the pool for a single user/database pair.
-  optional int64 max_pool_size = 2 [(buf.validate.field) = { int64: { lte: 12800, gte: 5 } }];
+  optional int64 max_pool_size = 2 [(buf.validate.field) = {
+    int64: {
+      lte: 12800
+      gte: 5
+    }
+  }];
 }
 
 message ClusterSpec {
   // Description of the PostgreSQL cluster.
   string description = 1 [
     (field_behavior) = IMMUTABLE,
-    (buf.validate.field) = { string: { max_len: 256 } }
+    (buf.validate.field) = {
+      string: {max_len: 256}
+    }
   ];
 
   // Network ID in which the cluster is created.
   string network_id = 6 [
     (field_behavior) = IMMUTABLE,
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "vpcnetwork" ] }
+    (nid) = {
+      resource: ["vpcnetwork"]
+    }
   ];
 
   ConfigSpec config = 3 [(buf.validate.field).required = true];
@@ -93,7 +102,10 @@ message Endpoints {
 message ConfigSpec {
   // Version of PostgreSQL used in the cluster.
   // Possible values: `16`
-  string version = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string version = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   // Configuration of the connection pooler.
   ConnectionPoolerConfig pooler_config = 2;
@@ -120,27 +132,30 @@ message BootstrapSpec {
     (buf.validate.field) = {
       cel: [
         {
-          id: "user_name.min_length",
-          message: "User name must be at least 1 characters long.",
+          id: "user_name.min_length"
+          message: "User name must be at least 1 characters long."
           expression: "size(this) >= 1"
         },
         {
-          id: "user_name.max_length",
-          message: "User name must not exceed 63 characters.",
+          id: "user_name.max_length"
+          message: "User name must not exceed 63 characters."
           expression: "size(this) <= 63"
         },
         {
-          id: "user_name.pattern",
-          message: "User name must match the pattern: '^[a-zA-Z0-9_][a-zA-Z0-9_-]*$'",
+          id: "user_name.pattern"
+          message: "User name must match the pattern: '^[a-zA-Z0-9_][a-zA-Z0-9_-]*$'"
           expression: "this.matches('^[a-zA-Z0-9_][a-zA-Z0-9_-]*$')"
         }
-      ],
+      ]
       required: true
     }
   ];
 
   // Password of the bootstrap PostgreSQL user.
-  string user_password = 2 [(field_behavior) = INPUT_ONLY, (sensitive) = true];
+  string user_password = 2 [
+    (field_behavior) = INPUT_ONLY,
+    (sensitive) = true
+  ];
 
   // Name of the PostgreSQL database. 1-63 characters long.
   string db_name = 3 [
@@ -148,21 +163,21 @@ message BootstrapSpec {
     (buf.validate.field) = {
       cel: [
         {
-          id: "db_name.min_length",
-          message: "Database name must be at least 1 characters long.",
+          id: "db_name.min_length"
+          message: "Database name must be at least 1 characters long."
           expression: "size(this) >= 1"
         },
         {
-          id: "db_name.max_length",
-          message: "Database name must not exceed 63 characters.",
+          id: "db_name.max_length"
+          message: "Database name must not exceed 63 characters."
           expression: "size(this) <= 63"
         },
         {
-          id: "db_name.pattern",
-          message: "Database name must match the pattern: '^[a-zA-Z0-9_][a-zA-Z0-9_-]*$'",
+          id: "db_name.pattern"
+          message: "Database name must match the pattern: '^[a-zA-Z0-9_][a-zA-Z0-9_-]*$'"
           expression: "this.matches('^[a-zA-Z0-9_][a-zA-Z0-9_-]*$')"
         }
-      ],
+      ]
       required: true
     }
   ];

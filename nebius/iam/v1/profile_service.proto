@@ -3,8 +3,8 @@ syntax = "proto3";
 package nebius.iam.v1;
 
 import "nebius/annotations.proto";
-import "nebius/iam/v1/tenant_user_account.proto";
 import "nebius/iam/v1/service_account.proto";
+import "nebius/iam/v1/tenant_user_account.proto";
 import "nebius/iam/v1/user_account.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
@@ -19,8 +19,7 @@ service ProfileService {
   rpc Get(GetProfileRequest) returns (GetProfileResponse);
 }
 
-message GetProfileRequest {
-}
+message GetProfileRequest {}
 
 message GetProfileResponse {
   oneof profile {
@@ -56,5 +55,4 @@ message ServiceAccountProfile {
   ServiceAccount info = 1;
 }
 
-message AnonymousAccount {
-}
+message AnonymousAccount {}

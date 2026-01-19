@@ -4,8 +4,8 @@ package nebius.iam.v1;
 
 import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
-import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 import "nebius/iam/v1/access.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";

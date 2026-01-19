@@ -5,16 +5,16 @@ package nebius.common.error.v1alpha1;
 import "nebius/annotations.proto";
 import "nebius/common/error/v1alpha1/common_errors.proto";
 
-option go_package = "github.com/nebius/gosdk/proto/nebius/common/error/v1alpha1";
 option deprecated = true;
-option (file_deprecation_details) = { description: "migrate to common/v1" };
+option go_package = "github.com/nebius/gosdk/proto/nebius/common/error/v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "ErrorProto";
 option java_package = "ai.nebius.pub.common.error.v1alpha1";
+option (file_deprecation_details) = {description: "migrate to common/v1"};
 
 message ServiceError {
   option deprecated = true;
-  option (message_deprecation_details) = { description: "migrate to common/v1" };
+  option (message_deprecation_details) = {description: "migrate to common/v1"};
 
   // ID of Service which the error originated in. E.g. "dns".
   string service = 1;

@@ -5,8 +5,8 @@ package nebius.iam.v1;
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
-import "nebius/iam/v1/access_key.proto";
 import "nebius/iam/v1/access.proto";
+import "nebius/iam/v1/access_key.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
 option java_multiple_files = true;
@@ -19,8 +19,8 @@ service AccessKeyService {
   option deprecated = true;
 
   option (service_deprecation_details) = {
-    effective_at: "2026-09-01",
-    description: "Access keys v1 API is deprecated. Please use the v2 API instead. All existing keys remain accessible through the v2 API.",
+    effective_at: "2026-09-01"
+    description: "Access keys v1 API is deprecated. Please use the v2 API instead. All existing keys remain accessible through the v2 API."
     description_cli: "Please use the 'iam v2 access-key' command instead. All existing keys remain accessible through the new command."
   };
 

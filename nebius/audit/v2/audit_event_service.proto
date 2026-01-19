@@ -22,7 +22,12 @@ message ListAuditEventRequest {
   // A tenant id must be provided
   string parent_id = 1 [(buf.validate.field).required = true];
 
-  int64 page_size = 2 [(buf.validate.field) = { int64: { lte: 500, gte: 0 } }];
+  int64 page_size = 2 [(buf.validate.field) = {
+    int64: {
+      lte: 500
+      gte: 0
+    }
+  }];
 
   google.protobuf.Timestamp start = 3 [(buf.validate.field).required = true];
 

@@ -56,5 +56,7 @@ message RecurrentResourceEvent {
   ResourceEvent last_occurrence = 2 [(buf.validate.field).required = true];
 
   // The number of times this event has occurred between `first_occurred_at` and `last_occurrence.occurred_at`. Must be > 0
-  int64 occurrence_count = 3 [(buf.validate.field) = { int64: { gt: 0 } }];
+  int64 occurrence_count = 3 [(buf.validate.field) = {
+    int64: {gt: 0}
+  }];
 }

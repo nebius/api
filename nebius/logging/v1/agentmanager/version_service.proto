@@ -1,9 +1,9 @@
 syntax = "proto3";
 
+package nebius.logging.agentmanager.v1;
+
 import "google/protobuf/duration.proto";
 import "nebius/annotations.proto";
-
-package nebius.logging.agentmanager.v1;
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/logging/v1/agentmanager";
 option java_multiple_files = true;
@@ -191,8 +191,7 @@ message GetVersionResponse {
 }
 
 // Parameters when no operation is required.
-message NopActionParams {
-}
+message NopActionParams {}
 
 // Parameters for agent update action.
 message UpdateActionParams {
@@ -204,5 +203,4 @@ message UpdateActionParams {
 }
 
 // Parameters for agent restart action.
-message RestartActionParams {
-}
+message RestartActionParams {}

@@ -3,8 +3,8 @@ syntax = "proto3";
 package nebius.iam.v1;
 
 import "buf/validate/validate.proto";
-import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 import "nebius/iam/v1/user_account.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
@@ -56,8 +56,8 @@ message UserAttributes {
     (buf.validate.field) = {
       cel: [
         {
-          id: "string.email",
-          message: "value must be a valid email address",
+          id: "string.email"
+          message: "value must be a valid email address"
           expression: "this == '' || this.isEmail()"
         }
       ]
@@ -67,7 +67,10 @@ message UserAttributes {
 
   optional bool email_verified = 7 [deprecated = true];
 
-  optional string zoneinfo = 8 [(sensitive) = true, deprecated = true];
+  optional string zoneinfo = 8 [
+    (sensitive) = true,
+    deprecated = true
+  ];
 
   optional string locale = 9 [(sensitive) = true];
 

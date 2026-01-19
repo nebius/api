@@ -29,11 +29,16 @@ message ClusterSpec {
 message ControlPlaneSpec {
   // Desired Kubernetes version of the cluster. For now only acceptable format is
   // `<major>.<minor>` like "1.31". Option for patch version update will be added later.
-  string version = 1 [(buf.validate.field) = { string: { pattern: "|^\\d\\.\\d\\d$" } }];
+  string version = 1 [(buf.validate.field) = {
+    string: {pattern: "|^\\d\\.\\d\\d$"}
+  }];
 
   // Nebius VPC Subnet ID where control plane instances will be located.
   // Also will be default NodeGroup subnet.
-  string subnet_id = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string subnet_id = 2 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   // Specification of endpoints of cluster control plane.
   ControlPlaneEndpointsSpec endpoints = 3;
@@ -42,7 +47,15 @@ message ControlPlaneSpec {
   // 3 by default.
   // Control plane with `etcd_cluster_size: 3` called "Highly Available" ("HA"), because it's Kubernetes API
   // will be available despite a failure of one control plane instance.
-  int64 etcd_cluster_size = 4 [(buf.validate.field) = { int64: { in: [ 0, 1, 3 ] } }];
+  int64 etcd_cluster_size = 4 [(buf.validate.field) = {
+    int64: {
+      in: [
+        0,
+        1,
+        3
+      ]
+    }
+  }];
 }
 
 message ControlPlaneEndpointsSpec {
@@ -50,8 +63,7 @@ message ControlPlaneEndpointsSpec {
   PublicEndpointSpec public_endpoint = 1 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
 }
 
-message PublicEndpointSpec {
-}
+message PublicEndpointSpec {}
 
 message KubeNetworkSpec {
   // CIDR blocks for Service ClusterIP allocation.
@@ -63,11 +75,11 @@ message KubeNetworkSpec {
   // Empty value treated as ["/16"].
   repeated string service_cidrs = 1 [
     (buf.validate.field) = {
-      repeated: { max_items: 1 },
+      repeated: {max_items: 1}
       cel: [
         {
-          id: "string.valid_cidr",
-          message: "value must be a CIDR block or prefix length from \"/12\" to \"/28\"",
+          id: "string.valid_cidr"
+          message: "value must be a CIDR block or prefix length from \"/12\" to \"/28\""
           expression: "this.all(x, x.matches('^(.*)/(1[2-9]|2[0-8])$'))"
         }
       ]

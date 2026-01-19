@@ -44,8 +44,8 @@ message IPv4PrivateAllocationSpec {
     (buf.validate.field) = {
       cel: [
         {
-          id: "string.valid_cidr",
-          message: "value must be a valid IP address, CIDR or mask",
+          id: "string.valid_cidr"
+          message: "value must be a valid IP address, CIDR or mask"
           expression: "this == '' || this.matches('^/([0-9]|[1-2][0-9]|3[0-2])$') || this.isIp(4) || this.isIpPrefix(4, true)"
         }
       ]
@@ -74,8 +74,8 @@ message IPv4PublicAllocationSpec {
     (buf.validate.field) = {
       cel: [
         {
-          id: "string.valid_cidr",
-          message: "value must be a valid IP address, CIDR or mask",
+          id: "string.valid_cidr"
+          message: "value must be a valid IP address, CIDR or mask"
           expression: "this == '' || this.matches('^/([0-9]|[1-2][0-9]|3[0-2])$') || this.isIp(4) || this.isIpPrefix(4, true)"
         }
       ]

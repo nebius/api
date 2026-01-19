@@ -13,21 +13,22 @@ option java_package = "ai.nebius.pub.vpc.v1alpha1";
 // Describes the specification of a network interface.
 message NetworkInterfaceSpec {
   // Subnet ID
-  string subnet_id = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string subnet_id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   // Interface name
   // Value of this field configures the name of the network interface inside VM's OS.
   // Longer values will persist in the specification but will be truncated to 15 symbols before being passed to VM configuration.
-  string name = 2 [
-    (buf.validate.field) = {
-      string: {
-        min_len: 1,
-        max_len: 60,
-        pattern: "^[0-9a-z][0-9a-z-]*$"
-      },
-      required: true
+  string name = 2 [(buf.validate.field) = {
+    string: {
+      min_len: 1
+      max_len: 60
+      pattern: "^[0-9a-z][0-9a-z-]*$"
     }
-  ];
+    required: true
+  }];
 
   // Private IPv4 address associated with the interface.
   IPAddress ip_address = 3 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];

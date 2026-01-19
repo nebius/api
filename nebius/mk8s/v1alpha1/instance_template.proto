@@ -5,14 +5,13 @@ package nebius.mk8s.v1alpha1;
 import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
 
-option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1alpha1";
-
 // Migrate to v1.
 option deprecated = true;
-option (file_deprecation_details) = { description: "migrate to v1" };
+option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "InstanceTemplateProto";
 option java_package = "ai.nebius.pub.mk8s.v1alpha1";
+option (file_deprecation_details) = {description: "migrate to v1"};
 
 message DiskSpec {
   enum DiskType {
@@ -31,13 +30,21 @@ message DiskSpec {
   oneof size {
     option (buf.validate.oneof).required = true;
 
-    int64 size_bytes = 1 [(buf.validate.field) = { int64: { gte: 68719476736 } }];
+    int64 size_bytes = 1 [(buf.validate.field) = {
+      int64: {gte: 68719476736}
+    }];
 
-    int64 size_kibibytes = 2 [(buf.validate.field) = { int64: { gte: 67108864 } }];
+    int64 size_kibibytes = 2 [(buf.validate.field) = {
+      int64: {gte: 67108864}
+    }];
 
-    int64 size_mebibytes = 3 [(buf.validate.field) = { int64: { gte: 65536 } }];
+    int64 size_mebibytes = 3 [(buf.validate.field) = {
+      int64: {gte: 65536}
+    }];
 
-    int64 size_gibibytes = 4 [(buf.validate.field) = { int64: { gte: 64 } }];
+    int64 size_gibibytes = 4 [(buf.validate.field) = {
+      int64: {gte: 64}
+    }];
   }
 
   int64 block_size_bytes = 5;

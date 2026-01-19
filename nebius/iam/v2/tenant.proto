@@ -19,8 +19,7 @@ message Tenant {
   TenantStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
 }
 
-message TenantSpec {
-}
+message TenantSpec {}
 
 message TenantStatus {
   enum TenantState {

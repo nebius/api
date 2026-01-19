@@ -9,18 +9,17 @@ import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1alpha1/operation.proto";
 import "nebius/mk8s/v1alpha1/node_group.proto";
 
-option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1alpha1";
-
 // Migrate to v1.
 option deprecated = true;
-option (file_deprecation_details) = { description: "migrate to v1" };
+option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "NodeGroupServiceProto";
 option java_package = "ai.nebius.pub.mk8s.v1alpha1";
+option (file_deprecation_details) = {description: "migrate to v1"};
 
 service NodeGroupService {
   option deprecated = true;
-  option (service_deprecation_details) = { description: "NodeGroup v1alpha1 API is deprecated, please migrate to v1." };
+  option (service_deprecation_details) = {description: "NodeGroup v1alpha1 API is deprecated, please migrate to v1."};
   option (api_service_name) = "mk8s";
 
   rpc Get(GetNodeGroupRequest) returns (NodeGroup);

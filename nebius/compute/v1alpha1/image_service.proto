@@ -7,10 +7,9 @@ import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1alpha1/operation_service.proto";
 import "nebius/compute/v1alpha1/image.proto";
 
-option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1alpha1";
-
 // Migrate to compute/v1.
 option deprecated = true;
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "ImageServiceProto";
 option java_package = "ai.nebius.pub.compute.v1alpha1";
@@ -51,7 +50,7 @@ message ListImagesRequest {
   string filter = 4 [
     deprecated = true,
     (field_deprecation_details) = {
-      effective_at: "2025-06-16",
+      effective_at: "2025-06-16"
       description: "it is not implemented, filtering could be done on client side"
     }
   ];

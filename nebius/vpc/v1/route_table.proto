@@ -3,8 +3,8 @@ syntax = "proto3";
 package nebius.vpc.v1;
 
 import "buf/validate/validate.proto";
-import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
 option java_multiple_files = true;
@@ -27,7 +27,10 @@ message RouteTable {
 
 message RouteTableSpec {
   // ID of the VPC network this route table belongs to.
-  string network_id = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string network_id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 }
 
 message RouteTableStatus {

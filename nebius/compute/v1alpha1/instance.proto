@@ -3,14 +3,13 @@ syntax = "proto3";
 package nebius.compute.v1alpha1;
 
 import "buf/validate/validate.proto";
-import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 import "nebius/vpc/v1alpha1/network_interface.proto";
-
-option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1alpha1";
 
 // Migrate to compute/v1.
 option deprecated = true;
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "InstanceProto";
 option java_package = "ai.nebius.pub.compute.v1alpha1";
@@ -28,11 +27,17 @@ message InstanceSpec {
 
   string service_account_id = 1 [(field_behavior) = IMMUTABLE];
 
-  ResourcesSpec resources = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  ResourcesSpec resources = 2 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   InstanceGpuClusterSpec gpu_cluster = 3 [(field_behavior) = IMMUTABLE];
 
-  repeated nebius.vpc.v1alpha1.NetworkInterfaceSpec network_interfaces = 4 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  repeated nebius.vpc.v1alpha1.NetworkInterfaceSpec network_interfaces = 4 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   AttachedDiskSpec boot_disk = 5 [(field_behavior) = IMMUTABLE];
 
@@ -83,7 +88,9 @@ message AttachedDiskSpec {
   }
 
   // Specifies the user-defined identifier, allowing to use '/dev/disk/by-id/virtio-{device_name}' as a device path in mount command.
-  string device_name = 3 [(buf.validate.field) = { string: { max_len: 20 } }];
+  string device_name = 3 [(buf.validate.field) = {
+    string: {max_len: 20}
+  }];
 }
 
 message ExistingDisk {

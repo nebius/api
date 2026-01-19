@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package nebius.audit.v2;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+import "nebius/audit/v2/audit_event_service.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
+option java_multiple_files = true;
+option java_outer_classname = "AuditEventExportProto";
+option java_package = "ai.nebius.pub.audit.v2";
+
+// A resource representing information about previously created exports of audit events.
+// Each record stores data about which filter was used and where the audit events were exported.
+message AuditEventExport {
+  common.v1.ResourceMetadata metadata = 1;
+
+  AuditEventExportSpec spec = 2;
+
+  AuditEventExportStatus status = 3;
+}
+
+message AuditEventExportSpec {
+  // Filter based on which audit logs must be exported.
+  AuditEventExportParams params = 1 [(buf.validate.field).required = true];
+
+  oneof export_destination {
+    option (buf.validate.oneof).required = true;
+
+    // An object storage bucket that will be used as the destination for audit logs.
+    // You must have `storage.upload` permission for successful execution.
+    NebiusObjectStorageDestination nebius_object_storage = 2;
+  }
+}
+
+message NebiusObjectStorageDestination {
+  // Prefix for export objects.
+  // Default value is `auditlogs`.
+  string object_prefix = 1;
+
+  // The bucket into which events will be exported.
+  oneof bucket {
+    option (buf.validate.oneof).required = true;
+
+    BucketById bucket_by_id = 2;
+  }
+}
+
+message BucketById {
+  // The id of the bucket in the tenant where the logs will be exported.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message AuditEventExportParams {
+  // Returns results with a timestamp greater than or equal to this value.
+  google.protobuf.Timestamp from = 1 [(buf.validate.field).required = true];
+
+  // Returns results with a timestamp lower than this value.
+  google.protobuf.Timestamp to = 2 [(buf.validate.field).required = true];
+
+  // Example:
+  // service.name = 'iam' AND resource.hierarchy.id:'container-e0t' AND regex(resource.metadata.name, '^.*test.*$')
+  //
+  // Supported filters:
+  // "=" - equals
+  // "!=" - not equals
+  // ":" - contains
+  // regex - regular expression
+  //
+  // Fields that can be used for filtering:
+  // action
+  // authentication.static_key_credential.id
+  // authentication.subject.service_account_id
+  // authentication.subject.tenant_user_id
+  // authentication.token_credential.masked_token
+  // project_region.name
+  // resource.hierarchy.id
+  // resource.hierarchy.name
+  // resource.metadata.id
+  // resource.metadata.name
+  // resource.metadata.type
+  // service.name
+  // type
+  // status
+  string filter = 3 [(sensitive) = true];
+
+  // Type of audit event to filter by.
+  EventType event_type = 4 [(buf.validate.field).required = true];
+}
+
+message AuditEventExportStatus {
+  // Current state of audit logs export.
+  AuditEventExportState state = 1;
+}
+
+enum AuditEventExportState {
+  AUDIT_EVENT_EXPORT_STATE_UNSPECIFIED = 0;
+
+  // Export created and running.
+  AUDIT_EVENT_EXPORT_STATE_RUNNING = 1;
+
+  // Export has been cancelled.
+  AUDIT_EVENT_EXPORT_STATE_CANCELED = 2;
+
+  // Export successfully completed.
+  AUDIT_EVENT_EXPORT_STATE_DONE = 3;
+
+  // Export failed.
+  AUDIT_EVENT_EXPORT_STATE_FAILED = 4;
+}

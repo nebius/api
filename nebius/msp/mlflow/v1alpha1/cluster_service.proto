@@ -3,10 +3,10 @@ syntax = "proto3";
 package nebius.msp.mlflow.v1alpha1;
 
 import "buf/validate/validate.proto";
-import "nebius/msp/mlflow/v1alpha1/cluster.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1alpha1/operation.proto";
-import "nebius/annotations.proto";
+import "nebius/msp/mlflow/v1alpha1/cluster.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/msp/mlflow/v1alpha1";
 option java_multiple_files = true;
@@ -36,7 +36,9 @@ message GetClusterRequest {
   // ID of the cluster to retrieve.
   string id = 1 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "mlflow" ] }
+    (nid) = {
+      resource: ["mlflow"]
+    }
   ];
 }
 
@@ -77,13 +79,13 @@ message CreateClusterRequest {
   option (buf.validate.message) = {
     cel: [
       {
-        id: "metadata.parent_id",
-        message: "metadata.parent_id should not be empty",
+        id: "metadata.parent_id"
+        message: "metadata.parent_id should not be empty"
         expression: "has(this.metadata.parent_id)"
       },
       {
-        id: "metadata.name",
-        message: "metadata.name should not be empty",
+        id: "metadata.name"
+        message: "metadata.name should not be empty"
         expression: "has(this.metadata.name)"
       }
     ]
@@ -94,6 +96,8 @@ message DeleteClusterRequest {
   // ID of the cluster to delete.
   string id = 1 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "mlflow" ] }
+    (nid) = {
+      resource: ["mlflow"]
+    }
   ];
 }

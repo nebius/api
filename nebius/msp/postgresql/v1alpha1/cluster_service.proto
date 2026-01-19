@@ -3,11 +3,11 @@ syntax = "proto3";
 package nebius.msp.postgresql.v1alpha1;
 
 import "buf/validate/validate.proto";
-import "nebius/msp/postgresql/v1alpha1/cluster.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1alpha1/operation.proto";
-import "nebius/annotations.proto";
-import "google/protobuf/timestamp.proto";
+import "nebius/msp/postgresql/v1alpha1/cluster.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/msp/postgresql/v1alpha1";
 option java_multiple_files = true;
@@ -57,7 +57,9 @@ message GetClusterRequest {
   // To get the cluster ID use a [ClusterService.List] request.
   string id = 1 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "postgresql" ] }
+    (nid) = {
+      resource: ["postgresql"]
+    }
   ];
 }
 
@@ -65,7 +67,9 @@ message GetClusterForBackupRequest {
   // ID of the PostgreSQL cluster that holds backup.
   string id = 1 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "postgresql" ] }
+    (nid) = {
+      resource: ["postgresql"]
+    }
   ];
 
   // ID of the backup for which source cluster is requested.
@@ -115,7 +119,9 @@ message RestoreClusterRequest {
   // ID of the PostgreSQL cluster to restore from.
   string source_cluster_id = 4 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "postgresql" ] }
+    (nid) = {
+      resource: ["postgresql"]
+    }
   ];
 
   // Timestamp for point in time recovery.
@@ -125,7 +131,9 @@ message RestoreClusterRequest {
 message DeleteClusterRequest {
   // ID of the PostgreSQL cluster to delete.
   // To get the PostgreSQL cluster ID, use a [ClusterService.List] request.
-  string id = 1 [(nid) = { resource: [ "postgresql" ] }];
+  string id = 1 [(nid) = {
+    resource: ["postgresql"]
+  }];
 }
 
 message UpdateClusterRequest {
@@ -141,7 +149,9 @@ message StopClusterRequest {
   // To get the cluster ID use a [ClusterService.List] request.
   string id = 1 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "postgresql" ] }
+    (nid) = {
+      resource: ["postgresql"]
+    }
   ];
 }
 
@@ -150,6 +160,8 @@ message StartClusterRequest {
   // To get the cluster ID use a [ClusterService.List] request.
   string id = 1 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "postgresql" ] }
+    (nid) = {
+      resource: ["postgresql"]
+    }
   ];
 }

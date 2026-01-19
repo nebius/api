@@ -29,13 +29,20 @@ message NodeGroupSpec {
   // Version is desired Kubernetes version of the cluster. For now only acceptable format is
   // `<major>.<minor>` like "1.31". Option for patch version update will be added later.
   // By default the cluster control plane <major>.<minor> version will be used.
-  string version = 1 [(buf.validate.field) = { string: { pattern: "|^\\d\\.\\d\\d$" } }];
+  string version = 1 [(buf.validate.field) = {
+    string: {pattern: "|^\\d\\.\\d\\d$"}
+  }];
 
   oneof size {
     option (buf.validate.oneof).required = true;
 
     // Number of nodes in the group. Can be changed manually at any time.
-    int64 fixed_node_count = 2 [(buf.validate.field) = { int64: { lte: 100, gte: 0 } }];
+    int64 fixed_node_count = 2 [(buf.validate.field) = {
+      int64: {
+        lte: 100
+        gte: 0
+      }
+    }];
 
     // Enables [Kubernetes Cluster Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler)
     // for that NodeGroup, and defines autoscaling parameters.
@@ -62,7 +69,9 @@ message NodeTemplate {
   // That behaviour may change later.
   // So, for now you will need to manually set them to existing nodes, if that is needed.
   // Field change will NOT trigger NodeGroup roll out.
-  repeated NodeTaint taints = 2 [(buf.validate.field) = { repeated: { max_items: 100 } }];
+  repeated NodeTaint taints = 2 [(buf.validate.field) = {
+    repeated: {max_items: 100}
+  }];
 
   // Resources that will have Nebius Compute Instance where Node kubelet will run.
   ResourcesSpec resources = 3 [(buf.validate.field).required = true];
@@ -133,7 +142,9 @@ message NodeMetadataTemplate {
   //
   // System labels containing "kubernetes.io" and "k8s.io" will be ignored.
   // Field change will NOT trigger NodeGroup roll out.
-  map<string, string> labels = 1 [(buf.validate.field) = { map: { max_pairs: 100 } }];
+  map<string, string> labels = 1 [(buf.validate.field) = {
+    map: {max_pairs: 100}
+  }];
 }
 
 // GPU-related settings.
@@ -166,8 +177,7 @@ message NetworkInterfaceTemplate {
 }
 
 // Describes a public IP address.
-message PublicIPAddress {
-}
+message PublicIPAddress {}
 
 message AttachedFilesystemSpec {
   enum AttachMode {
@@ -195,15 +205,25 @@ message ExistingFilesystem {
 }
 
 message NodeGroupAutoscalingSpec {
-  int64 min_node_count = 1 [(buf.validate.field) = { int64: { lte: 100, gte: 0 } }];
+  int64 min_node_count = 1 [(buf.validate.field) = {
+    int64: {
+      lte: 100
+      gte: 0
+    }
+  }];
 
-  int64 max_node_count = 2 [(buf.validate.field) = { int64: { lte: 100, gte: 0 } }];
+  int64 max_node_count = 2 [(buf.validate.field) = {
+    int64: {
+      lte: 100
+      gte: 0
+    }
+  }];
 
   option (buf.validate.message) = {
     cel: [
       {
-        id: "autoscaling.protovalidate.message",
-        message: "min_node_count must be less or equal than max_node_count",
+        id: "autoscaling.protovalidate.message"
+        message: "min_node_count must be less or equal than max_node_count"
         expression: "this.min_node_count <= this.max_node_count"
       }
     ]
@@ -258,16 +278,27 @@ message NodeGroupDeploymentStrategy {
   // Important consequence of that is if PodDisruptionBudget doesn't allow to evict a pod,
   // then NodeGroup update with node re-creation will hung on that pod eviction.
   // Note, that it is different from `kubectl drain --timeout`
-  google.protobuf.Duration drain_timeout = 3 [(buf.validate.field) = { duration: { gte: { } } }];
+  google.protobuf.Duration drain_timeout = 3 [(buf.validate.field) = {
+    duration: {
+      gte: {}
+    }
+  }];
 }
 
 message PercentOrCount {
   oneof value {
     option (buf.validate.oneof).required = true;
 
-    int64 percent = 1 [(buf.validate.field) = { int64: { lte: 100, gte: 0 } }];
+    int64 percent = 1 [(buf.validate.field) = {
+      int64: {
+        lte: 100
+        gte: 0
+      }
+    }];
 
-    int64 count = 2 [(buf.validate.field) = { int64: { gte: 0 } }];
+    int64 count = 2 [(buf.validate.field) = {
+      int64: {gte: 0}
+    }];
   }
 }
 
@@ -304,8 +335,7 @@ enum ConditionStatus {
   UNKNOWN = 3;
 }
 
-message PreemptibleSpec {
-}
+message PreemptibleSpec {}
 
 message NodeGroupStatus {
   enum State {

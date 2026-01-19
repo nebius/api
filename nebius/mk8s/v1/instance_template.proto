@@ -26,13 +26,21 @@ message DiskSpec {
   oneof size {
     option (buf.validate.oneof).required = true;
 
-    int64 size_bytes = 1 [(buf.validate.field) = { int64: { gte: 68719476736 } }];
+    int64 size_bytes = 1 [(buf.validate.field) = {
+      int64: {gte: 68719476736}
+    }];
 
-    int64 size_kibibytes = 2 [(buf.validate.field) = { int64: { gte: 67108864 } }];
+    int64 size_kibibytes = 2 [(buf.validate.field) = {
+      int64: {gte: 67108864}
+    }];
 
-    int64 size_mebibytes = 3 [(buf.validate.field) = { int64: { gte: 65536 } }];
+    int64 size_mebibytes = 3 [(buf.validate.field) = {
+      int64: {gte: 65536}
+    }];
 
-    int64 size_gibibytes = 4 [(buf.validate.field) = { int64: { gte: 64 } }];
+    int64 size_gibibytes = 4 [(buf.validate.field) = {
+      int64: {gte: 64}
+    }];
   }
 
   int64 block_size_bytes = 5;

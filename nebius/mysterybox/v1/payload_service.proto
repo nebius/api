@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package nebius.mysterybox.v1;
 
-import "nebius/mysterybox/v1/payload.proto";
-import "nebius/annotations.proto";
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/mysterybox/v1/payload.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/mysterybox/v1";
 option java_multiple_files = true;

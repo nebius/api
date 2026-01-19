@@ -3,10 +3,10 @@ syntax = "proto3";
 package nebius.storage.v1alpha1;
 
 import "buf/validate/validate.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/duration.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1alpha1";
 option java_multiple_files = true;
@@ -28,11 +28,20 @@ message TransferSpec {
     // The endpoint must be in the form of a URL, starting with the protocol (https),
     // followed by the endpoint address without a trailing slash.
     // Example: https://storage.us-central1.nebius.cloud
-    string endpoint = 1 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+    string endpoint = 1 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field).required = true
+    ];
 
-    string bucket_name = 2 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+    string bucket_name = 2 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field).required = true
+    ];
 
-    string region = 3 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+    string region = 3 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field).required = true
+    ];
 
     // Prefix to filter objects in the source bucket. Only objects whose keys start with this prefix will be transferred.
     // During transfer, the resulting object key in the destination bucket is computed
@@ -58,7 +67,10 @@ message TransferSpec {
   DestinationBucket destination = 2 [(buf.validate.field).required = true];
 
   message DestinationBucket {
-    string bucket_name = 1 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+    string bucket_name = 1 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field).required = true
+    ];
 
     // Prefix to add to the beginning of each transferred object key in the destination bucket.
     // During transfer, the resulting object key in the destination bucket is computed
@@ -83,19 +95,30 @@ message TransferSpec {
       AzureAccessKey azure_access_key = 3;
     }
 
-    message CredentialsAnonymous {
-    }
+    message CredentialsAnonymous {}
 
     message CredentialsAccessKey {
-      string access_key_id = 1 [(sensitive) = true, (buf.validate.field).required = true];
+      string access_key_id = 1 [
+        (sensitive) = true,
+        (buf.validate.field).required = true
+      ];
 
-      string secret_access_key = 2 [(sensitive) = true, (buf.validate.field).required = true];
+      string secret_access_key = 2 [
+        (sensitive) = true,
+        (buf.validate.field).required = true
+      ];
     }
 
     message AzureAccessKey {
-      string account_name = 2 [(sensitive) = true, (buf.validate.field).required = true];
+      string account_name = 2 [
+        (sensitive) = true,
+        (buf.validate.field).required = true
+      ];
 
-      string access_key = 1 [(sensitive) = true, (buf.validate.field).required = true];
+      string access_key = 1 [
+        (sensitive) = true,
+        (buf.validate.field).required = true
+      ];
     }
   }
 
@@ -119,20 +142,22 @@ message TransferSpec {
     StopConditionInfinite infinite = 5 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
   }
 
-  message StopConditionAfterOneIteration {
-  }
+  message StopConditionAfterOneIteration {}
 
   message StopConditionAfterNEmptyIterations {
     // Number of consecutive iterations with zero transferred objects required to stop transfer.
     uint32 empty_iterations_threshold = 1 [(buf.validate.field).required = true];
   }
 
-  message StopConditionInfinite {
-  }
+  message StopConditionInfinite {}
 
   // Time to wait between transfer iterations. Default is 15 minutes if not specified.
   google.protobuf.Duration inter_iteration_interval = 6 [
-    (buf.validate.field) = { duration: { gte: { } } },
+    (buf.validate.field) = {
+      duration: {
+        gte: {}
+      }
+    },
     (field_behavior) = NON_EMPTY_DEFAULT
   ];
 

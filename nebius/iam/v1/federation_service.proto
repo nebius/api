@@ -73,7 +73,7 @@ message UpdateFederationRequest {
 
   FederationStatus status = 3 [
     deprecated = true,
-    (field_deprecation_details) = { description: "'status' is ignored for update requests." }
+    (field_deprecation_details) = {description: "'status' is ignored for update requests."}
   ];
 }
 

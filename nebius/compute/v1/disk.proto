@@ -3,8 +3,8 @@ syntax = "proto3";
 package nebius.compute.v1;
 
 import "buf/validate/validate.proto";
-import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
 option java_multiple_files = true;
@@ -56,7 +56,10 @@ message DiskSpec {
 
   // The type of disk defines the performance and reliability characteristics of the block device.
   // For details, see https://docs.nebius.com/compute/storage/types#disks-types
-  DiskType type = 6 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  DiskType type = 6 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   // Source for disk creation.
   // Boot disk must be created from an image https://docs.nebius.com/compute/storage/manage#boot

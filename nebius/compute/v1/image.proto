@@ -3,9 +3,9 @@ syntax = "proto3";
 package nebius.compute.v1;
 
 import "buf/validate/validate.proto";
-import "nebius/common/v1/metadata.proto";
-import "nebius/annotations.proto";
 import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
 option java_multiple_files = true;
@@ -32,7 +32,10 @@ message ImageSpec {
   optional string description = 1 [
     (field_behavior) = IMMUTABLE,
     deprecated = true,
-    (field_deprecation_details) = { effective_at: "2026-01-01", description: "The field is empty" }
+    (field_deprecation_details) = {
+      effective_at: "2026-01-01"
+      description: "The field is empty"
+    }
   ];
 
   string image_family = 2 [(field_behavior) = IMMUTABLE];

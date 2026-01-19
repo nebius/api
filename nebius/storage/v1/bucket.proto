@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package nebius.storage.v1;
 
-import "google/protobuf/timestamp.proto";
 import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/storage/v1/base.proto";
@@ -49,7 +49,10 @@ message BucketSpec {
   // or the one provided via the `x-amz-storage-class` header.
   StorageClass override_storage_class = 10 [
     deprecated = true,
-    (field_deprecation_details) = { effective_at: "2025-12-01", description: "Use `default_storage_class` with `force_storage_class` instead" }
+    (field_deprecation_details) = {
+      effective_at: "2025-12-01"
+      description: "Use `default_storage_class` with `force_storage_class` instead"
+    }
   ];
 
   // Flag to force usage of default_storage_class, ignoring `x-amz-storage-class` header.

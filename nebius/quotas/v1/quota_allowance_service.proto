@@ -40,7 +40,15 @@ service QuotaAllowanceService {
 
 // Request to create a quota allowance with the specified spec and metadata.
 message CreateQuotaAllowanceRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: [
+      "tenant",
+      "aitenant",
+      "tractotenant",
+      "project",
+      "aiproject"
+    ]
+  }];
 
   QuotaAllowanceSpec spec = 2 [(buf.validate.field).required = true];
 }
@@ -55,13 +63,30 @@ message UpdateQuotaAllowanceRequest {
 // Request to delete a quota allowance by its identifier.
 message DeleteQuotaAllowanceRequest {
   // ID of the quota.
-  string id = 1 [(buf.validate.field).required = true, (field_behavior) = IDENTIFIER];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IDENTIFIER,
+    (nid) = {
+      resource: ["quotaallowance"]
+    }
+  ];
 }
 
 // Request to list quota allowances under a container with pagination support.
 message ListQuotaAllowancesRequest {
   // ID of the Container to list quotas for.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: [
+        "tenant",
+        "aitenant",
+        "tractotenant",
+        "project",
+        "aiproject"
+      ]
+    }
+  ];
 
   // Page size. Must be between [1...1000].
   // Optional; if not specified, a reasonable default will be chosen by the service.
@@ -74,7 +99,13 @@ message ListQuotaAllowancesRequest {
 // Request to get a quota allowance by its identifier.
 message GetQuotaAllowanceRequest {
   // ID of the quota.
-  string id = 1 [(buf.validate.field).required = true, (field_behavior) = IDENTIFIER];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IDENTIFIER,
+    (nid) = {
+      resource: ["quotaallowance"]
+    }
+  ];
 }
 
 // Response containing quota allowances and pagination token.
@@ -89,7 +120,18 @@ message ListQuotaAllowancesResponse {
 // Request to get a quota allowance by container, name, and region.
 message GetByNameRequest {
   // ID of the Container to list quotas for.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: [
+        "tenant",
+        "aitenant",
+        "tractotenant",
+        "project",
+        "aiproject"
+      ]
+    }
+  ];
 
   // Name of the quota.
   // Example: "compute.disk.size.network-ssd".

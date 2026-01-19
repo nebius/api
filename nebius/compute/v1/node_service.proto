@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package nebius.compute.v1;
 
-import "google/protobuf/timestamp.proto";
 import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
 import "nebius/annotations.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
@@ -47,5 +47,4 @@ message NodeSetUnhealthyRequest {
   bool dry_run = 3;
 }
 
-message NodeSetUnhealthyResponse {
-}
+message NodeSetUnhealthyResponse {}

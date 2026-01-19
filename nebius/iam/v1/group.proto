@@ -19,8 +19,7 @@ message Group {
   GroupStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
 }
 
-message GroupSpec {
-}
+message GroupSpec {}
 
 message GroupStatus {
   enum State {

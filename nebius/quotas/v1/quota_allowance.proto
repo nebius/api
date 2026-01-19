@@ -89,7 +89,18 @@ message QuotaAllowanceStatus {
 message QuotaAllowance {
   option (resource_behavior) = UNNAMED;
 
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: [
+        "tenant",
+        "aitenant",
+        "tractotenant",
+        "project",
+        "aiproject"
+      ]
+    }
+  ];
 
   QuotaAllowanceSpec spec = 2 [(buf.validate.field).required = true];
 

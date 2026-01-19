@@ -26,7 +26,10 @@ message JobSpec {
   string description = 1;
 
   // Network ID to run the job in
-  string network_id = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string network_id = 2 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   // Container spec
   JobContainerSpec container = 101;
@@ -52,7 +55,10 @@ message JobContainerSpec {
   map<string, string> envs = 103;
 
   // Environment variables with sensitive data
-  map<string, string> sensitive_envs = 104 [(field_behavior) = INPUT_ONLY, (sensitive) = true];
+  map<string, string> sensitive_envs = 104 [
+    (field_behavior) = INPUT_ONLY,
+    (sensitive) = true
+  ];
 
   // Job timeout in seconds (0 - no timeout)
   int64 timeout_seconds = 201;

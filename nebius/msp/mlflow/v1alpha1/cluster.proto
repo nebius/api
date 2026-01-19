@@ -3,8 +3,8 @@ syntax = "proto3";
 package nebius.msp.mlflow.v1alpha1;
 
 import "buf/validate/validate.proto";
-import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 import "nebius/msp/v1alpha1/cluster.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/msp/mlflow/v1alpha1";
@@ -43,7 +43,9 @@ message ClusterSpec {
   // Id of the service account that will be used to access S3 bucket (and create one if not provided).
   string service_account_id = 6 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "serviceaccount" ] }
+    (nid) = {
+      resource: ["serviceaccount"]
+    }
   ];
 
   // Name of the Nebius S3 bucket for MLflow artifacts. If not provided, will be created under the same parent.
@@ -53,7 +55,9 @@ message ClusterSpec {
   string network_id = 8 [
     (buf.validate.field).required = true,
     (field_behavior) = IMMUTABLE,
-    (nid) = { resource: [ "vpcnetwork" ] }
+    (nid) = {
+      resource: ["vpcnetwork"]
+    }
   ];
 
   // Size defines how much resources will be allocated to mlflow

@@ -25,5 +25,4 @@ message RevokeSessionRequest {
   }
 }
 
-message RevokeSessionResponse {
-}
+message RevokeSessionResponse {}
