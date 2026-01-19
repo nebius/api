@@ -3,8 +3,8 @@ syntax = "proto3";
 package nebius.vpc.v1;
 
 import "buf/validate/validate.proto";
-import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
 option java_multiple_files = true;
@@ -29,11 +29,17 @@ message PoolSpec {
   string source_pool_id = 1 [(field_behavior) = IMMUTABLE];
 
   // IP version of the pool.
-  IpVersion version = 3 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  IpVersion version = 3 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   // Configures whether the pool is private or public.
   // Only public pools IP addresses are routable in the Internet.
-  IpVisibility visibility = 5 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  IpVisibility visibility = 5 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   // CIDR blocks defined by the pool.
   repeated PoolCidr cidrs = 4;
@@ -43,23 +49,21 @@ message PoolCidr {
   // A CIDR block (e.g., "10.1.2.0/24") or a prefix length (e.g., "/24").
   // If prefix length is specified, the CIDR block will be auto-allocated from
   // the available space in the parent pool.
-  string cidr = 1 [
-    (buf.validate.field) = {
-      cel: [
-        {
-          id: "string.valid_cidr",
-          message: "value must be a valid IP address, CIDR or mask",
-          expression: "this == '' || this.matches('^/([0-9]|[1-9][0-9]|1[0-2][0-8])$') || this.isIpPrefix(true)"
-        },
-        {
-          id: "string.ip_empty",
-          message: "value is empty, which is not a valid IP address",
-          expression: "this != ''"
-        }
-      ],
-      required: true
-    }
-  ];
+  string cidr = 1 [(buf.validate.field) = {
+    cel: [
+      {
+        id: "string.valid_cidr"
+        message: "value must be a valid IP address, CIDR or mask"
+        expression: "this == '' || this.matches('^/([0-9]|[1-9][0-9]|1[0-2][0-8])$') || this.isIpPrefix(true)"
+      },
+      {
+        id: "string.ip_empty"
+        message: "value is empty, which is not a valid IP address"
+        expression: "this != ''"
+      }
+    ]
+    required: true
+  }];
 
   // Controls provisioning of IP addresses from the CIDR block to other pools
   // or allocations. Defaults to AVAILABLE.
@@ -69,7 +73,12 @@ message PoolCidr {
   // Default max_mask_length is 32 for IPv4.
   int64 max_mask_length = 3 [
     (field_behavior) = NON_EMPTY_DEFAULT,
-    (buf.validate.field) = { int64: { lte: 128, gte: 0 } }
+    (buf.validate.field) = {
+      int64: {
+        lte: 128
+        gte: 0
+      }
+    }
   ];
 }
 

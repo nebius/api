@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package nebius.storage.v1;
 
-import "nebius/storage/v1/base.proto";
-import "nebius/annotations.proto";
 import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+import "nebius/storage/v1/base.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
 option java_multiple_files = true;
@@ -24,7 +24,9 @@ option java_package = "ai.nebius.pub.storage.v1";
 //   object (one current version and zero or more noncurrent versions). The system provides predefined actions
 //   that you can specify for current and noncurrent object versions.
 message LifecycleConfiguration {
-  repeated LifecycleRule rules = 1 [(buf.validate.field) = { repeated: { max_items: 1000 } }];
+  repeated LifecycleRule rules = 1 [(buf.validate.field) = {
+    repeated: {max_items: 1000}
+  }];
 
   // Specifies which requests are included in `days_since_last_access` calculations for all transition rules.
   LifecycleAccessFilter last_access_filter = 2;
@@ -89,25 +91,29 @@ message LifecycleAccessFilter {
   // - The first condition matching the request has `INCLUDE` type.
   // OR
   // - The request doesn't match any conditions
-  repeated Condition conditions = 1 [(buf.validate.field) = { repeated: { max_items: 100 } }];
+  repeated Condition conditions = 1 [(buf.validate.field) = {
+    repeated: {max_items: 100}
+  }];
 
   message Condition {
     Type type = 1 [(buf.validate.field).required = true];
 
     // The s3 methods to match.
     // An empty list matches all methods
-    repeated Method methods = 2 [(buf.validate.field) = { repeated: { max_items: 10 } }];
+    repeated Method methods = 2 [(buf.validate.field) = {
+      repeated: {max_items: 10}
+    }];
 
     // User agents to match. Condition is satisfied if the request's user agent contains any of these substrings.
     // An empty list matches all user agents.
-    repeated string user_agents = 3 [
-      (buf.validate.field) = {
-        repeated: {
-          max_items: 100,
-          items: { string: { max_len: 200 } }
+    repeated string user_agents = 3 [(buf.validate.field) = {
+      repeated: {
+        max_items: 100
+        items: {
+          string: {max_len: 200}
         }
       }
-    ];
+    }];
 
     enum Type {
       TYPE_UNSPECIFIED = 0;
@@ -146,7 +152,12 @@ message LifecycleExpiration {
 
     // Indicates the lifetime, in days, of the objects that are subject to the rule.
     // The value must be a non-zero positive integer.
-    int32 days = 2 [(buf.validate.field) = { int32: { lte: 18250, gte: 1 } }];
+    int32 days = 2 [(buf.validate.field) = {
+      int32: {
+        lte: 18250
+        gte: 1
+      }
+    }];
   }
 
   // Indicates whether the system will remove a "delete marker" with no noncurrent versions.
@@ -161,13 +172,23 @@ message LifecycleNoncurrentVersionExpiration {
   optional int32 newer_noncurrent_versions = 1;
 
   // Specifies the number of days an object is noncurrent before the system will expire it.
-  int32 noncurrent_days = 2 [(buf.validate.field) = { int32: { lte: 18250, gte: 1 } }];
+  int32 noncurrent_days = 2 [(buf.validate.field) = {
+    int32: {
+      lte: 18250
+      gte: 1
+    }
+  }];
 }
 
 message LifecycleAbortIncompleteMultipartUpload {
   // Specifies the days since the initiation of an incomplete multipart upload that
   // the system will wait before permanently removing all parts of the upload.
-  int32 days_after_initiation = 1 [(buf.validate.field) = { int32: { lte: 18250, gte: 1 } }];
+  int32 days_after_initiation = 1 [(buf.validate.field) = {
+    int32: {
+      lte: 18250
+      gte: 1
+    }
+  }];
 }
 
 message LifecycleTransition {
@@ -177,10 +198,20 @@ message LifecycleTransition {
 
     // Amount of days since object was uploaded before it's transited to a new storage class.
     // The value must be a non-zero positive integer.
-    int32 days = 2 [(buf.validate.field) = { int32: { lte: 18250, gte: 1 } }];
+    int32 days = 2 [(buf.validate.field) = {
+      int32: {
+        lte: 18250
+        gte: 1
+      }
+    }];
 
     // The number of days since the object was last accessed before it is transitioned.
-    int32 days_since_last_access = 4 [(buf.validate.field) = { int32: { lte: 18250, gte: 1 } }];
+    int32 days_since_last_access = 4 [(buf.validate.field) = {
+      int32: {
+        lte: 18250
+        gte: 1
+      }
+    }];
   }
 
   // Target storage class to transit to.
@@ -192,7 +223,12 @@ message LifecycleNoncurrentVersionTransition {
   optional int32 newer_noncurrent_versions = 1;
 
   // Specifies the number of days an object is noncurrent before the system will transit it.
-  int32 noncurrent_days = 2 [(buf.validate.field) = { int32: { lte: 18250, gte: 1 } }];
+  int32 noncurrent_days = 2 [(buf.validate.field) = {
+    int32: {
+      lte: 18250
+      gte: 1
+    }
+  }];
 
   // Target storage class to transit to.
   StorageClass storage_class = 3;

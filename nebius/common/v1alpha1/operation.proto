@@ -2,22 +2,22 @@ syntax = "proto3";
 
 package nebius.common.v1alpha1;
 
+import "buf/validate/validate.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "google/rpc/status.proto";
-import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
 
-option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1alpha1";
 option deprecated = true;
-option (file_deprecation_details) = { description: "migrate to common/v1" };
+option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "OperationProto";
 option java_package = "ai.nebius.pub.common.v1alpha1";
+option (file_deprecation_details) = {description: "migrate to common/v1"};
 
 message Operation {
   option deprecated = true;
-  option (message_deprecation_details) = { description: "migrate to common/v1" };
+  option (message_deprecation_details) = {description: "migrate to common/v1"};
 
   // ID of the operation.
   string id = 1;
@@ -50,13 +50,13 @@ message Operation {
   // All the header names *must* be converted to lower case.
   // Validator is based on:
   // https://httpwg.org/specs/rfc9110.html#considerations.for.new.field.names
-  map<string, request_header> request_headers = 11 [
-    (buf.validate.field) = {
-      map: {
-        keys: { string: { pattern: "^[a-z][-a-z\\.]*$" } }
+  map<string, request_header> request_headers = 11 [(buf.validate.field) = {
+    map: {
+      keys: {
+        string: {pattern: "^[a-z][-a-z\\.]*$"}
       }
     }
-  ];
+  }];
 
   // ID of the resource that this operation creates, updates, deletes or otherwise changes.
   //

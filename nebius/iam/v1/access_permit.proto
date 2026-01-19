@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package nebius.iam.v1;
 
-import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
 option java_multiple_files = true;
@@ -28,5 +28,4 @@ message AccessPermitSpec {
   string role = 2 [(field_behavior) = IMMUTABLE];
 }
 
-message AccessPermitStatus {
-}
+message AccessPermitStatus {}

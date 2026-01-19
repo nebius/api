@@ -43,7 +43,9 @@ message GetMaintenanceRequest {
   // To get the maintenance ID use a [MaintenanceService.List] request.
   string id = 1 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "maintenance" ] }
+    (nid) = {
+      resource: ["maintenance"]
+    }
   ];
 }
 
@@ -51,8 +53,8 @@ message UpdateMaintenanceRequest {
   option (buf.validate.message) = {
     cel: [
       {
-        id: "update_maintenance.metadata",
-        message: "'metadata' must have 'id'",
+        id: "update_maintenance.metadata"
+        message: "'metadata' must have 'id'"
         expression: "has(this.metadata.id)"
       }
     ]
@@ -62,7 +64,9 @@ message UpdateMaintenanceRequest {
   // Must include ID of the maintenance operation to update.
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "maintenance" ] }
+    (nid) = {
+      resource: ["maintenance"]
+    }
   ];
 
   // Updated specification for the maintenance operation.

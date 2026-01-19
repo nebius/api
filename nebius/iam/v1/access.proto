@@ -24,6 +24,5 @@ message Account {
     string id = 1;
   }
 
-  message AnonymousAccount {
-  }
+  message AnonymousAccount {}
 }

@@ -22,17 +22,35 @@ message K8sRelease {
 }
 
 message K8sReleaseSpec {
-  string cluster_id = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string cluster_id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
-  string product_slug = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string product_slug = 2 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
-  string namespace = 3 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string namespace = 3 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
-  string application_name = 4 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string application_name = 4 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
-  string values = 5 [(field_behavior) = INPUT_ONLY, (sensitive) = true];
+  string values = 5 [
+    (field_behavior) = INPUT_ONLY,
+    (sensitive) = true
+  ];
 
-  map<string, string> set = 6 [(field_behavior) = INPUT_ONLY, (sensitive) = true];
+  map<string, string> set = 6 [
+    (field_behavior) = INPUT_ONLY,
+    (sensitive) = true
+  ];
 }
 
 message K8sReleaseStatus {

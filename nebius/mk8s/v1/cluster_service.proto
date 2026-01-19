@@ -80,8 +80,7 @@ message DeleteClusterRequest {
   string id = 1 [(buf.validate.field).required = true];
 }
 
-message ListClusterControlPlaneVersionsRequest {
-}
+message ListClusterControlPlaneVersionsRequest {}
 
 message ListClusterControlPlaneVersionsResponse {
   repeated ClusterControlPlaneVersion items = 1;

@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package nebius.storage.v1;
 
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/duration.proto";
 import "buf/validate/validate.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";

@@ -3,8 +3,8 @@ syntax = "proto3";
 package nebius.compute.v1;
 
 import "buf/validate/validate.proto";
-import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 import "nebius/compute/v1/network_interface.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
@@ -36,7 +36,10 @@ message InstanceSpec {
   InstanceGpuClusterSpec gpu_cluster = 3 [(field_behavior) = IMMUTABLE];
 
   // List of network interfaces attached to the instance.
-  repeated NetworkInterfaceSpec network_interfaces = 4 [(buf.validate.field) = { repeated: { max_items: 8 }, required: true }];
+  repeated NetworkInterfaceSpec network_interfaces = 4 [(buf.validate.field) = {
+    repeated: {max_items: 8}
+    required: true
+  }];
 
   // Specified boot disk attached to the instance.
   AttachedDiskSpec boot_disk = 5 [(field_behavior) = IMMUTABLE];
@@ -49,7 +52,12 @@ message InstanceSpec {
 
   // Data in cloud-init format for customizing instance initialization.
   // For details, see https://docs.nebius.com/compute/virtual-machines/manage#user-data
-  string cloud_init_user_data = 8 [(sensitive) = true, (buf.validate.field) = { string: { max_len: 32768 } }];
+  string cloud_init_user_data = 8 [
+    (sensitive) = true,
+    (buf.validate.field) = {
+      string: {max_len: 32768}
+    }
+  ];
 
   // Indicates whether the instance should be stopped.
   bool stopped = 13;
@@ -66,17 +74,15 @@ message InstanceSpec {
 
   // Instance's hostname. Used to generate default DNS record in format `<hostname>.<network_id>.compute.internal.`
   // or `<instance_id>.<network_id>.compute.internal.` if hostname is not specified.
-  string hostname = 20 [
-    (buf.validate.field) = {
-      cel: [
-        {
-          id: "hostname.valid",
-          message: "value must be a valid hostname",
-          expression: "this == '' || this.matches('^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$')"
-        }
-      ]
-    }
-  ];
+  string hostname = 20 [(buf.validate.field) = {
+    cel: [
+      {
+        id: "hostname.valid"
+        message: "value must be a valid hostname"
+        expression: "this == '' || this.matches('^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$')"
+      }
+    ]
+  }];
 
   ReservationPolicy reservation_policy = 23;
 }
@@ -90,15 +96,24 @@ message PreemptibleSpec {
 
   // Specifies what happens when the VM is preempted. The only supported value is STOP:
   // Compute stops the VM without deleting or restarting it.
-  PreemptionPolicy on_preemption = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  PreemptionPolicy on_preemption = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   // The value can range from 1 to 5, where 5 indicates the highest priority.
   // Affects the order in which Compute tries to preempt VMs, but does not guarantee the exact order.
-  int32 priority = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  int32 priority = 2 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 }
 
 message ResourcesSpec {
-  string platform = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string platform = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   oneof size {
     option (buf.validate.oneof).required = true;
@@ -133,7 +148,9 @@ message AttachedDiskSpec {
   }
 
   // Specifies the user-defined identifier, allowing to use '/dev/disk/by-id/virtio-{device_id}' as a device path in mount command.
-  string device_id = 3 [(buf.validate.field) = { string: { max_len: 20 } }];
+  string device_id = 3 [(buf.validate.field) = {
+    string: {max_len: 20}
+  }];
 }
 
 message ExistingDisk {
@@ -156,7 +173,10 @@ message AttachedFilesystemSpec {
   AttachMode attach_mode = 1 [(buf.validate.field).required = true];
 
   // Specifies the user-defined identifier, allowing to use it as a device in mount command.
-  string mount_tag = 2 [(buf.validate.field) = { string: { max_len: 37 }, required: true }];
+  string mount_tag = 2 [(buf.validate.field) = {
+    string: {max_len: 37}
+    required: true
+  }];
 
   oneof type {
     option (buf.validate.oneof).required = true;

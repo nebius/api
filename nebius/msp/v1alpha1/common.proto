@@ -42,7 +42,9 @@ message ListRequest {
   string parent_id = 1 [(buf.validate.field).required = true];
 
   // Specifies the maximum number of items to return in the response. Default value is 100.
-  int64 page_size = 2 [(buf.validate.field) = { int64: { gte: 0 } }];
+  int64 page_size = 2 [(buf.validate.field) = {
+    int64: {gte: 0}
+  }];
 
   // Token for pagination, allowing the retrieval of the next set of results.
   string page_token = 3;

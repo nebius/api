@@ -8,14 +8,13 @@ import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/mk8s/v1alpha1/instance_template.proto";
 
-option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1alpha1";
-
 // Migrate to v1.
 option deprecated = true;
-option (file_deprecation_details) = { description: "migrate to v1" };
+option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "NodeGroupProto";
 option java_package = "ai.nebius.pub.mk8s.v1alpha1";
+option (file_deprecation_details) = {description: "migrate to v1"};
 
 // NodeGroup represents Kubernetes node pool
 message NodeGroup {
@@ -35,7 +34,12 @@ message NodeGroupSpec {
   oneof size {
     option (buf.validate.oneof).required = true;
 
-    int64 fixed_node_count = 2 [(buf.validate.field) = { int64: { lte: 100, gte: 0 } }];
+    int64 fixed_node_count = 2 [(buf.validate.field) = {
+      int64: {
+        lte: 100
+        gte: 0
+      }
+    }];
 
     NodeGroupAutoscalingSpec autoscaling = 5;
   }
@@ -144,8 +148,7 @@ message NetworkInterfaceTemplate {
 }
 
 // Describes a public IP address.
-message PublicIPAddress {
-}
+message PublicIPAddress {}
 
 message AttachedFilesystemSpec {
   enum AttachMode {
@@ -172,23 +175,32 @@ message ExistingFilesystem {
 }
 
 message NodeGroupAutoscalingSpec {
-  int64 min_node_count = 1 [(buf.validate.field) = { int64: { lte: 100, gte: 0 } }];
+  int64 min_node_count = 1 [(buf.validate.field) = {
+    int64: {
+      lte: 100
+      gte: 0
+    }
+  }];
 
-  int64 max_node_count = 2 [(buf.validate.field) = { int64: { lte: 100, gte: 0 } }];
+  int64 max_node_count = 2 [(buf.validate.field) = {
+    int64: {
+      lte: 100
+      gte: 0
+    }
+  }];
 
   option (buf.validate.message) = {
     cel: [
       {
-        id: "autoscaling.protovalidate.message",
-        message: "min_node_count must be less or equal than max_node_count",
+        id: "autoscaling.protovalidate.message"
+        message: "min_node_count must be less or equal than max_node_count"
         expression: "this.min_node_count <= this.max_node_count"
       }
     ]
   };
 }
 
-message PreemptibleSpec {
-}
+message PreemptibleSpec {}
 
 // See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 message NodeTaint {

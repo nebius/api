@@ -8,10 +8,9 @@ import "nebius/common/v1alpha1/operation.proto";
 import "nebius/common/v1alpha1/operation_service.proto";
 import "nebius/compute/v1alpha1/instance.proto";
 
-option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1alpha1";
-
 // Migrate to compute/v1.
 option deprecated = true;
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "InstanceServiceProto";
 option java_package = "ai.nebius.pub.compute.v1alpha1";

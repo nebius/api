@@ -3,8 +3,8 @@ syntax = "proto3";
 package nebius.compute.v1;
 
 import "buf/validate/validate.proto";
-import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
 option java_multiple_files = true;
@@ -55,7 +55,10 @@ message FilesystemSpec {
 
   // The Shared Filesystem type determines its limits and performance characteristics.
   // For details, see https://docs.nebius.com/compute/storage/types#filesystems-types
-  FilesystemType type = 6 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  FilesystemType type = 6 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 }
 
 message FilesystemStatus {

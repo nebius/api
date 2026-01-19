@@ -3,8 +3,8 @@ syntax = "proto3";
 package nebius.maintenance.v1alpha1;
 
 import "buf/validate/validate.proto";
-import "nebius/common/v1/metadata.proto";
 import "google/protobuf/timestamp.proto";
+import "nebius/common/v1/metadata.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/maintenance/v1alpha1";
 option java_multiple_files = true;

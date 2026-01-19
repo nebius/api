@@ -3,9 +3,9 @@ syntax = "proto3";
 package nebius.msp.postgresql.v1alpha1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1alpha1/operation.proto";
 import "nebius/msp/postgresql/v1alpha1/backup.proto";
-import "nebius/annotations.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/msp/postgresql/v1alpha1";
 option java_multiple_files = true;
@@ -37,7 +37,9 @@ message GetBackupRequest {
   // ID of the PostgreSQL cluster that holds backup.
   string cluster_id = 1 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "postgresql" ] }
+    (nid) = {
+      resource: ["postgresql"]
+    }
   ];
 
   // ID of the designated backup.
@@ -53,7 +55,9 @@ message ListBackupsByClusterRequest {
   // ID of the PostgreSQL cluster to list backups from.
   string cluster_id = 1 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "postgresql" ] }
+    (nid) = {
+      resource: ["postgresql"]
+    }
   ];
 }
 
@@ -66,7 +70,9 @@ message CreateBackupRequest {
   // ID of the PostgreSQL cluster that holds backup.
   string cluster_id = 1 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "postgresql" ] }
+    (nid) = {
+      resource: ["postgresql"]
+    }
   ];
 }
 
@@ -74,7 +80,9 @@ message DeleteBackupRequest {
   // ID of the PostgreSQL cluster that holds backup.
   string cluster_id = 1 [
     (buf.validate.field).required = true,
-    (nid) = { resource: [ "postgresql" ] }
+    (nid) = {
+      resource: ["postgresql"]
+    }
   ];
 
   // ID of the designated backup.

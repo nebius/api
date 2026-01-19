@@ -3,8 +3,8 @@ syntax = "proto3";
 package nebius.compute.v1;
 
 import "buf/validate/validate.proto";
-import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
 option java_multiple_files = true;
@@ -22,7 +22,10 @@ message GpuCluster {
 message GpuClusterSpec {
   // The identifier of the physical InfiniBand fabric to connect GPU instances to.
   // For details, see https://docs.nebius.com/compute/clusters/gpu#fabrics
-  string infiniband_fabric = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string infiniband_fabric = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 }
 
 message GpuClusterStatus {

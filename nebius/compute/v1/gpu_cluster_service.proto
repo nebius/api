@@ -54,7 +54,7 @@ message ListGpuClustersRequest {
   string filter = 4 [
     deprecated = true,
     (field_deprecation_details) = {
-      effective_at: "2025-06-16",
+      effective_at: "2025-06-16"
       description: "it is not implemented, filtering could be done on client side"
     }
   ];

@@ -5,8 +5,8 @@ package nebius.iam.v2;
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
-import "nebius/iam/v2/access_key.proto";
 import "nebius/iam/v1/access.proto";
+import "nebius/iam/v2/access_key.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v2";
 option java_multiple_files = true;

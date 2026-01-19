@@ -36,18 +36,21 @@ message RecordSpec {
     (buf.validate.field) = {
       cel: [
         {
-          id: "relative_name_format",
-          message: "relative_name must be '@' for zone apex, or a valid relative domain name (e.g. 'a.x-y.zzz')",
+          id: "relative_name_format"
+          message: "relative_name must be '@' for zone apex, or a valid relative domain name (e.g. 'a.x-y.zzz')"
           expression: "size(this) < 253 && this.matches('^(?:@|(?:[*]|[a-z0-9_](?:[a-z0-9-_]{0,60}[a-z0-9_])*)(?:[.][a-z0-9_](?:[a-z0-9-_]{0,60}[a-z0-9_])*)*)$')"
         }
-      ],
+      ]
       required: true
     },
     (field_behavior) = IMMUTABLE
   ];
 
   // Record type
-  RecordType type = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  RecordType type = 2 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   // Record TTL. If absent or negative, will be assumed to be the default value (`600`)
   int64 ttl = 3;
@@ -124,7 +127,9 @@ message GetRecordRequest {
   // Optional: expected record version (`metadata.resource_version`)
   // - If specified, the requested version will be returned if possible (if the version has changed, you will get a `FAILED_PRECONDITION` error)
   // - If not specified or set to `0`, the latest version will be returned
-  int64 resource_version = 2 [(buf.validate.field) = { int64: { gte: 0 } }];
+  int64 resource_version = 2 [(buf.validate.field) = {
+    int64: {gte: 0}
+  }];
 }
 
 // Request to list DNS records in the specified parent DNS zone

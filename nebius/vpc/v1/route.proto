@@ -3,8 +3,8 @@ syntax = "proto3";
 package nebius.vpc.v1;
 
 import "buf/validate/validate.proto";
-import "nebius/common/v1/metadata.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
 option java_multiple_files = true;
@@ -32,10 +32,16 @@ message RouteSpec {
   // Each destination CIDR must be unique within a route table.
   // When multiple routes match a destination IP, the route with the longest
   // matching prefix (most specific match) is selected.
-  DestinationMatch destination = 2 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+  DestinationMatch destination = 2 [
+    (field_behavior) = IMMUTABLE,
+    (buf.validate.field).required = true
+  ];
 
   // Next hop configuration specifying where to send matching traffic.
-  NextHop next_hop = 3 [(field_behavior) = IMMUTABLE, (buf.validate.field).required = true];
+  NextHop next_hop = 3 [
+    (field_behavior) = IMMUTABLE,
+    (buf.validate.field).required = true
+  ];
 }
 
 message DestinationMatch {
@@ -47,11 +53,11 @@ message DestinationMatch {
     (buf.validate.field) = {
       cel: [
         {
-          id: "string.valid_cidr",
-          message: "destination.cidr must be a valid and specified CIDR",
+          id: "string.valid_cidr"
+          message: "destination.cidr must be a valid and specified CIDR"
           expression: "this.matches('^([0-9]{1,3}\\\\.){3}[0-9]{1,3}/[0-9]+$') && this.isIpPrefix(4, true)"
         }
-      ],
+      ]
       required: true
     }
   ];
@@ -114,5 +120,4 @@ message AllocationNextHopState {
   string cidr = 1;
 }
 
-message DefaultEgressGatewayState {
-}
+message DefaultEgressGatewayState {}

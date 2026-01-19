@@ -6,8 +6,8 @@ import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
-import "nebius/iam/v1/group_membership.proto";
 import "nebius/iam/v1/group.proto";
+import "nebius/iam/v1/group_membership.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
 option java_multiple_files = true;

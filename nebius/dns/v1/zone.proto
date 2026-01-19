@@ -33,18 +33,16 @@ message Zone {
 // DNS Zone specification
 message ZoneSpec {
   // Fully qualified domain name of this zone, including `.` at the end
-  string domain_name = 1 [
-    (buf.validate.field) = {
-      cel: [
-        {
-          id: "domain_name_format",
-          message: "domain_name must be a fully-qualified domain name with '.' at the end, e.g. 'x.y.z.'",
-          expression: "size(this) < 253 && this.matches('^[a-z0-9][-a-z0-9.]*[.]$')"
-        }
-      ],
-      required: true
-    }
-  ];
+  string domain_name = 1 [(buf.validate.field) = {
+    cel: [
+      {
+        id: "domain_name_format"
+        message: "domain_name must be a fully-qualified domain name with '.' at the end, e.g. 'x.y.z.'"
+        expression: "size(this) < 253 && this.matches('^[a-z0-9][-a-z0-9.]*[.]$')"
+      }
+    ]
+    required: true
+  }];
 
   // Scope for this zone
   // The scope is chosen at zone creation time and cannot be changed, but scope's attributes can sometimes be changed
@@ -63,7 +61,10 @@ message ZoneSpec {
 message VpcZoneScope {
   // ID of the virtual network that this zone's records will be visible from
   // This value cannot be changed after creating the zone
-  string primary_network_id = 1 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string primary_network_id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 }
 
 // Custom SOA (Start of Authority) record specification for the zone
@@ -91,7 +92,9 @@ message GetZoneRequest {
   // Optional: expected zone version (`metadata.resource_version`)
   // - If specified, the requested version will be returned if possible (if the version has changed, you will get a `FAILED_PRECONDITION` error)
   // - If not specified or set to `0`, the latest zone version will be returned
-  int64 resource_version = 2 [(buf.validate.field) = { int64: { gte: 0 } }];
+  int64 resource_version = 2 [(buf.validate.field) = {
+    int64: {gte: 0}
+  }];
 }
 
 // Request to list DNS zones in the specified parent IAM container

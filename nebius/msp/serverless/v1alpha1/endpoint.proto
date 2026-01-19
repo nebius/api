@@ -26,7 +26,10 @@ message EndpointSpec {
   string description = 1;
 
   // Network ID to run the endpoint in
-  string network_id = 2 [(buf.validate.field).required = true, (field_behavior) = IMMUTABLE];
+  string network_id = 2 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
 
   // Username for accessing the container endpoint.
   string username = 3 [
@@ -69,7 +72,10 @@ message EndpointContainerSpec {
   map<string, string> envs = 103;
 
   // Environment variables with sensitive data
-  map<string, string> sensitive_envs = 104 [(field_behavior) = INPUT_ONLY, (sensitive) = true];
+  map<string, string> sensitive_envs = 104 [
+    (field_behavior) = INPUT_ONLY,
+    (sensitive) = true
+  ];
 
   // Liveness probe spec
   ProbeSpec liveness = 201;
@@ -85,10 +91,16 @@ message ProbeSpec {
   int64 delay_seconds = 5;
 
   // Probing period in seconds
-  int64 period_seconds = 6 [(buf.validate.field) = { int64: { gt: 0 }, required: true }];
+  int64 period_seconds = 6 [(buf.validate.field) = {
+    int64: {gt: 0}
+    required: true
+  }];
 
   // Failure threshold for the probe after which the container will be restarted
-  int64 failure_threshold = 7 [(buf.validate.field) = { int64: { gt: 0 }, required: true }];
+  int64 failure_threshold = 7 [(buf.validate.field) = {
+    int64: {gt: 0}
+    required: true
+  }];
 }
 
 message EndpointTemplateSpec {
