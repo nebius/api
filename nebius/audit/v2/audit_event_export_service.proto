@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package nebius.audit.v2;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/audit/v2/audit_event_export.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/audit/v2";
+option java_multiple_files = true;
+option java_outer_classname = "AuditEventExportServiceProto";
+option java_package = "ai.nebius.pub.audit.v2";
+
+// Service for managing audit event exports.
+service AuditEventExportService {
+  option (api_service_name) = "audit";
+
+  // Start audit events export to s3 bucket for specific period.
+  rpc Start(StartRequest) returns (common.v1.Operation);
+
+  // Stop active audit events export to s3 bucket, all data written before calling this API remains in the bucket.
+  rpc Cancel(CancelRequest) returns (common.v1.Operation);
+
+  // Returns the audit event export with the current progress status and the parameters with which it was created.
+  rpc Get(GetRequest) returns (AuditEventExport);
+
+  // Returns a list of exports created for a specific parent_id.
+  rpc List(ListRequest) returns (ListAuditEventExportResponse);
+}
+
+message StartRequest {
+  // Metadata associated with the new export.
+  common.v1.ResourceMetadata metadata = 1;
+
+  // Specification for the new export.
+  AuditEventExportSpec spec = 2;
+}
+
+message CancelRequest {
+  // Id of the audit event export that needs to be cancelled.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message GetRequest {
+  // Id of the audit event export.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message ListRequest {
+  // Parent id used when creating the audit export.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Specifies the maximum number of items to return in the response.
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+}
+
+message ListAuditEventExportResponse {
+  // List of audit event exports.
+  repeated AuditEventExport items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}
