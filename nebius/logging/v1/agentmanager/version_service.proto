@@ -102,6 +102,9 @@ message GetVersionRequest {
 
   // Version of the DCGM (Data Center GPU Manager) used.
   string dcgm_version = 20;
+
+  // Health check logs information for monitoring disk usage.
+  HealthCheckLogs healthcheck_logs = 21;
 }
 
 // Health status information for all agent modules.
@@ -120,6 +123,21 @@ message ModulesHealth {
 
   // Health status of the VM applications pipeline module.
   ModuleHealth vmapps_pipeline = 5;
+
+  // Health status of the common service logs pipeline module.
+  ModuleHealth common_service_logs_pipeline = 6;
+
+  // Health status of the vm service logs pipeline module.
+  ModuleHealth vm_service_logs_pipeline = 7;
+}
+
+// Health check logs information for monitoring disk usage.
+message HealthCheckLogs {
+  // Size of the healthcheck directory in bytes.
+  int64 directory_size_bytes = 1;
+
+  // Total size of the healthcheck mountpoint in bytes.
+  int64 mountpoint_total_bytes = 2;
 }
 
 // Health status information for an individual module.
