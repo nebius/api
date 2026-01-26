@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package nebius.common.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1";
+option java_multiple_files = true;
+option java_outer_classname = "ProgressTrackerProto";
+option java_package = "ai.nebius.pub.common.v1";
+
+// Information for tracking the progress of a task (e.g., an API operation or background maintenance action).
+// This serves as a UI contract and may be directly reflected in CLI, Console, and other tools.
+message ProgressTracker {
+  // Human-readable description of the currently executing task, e.g., "Downloading dat-groot-llm.tar.xz".
+  // Relates to the overall task, not individual steps.
+  // SHOULD match the Operation's `description` field when this ProgressTracker tracks an API Operation's progress.
+  // MAY provide more detailed overall information.
+  //
+  // MUST be suitable for display to public users.
+  // Even if the task is internal, this description may be shown to end users in overall task step descriptions.
+  //
+  // For individual step descriptions, use `Step.description`.
+  string description = 1 [(buf.validate.field).required = true];
+
+  // Timestamp when the overall task started.
+  // MUST match the operation's created_at timestamp when tracking an API Operation's progress.
+  google.protobuf.Timestamp started_at = 2 [(buf.validate.field).required = true];
+
+  // Estimated completion timestamp for the task.
+  // MUST be absent if the task is completed (i.e., finished_at is set).
+  // MAY be absent if the estimate is unknown.
+  // MAY be updated as the progress estimate changes.
+  google.protobuf.Timestamp estimated_finished_at = 3;
+
+  // Completion timestamp of the task.
+  // MUST be absent for running tasks; MUST be present for completed tasks.
+  // MUST match the operation's finished_at timestamp when tracking an API Operation's progress.
+  google.protobuf.Timestamp finished_at = 4;
+
+  // Overall work progress details.
+  // MAY be absent if unknown.
+  WorkDone work_done = 10;
+
+  // Detailed information about the task steps that are currently running or have been finished.
+  // - For a completed task, the step list MUST either be empty or contain finished steps only.
+  // - For a running task, the step list MAY be empty if the task consists of a single step or no detailed information is available.
+  //   A non-empty step list MUST include all currently running steps and MAY include some or all finished steps.
+  // - Service SHOULD provide both running and finished steps if the task has around 10-20 steps, and provide only running steps otherwise.
+  //   Service MUST consistently choose either the "running steps only" or the "running + finished steps" behavior.
+  // - The UI, CLI etc. MAY choose not to display all steps provided by the service.
+  repeated Step steps = 20;
+
+  // Information about the work done by the task or its step, expressed in ticks (abstract work units).
+  // Each tick may represent a real measurement (e.g., VMs created, KiB uploaded), number of substeps or a percentage of work completed.
+  message WorkDone {
+    // Total number of ticks (work units) to be completed. MUST be greater than 0.
+    int64 total_tick_count = 1 [(buf.validate.field) = {
+      int64: {gt: 0}
+    }];
+
+    // Number of ticks completed so far. MUST be between 0 and total_tick_count, inclusive.
+    // MUST equal total_tick_count if the task or step is finished.
+    int64 done_tick_count = 2 [(buf.validate.field) = {
+      int64: {gte: 0}
+    }];
+  }
+
+  // Represents a basic step in the task.
+  // Fields are binary-compatible with ProgressTracker for easier processing.
+  message Step {
+    // Human-readable description of the step, e.g., "Connecting to localhost:8080".
+    // MUST be suitable for display to public users.
+    // Private descriptions must be filtered server-side based on the use case.
+    string description = 1 [(buf.validate.field).required = true];
+
+    // Timestamp when the step started.
+    google.protobuf.Timestamp started_at = 2 [(buf.validate.field).required = true];
+
+    // Timestamp when the step finished.
+    // MUST be absent for running steps; MUST be present for completed steps.
+    google.protobuf.Timestamp finished_at = 4;
+
+    // Details on the work to be done for this step and progress made.
+    // MAY be absent if unknown.
+    WorkDone work_done = 10;
+  }
+}

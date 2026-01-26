@@ -7,6 +7,7 @@ import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "google/rpc/status.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/progress_tracker.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1";
 option java_multiple_files = true;
@@ -69,6 +70,11 @@ message Operation {
   // - [status.code] must belong to an Operation-compatible subset of GRPC codes:
   //   OK, CANCELLED, PERMISSION_DENIED, RESOURCE_EXHAUSTED, FAILED_PRECONDITION, ABORTED, INTERNAL
   google.rpc.Status status = 10 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+  // Information about this operation's progress, if this operation tracks its progress.
+  // If the operation tracks its progress, `progress_tracker` MUST be present both while
+  // the operation is running and after it has been completed.
+  ProgressTracker progress_tracker = 12;
 
   // Extra information about this operation's progress. MAY be absent while the operation is running, MUST be absent after the operation has completed.
   //
