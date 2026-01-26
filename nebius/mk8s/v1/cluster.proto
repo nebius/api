@@ -56,6 +56,10 @@ message ControlPlaneSpec {
       ]
     }
   }];
+
+  // Specify configuration of the pushing k8s audit logs into service logs and show it in the UI.
+  // By default cluster will be created without it.
+  AuditLogsSpec audit_logs = 5 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
 }
 
 message ControlPlaneEndpointsSpec {
@@ -87,6 +91,8 @@ message KubeNetworkSpec {
     (field_behavior) = IMMUTABLE
   ];
 }
+
+message AuditLogsSpec {}
 
 message ClusterStatus {
   enum State {

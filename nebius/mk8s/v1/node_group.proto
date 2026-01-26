@@ -132,6 +132,9 @@ message NodeTemplate {
   // Configures whether the nodes in the group are preemptible.
   // Set to empty value to enable preemptible nodes.
   PreemptibleSpec preemptible = 15 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+  // reservation_policy is an interface of the "capacity block" (or "capacity block group") mechanism of Nebius Compute.
+  ReservationPolicy reservation_policy = 18;
 }
 
 message NodeMetadataTemplate {
@@ -336,6 +339,31 @@ enum ConditionStatus {
 }
 
 message PreemptibleSpec {}
+
+// ReservationPolicy is copied as-is from NebiusAPI `compute/v1/instance.proto`.
+message ReservationPolicy {
+  enum Policy {
+    // 1) Will try to launch instance in any reservation_ids if provided.
+    // 2) Will try to launch instance in any of the available capacity block.
+    // 3) Will try to launch instance in PAYG if 1 & 2 are not satisfied.
+    AUTO = 0;
+
+    // The instance is launched only using on-demand (PAYG) capacity.
+    // No attempt is made to find or use a Capacity Block.
+    // It's an error to provide reservation_ids with policy = FORBID
+    FORBID = 1;
+
+    // 1) Will try to launch the instance in Capacity Blocks from reservation_ids if provided.
+    // 2) If reservation_ids are not provided will try to launch instance in suitable & available Capacity Block.
+    // 3) Fail otherwise.
+    STRICT = 2;
+  }
+
+  Policy policy = 1;
+
+  // Capacity block groups, order matters
+  repeated string reservation_ids = 2;
+}
 
 message NodeGroupStatus {
   enum State {
