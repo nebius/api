@@ -21,7 +21,9 @@ option java_package = "ai.nebius.pub.dns.v1";
 message Zone {
   // DNS zone metadata
   // `metadata.parent_id` must be an IAM Container ID
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // DNS zone specification, including its domain name and scope
   ZoneSpec spec = 2;
@@ -63,7 +65,10 @@ message VpcZoneScope {
   // This value cannot be changed after creating the zone
   string primary_network_id = 1 [
     (buf.validate.field).required = true,
-    (field_behavior) = IMMUTABLE
+    (field_behavior) = IMMUTABLE,
+    (nid) = {
+      resource: ["vpcnetwork"]
+    }
   ];
 }
 
@@ -87,7 +92,12 @@ message ZoneStatus {
 // Request to get the DNS zone by its ID and, optionally, its resource version
 message GetZoneRequest {
   // Zone ID
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["dnszone"]
+    }
+  ];
 
   // Optional: expected zone version (`metadata.resource_version`)
   // - If specified, the requested version will be returned if possible (if the version has changed, you will get a `FAILED_PRECONDITION` error)
@@ -100,7 +110,12 @@ message GetZoneRequest {
 // Request to list DNS zones in the specified parent IAM container
 message ListZonesRequest {
   // Parent IAM container ID
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   // Page size
   // If not specified or set to `0`, a default page size of `100` will be used

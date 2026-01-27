@@ -18,7 +18,9 @@ option java_package = "ai.nebius.pub.dns.v1";
 message Record {
   // DNS record metadata
   // `metadata.parent_id` must be a DNS zone ID
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["dnszone"]
+  }];
 
   // DNS record specification, including its relative name, type, data and TTL
   RecordSpec spec = 2;
@@ -122,7 +124,12 @@ message RecordStatus {
 // Request to get the DNS record by its ID and, optionally, its resource version
 message GetRecordRequest {
   // Record ID
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["dnsrecord"]
+    }
+  ];
 
   // Optional: expected record version (`metadata.resource_version`)
   // - If specified, the requested version will be returned if possible (if the version has changed, you will get a `FAILED_PRECONDITION` error)
@@ -135,7 +142,12 @@ message GetRecordRequest {
 // Request to list DNS records in the specified parent DNS zone
 message ListRecordsRequest {
   // Parent DNS zone ID
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["dnszone"]
+    }
+  ];
 
   // Page size
   // If not specified or set to `0`, a default page size of `100` will be used
