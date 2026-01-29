@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package nebius.capacity.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+import "nebius/capacity/v1/resource_affinity.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/capacity/v1";
+option java_multiple_files = true;
+option java_outer_classname = "CapacityIntervalProto";
+option java_package = "ai.nebius.pub.capacity.v1";
+
+// Capacity Interval specification.
+message CapacityIntervalSpec {}
+
+// Capacity Interval status data.
+message CapacityIntervalStatus {
+  enum State {
+    // Shouldn't happen.
+    STATE_UNSPECIFIED = 0;
+
+    // Capacity Interval is fully in the future (now < start_time).
+    STATE_SCHEDULED = 1;
+
+    // Capacity Interval is currently active (start_time <= now < end_time).
+    STATE_ACTIVE = 2;
+
+    // Capacity Interval is fully in the past (end_time <= now).
+    STATE_EXPIRED = 3;
+  }
+
+  // Tenant ID for which the Capacity Interval is created.
+  string container_id = 1 [(nid) = {
+    resource: ["tenant"]
+  }];
+
+  // Name of the region where the Capacity Interval is created.
+  // Example: "eu-north1".
+  string region = 2;
+
+  // Specification of the Capacity Interval.
+  ResourceAffinity resource_affinity = 3;
+
+  // Service for which the Capacity Interval is created.
+  string service = 4;
+
+  // Resource quantity of the Capacity Interval.
+  uint64 quantity = 5;
+
+  // Start time of the Capacity Interval.
+  google.protobuf.Timestamp start_time = 6;
+
+  // End time of the Capacity Interval.
+  google.protobuf.Timestamp end_time = 7;
+
+  // State of the Capacity Interval.
+  State state = 8;
+
+  // Shows that changes are in flight.
+  bool reconciling = 100;
+}
+
+// Capacity Intervals represents a timeframe during which the specified resources can be used.
+message CapacityInterval {
+  option (resource_behavior) = UNNAMED;
+
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["capacityblockgroup"]
+    }
+  ];
+
+  CapacityIntervalSpec spec = 2 [(buf.validate.field).required = true];
+
+  CapacityIntervalStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}

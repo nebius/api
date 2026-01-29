@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package nebius.capacity.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/capacity/v1/capacity_block_group.proto";
+import "nebius/capacity/v1/resource_affinity.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/capacity/v1";
+option java_multiple_files = true;
+option java_outer_classname = "CapacityBlockGroupServiceProto";
+option java_package = "ai.nebius.pub.capacity.v1";
+
+// Capacity Block Group service provides read access to Capacity Block Groups resources.
+service CapacityBlockGroupService {
+  option (api_service_name) = "capacity-blocks.billing-cpl";
+
+  // Get Capacity Block Group by its ID.
+  rpc Get(GetCapacityBlockGroupRequest) returns (CapacityBlockGroup);
+
+  // Get Capacity Block Group by its specification.
+  rpc GetByResourceAffinity(GetCapacityBlockGroupByResourceAffinityRequest) returns (CapacityBlockGroup);
+
+  // List all Capacity Block Groups for the specified Tenant.
+  rpc List(ListCapacityBlockGroupsRequest) returns (ListCapacityBlockGroupsResponse);
+}
+
+// Get a Capacity Block Group by its ID.
+message GetCapacityBlockGroupRequest {
+  // ID of the Capacity Block Group.
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IDENTIFIER,
+    (nid) = {
+      resource: ["capacityblockgroup"]
+    }
+  ];
+}
+
+// Get a Capacity Block Group in a Tenant by its Resource Affinity.
+message GetCapacityBlockGroupByResourceAffinityRequest {
+  // Tenant ID of the Capacity Block Group.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["tenant"]
+    }
+  ];
+
+  // Name of the region where the Capacity Block Group is allocated.
+  // Example: "eu-north1".
+  string region = 2 [(buf.validate.field).required = true];
+
+  // Specifications of the Capacity Block Group.
+  ResourceAffinity resource_affinity = 3 [(buf.validate.field).required = true];
+}
+
+// List Capacity Block Groups by a Tenant ID.
+message ListCapacityBlockGroupsRequest {
+  // Tenant ID of the Capacity Block Group.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["tenant"]
+    }
+  ];
+
+  // Page size. Must be between [1...200].
+  // Optional; if not specified, a reasonable default will be chosen by the service.
+  int64 page_size = 2 [(buf.validate.field) = {
+    int64: {
+      lte: 200
+      gte: 0
+    }
+  }];
+
+  // Listing continuation token. Pass an empty string to start listing from the first page.
+  string page_token = 3;
+}
+
+// All existing Capacity Block Groups in a Tenant.
+message ListCapacityBlockGroupsResponse {
+  // List of Capacity Block Groups on this result page.
+  repeated CapacityBlockGroup items = 1;
+
+  // Listing continuation token for the next page of results.
+  string next_page_token = 2;
+}

@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package nebius.capacity.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/capacity/v1/capacity_interval.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/capacity/v1";
+option java_multiple_files = true;
+option java_outer_classname = "CapacityIntervalServiceProto";
+option java_package = "ai.nebius.pub.capacity.v1";
+
+// Capacity Interval service provides read access to Capacity Intervals resources.
+service CapacityIntervalService {
+  option (api_service_name) = "capacity-blocks.billing-cpl";
+
+  // Get Capacity Interval by its ID.
+  rpc Get(GetCapacityIntervalRequest) returns (CapacityInterval);
+
+  // List all capacity intervals in a Capacity Block Group.
+  rpc List(ListCapacityIntervalsRequest) returns (ListCapacityIntervalsResponse);
+}
+
+// Getting Capacity Interval by its ID.
+message GetCapacityIntervalRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IDENTIFIER,
+    (nid) = {
+      resource: ["capacityinterval"]
+    }
+  ];
+}
+
+// Listing all existing Capacity Intervals in a Capacity Block Group.
+message ListCapacityIntervalsRequest {
+  // Capacity Block Group ID for which the Capacity Intervals should be listed.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["capacityblockgroup"]
+    }
+  ];
+
+  // Page size. Must be between [1...200].
+  // Optional; if not specified, a reasonable default will be chosen by the service.
+  int64 page_size = 2 [(buf.validate.field) = {
+    int64: {
+      lte: 200
+      gte: 0
+    }
+  }];
+
+  // Listing continuation token. Pass an empty string to start listing from the first page.
+  string page_token = 3;
+}
+
+// All existing Capacity Intervals in a Capacity Block Group.
+message ListCapacityIntervalsResponse {
+  // List of Capacity Intervals on this result page.
+  repeated CapacityInterval items = 1;
+
+  // Listing continuation token for the next page of results.
+  string next_page_token = 2;
+}

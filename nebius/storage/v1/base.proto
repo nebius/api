@@ -13,6 +13,8 @@ enum StorageClass {
   STANDARD = 1;
 
   ENHANCED_THROUGHPUT = 2;
+
+  INTELLIGENT_TIERING = 3;
 }
 
 enum VersioningPolicy {
