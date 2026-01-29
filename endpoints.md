@@ -10,6 +10,9 @@
   * [nebius.audit.v2.AuditEventExportService](nebius/audit/v2/audit_event_export_service.proto)
   * [nebius.audit.v2.AuditEventService](nebius/audit/v2/audit_event_service.proto)
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+* capacity-blocks.billing-cpl.api.nebius.cloud:443
+  * [nebius.capacity.v1.CapacityBlockGroupService](nebius/capacity/v1/capacity_block_group_service.proto)
+  * [nebius.capacity.v1.CapacityIntervalService](nebius/capacity/v1/capacity_interval_service.proto)
 * compute.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)

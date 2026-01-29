@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package nebius.capacity.v1;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/capacity/v1";
+option java_multiple_files = true;
+option java_outer_classname = "ResourceAffinityProto";
+option java_package = "ai.nebius.pub.capacity.v1";
+
+// First version of Compute service resource affinity
+message ResourceAffinityComputeV1 {
+  // The fabric where the Capacity Block Group is allocated.
+  string fabric = 1 [(buf.validate.field).required = true];
+
+  // The platform for which the Capacity Block Group is allocated.
+  string platform = 2 [(buf.validate.field).required = true];
+}
+
+// Specification of the Capacity Block Group.
+message ResourceAffinity {
+  oneof versions {
+    // First version of the compute Resource Affinity.
+    ResourceAffinityComputeV1 compute_v1 = 1;
+  }
+}

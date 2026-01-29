@@ -71,7 +71,7 @@ message Operation {
   //   in a Create operation it will be the spec and metadata *of the resource being created*,
   //   and so on.
   // - [resource.status] reflects the status of the resource at the moment this operation started.
-  //   This is a snapshot, call the <Resource>Service/Get to get current status of the resource.
+  //   This is a snapshot, call the `<Resource>Service/Get` to get current status of the resource.
   //
   // The [resource] field MUST never be updated *after* this operation has started.
   //

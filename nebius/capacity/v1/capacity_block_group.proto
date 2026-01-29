@@ -1,0 +1,147 @@
+syntax = "proto3";
+
+package nebius.capacity.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+import "nebius/capacity/v1/resource_affinity.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/capacity/v1";
+option java_multiple_files = true;
+option java_outer_classname = "CapacityBlockGroupProto";
+option java_package = "ai.nebius.pub.capacity.v1";
+
+// Capacity Block Group specification.
+message CapacityBlockGroupSpec {}
+
+// Current, last or future concatenation of Capacity Intervals in a Capacity Block Group.
+message CurrentContinuousInterval {
+  // Shows a state of a Continuous Interval.
+  enum State {
+    // Shouldn't happen.
+    STATE_UNSPECIFIED = 0;
+
+    // Continuous Interval is in the future.
+    STATE_SCHEDULED = 1;
+
+    // Continuous Interval is active.
+    STATE_ACTIVE = 2;
+
+    // Continuous Interval is in the past.
+    STATE_EXPIRED = 3;
+  }
+
+  // Start time of the first interval(s) in Continuous Interval.
+  google.protobuf.Timestamp start_time = 1;
+
+  // End time of the last interval(s) in Continuous Interval.
+  google.protobuf.Timestamp end_time = 2;
+
+  // Quota quantity that is currently set, was set or will be set in the Continuous Interval depending on it's
+  // start_time and end_time.
+  // If the Continuous Interval is currently active, quantity is the sum of quantities of the currently active
+  // non-zero intervals.
+  // If the Continuous Interval is in the past, quantity is the sum of quantities of the last non-zero active
+  // intervals.
+  // If the Continuous Interval is in the future, quantity is the sum of the quantities of the first scheduled
+  // non-zero active intervals.
+  uint64 quantity = 3;
+
+  // Continuous Interval state.
+  State state = 4;
+}
+
+// Capacity Block Group status.
+message CapacityBlockGroupStatus {
+  // Shows the state of a Capacity Block Group with respect to its quota.
+  enum State {
+    // Shouldn't happen.
+    STATE_UNSPECIFIED = 0;
+
+    // Capacity Block Group quota is being allocated as one or more capacity intervals have started.
+    STATE_ALLOCATING = 1;
+
+    // Capacity Block Group quota is already allocated and active as one or more capacity intervals are active.
+    STATE_ACTIVE = 2;
+
+    // Capacity Block Group is being shut down due to absence of active intervals at the time.
+    STATE_SHUTTING = 3;
+
+    // Capacity Block Group is inactive due to absence of active intervals at the time.
+    STATE_INACTIVE = 4;
+  }
+
+  // Shows the usage state if a Capacity Block Group quota.
+  enum UsageState {
+    // Shouldn't happen.
+    USAGE_STATE_UNSPECIFIED = 0;
+
+    // Capacity Block Group quota is actively in use.
+    USAGE_STATE_USED = 1;
+
+    // Capacity Block Group quota is not currently in use.
+    USAGE_STATE_NOT_USED = 2;
+
+    // Capacity Block Group region is unreachable, the current usage is therefore unknown.
+    // Please, retry the request later.
+    USAGE_STATE_UNKNOWN = 3;
+  }
+
+  // Name of the region where the Capacity Block Group is allocated.
+  // Example: "eu-north1".
+  string region = 1;
+
+  // Specification of the Capacity Block Group.
+  ResourceAffinity resource_affinity = 2;
+
+  // Service for which the Capacity Block Group is allocated.
+  string service = 3;
+
+  // Capacity Block Group state with respect to quota allocation.
+  State state = 5;
+
+  // Capacity Block Group current quota limit.
+  uint64 current_limit = 6;
+
+  // Capacity Block Group quota usage.
+  uint64 usage = 8;
+
+  // Capacity Block Group quota usage percentage.
+  string usage_percentage = 9;
+
+  // Time of the next Capacity Block Group quota change.
+  google.protobuf.Timestamp next_change_at = 10;
+
+  // The next expected change of the Capacity Block Group quota limit.
+  // the quota limit change that is currently performed.
+  optional uint64 next_change_to = 11;
+
+  // Current concatenation of non-zero Capacity Intervals that overlap or follow each other without a break.
+  // If all Capacity Intervals are in the past, returns the last Continuous Interval.
+  // If all Capacity Intervals are in the future, returns the first Continuous Interval scheduled.
+  CurrentContinuousInterval current_continuous_interval = 12;
+
+  // Capacity Block Group quota usage state.
+  UsageState usage_state = 13;
+
+  // Shows that changes are in flight.
+  bool reconciling = 100;
+}
+
+// Capacity Block Group is a parent resource for Capacity Intervals.
+message CapacityBlockGroup {
+  option (resource_behavior) = UNNAMED;
+
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["tenant"]
+    }
+  ];
+
+  CapacityBlockGroupSpec spec = 2;
+
+  CapacityBlockGroupStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
