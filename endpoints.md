@@ -3,6 +3,8 @@
 * api.calculator.billing-data-plane.api.nebius.cloud:443
   * [nebius.billing.v1alpha1.CalculatorService](nebius/billing/v1alpha1/calculator_service.proto)
 * apps.msp.api.nebius.cloud:443
+  * [nebius.ai.v1.EndpointService](nebius/ai/v1/endpoint_service.proto)
+  * [nebius.ai.v1.JobService](nebius/ai/v1/job_service.proto)
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.msp.serverless.v1alpha1.EndpointService](nebius/msp/serverless/v1alpha1/endpoint_service.proto)
   * [nebius.msp.serverless.v1alpha1.JobService](nebius/msp/serverless/v1alpha1/job_service.proto)

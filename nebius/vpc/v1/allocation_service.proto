@@ -54,7 +54,12 @@ message ListAllocationsRequest {
 }
 
 message ListAllocationsByPoolRequest {
-  string pool_id = 1 [(buf.validate.field).required = true];
+  string pool_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcpool"]
+    }
+  ];
 
   int64 page_size = 2;
 
@@ -62,7 +67,12 @@ message ListAllocationsByPoolRequest {
 }
 
 message ListAllocationsBySubnetRequest {
-  string subnet_id = 1 [(buf.validate.field).required = true];
+  string subnet_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcsubnet"]
+    }
+  ];
 
   int64 page_size = 2;
 

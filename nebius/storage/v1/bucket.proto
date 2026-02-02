@@ -8,6 +8,7 @@ import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/storage/v1/base.proto";
 import "nebius/storage/v1/bucket_counters.proto";
+import "nebius/storage/v1/bucket_policy.proto";
 import "nebius/storage/v1/lifecycle.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
@@ -73,6 +74,9 @@ message BucketSpec {
     // Logging enabled for all requests.
     ALL = 3;
   }
+
+  // Bucket policy specifies granular permissions for a bucket.
+  BucketPolicy bucket_policy = 13;
 }
 
 message BucketStatus {

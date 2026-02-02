@@ -1,0 +1,292 @@
+syntax = "proto3";
+
+package nebius.ai.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/compute/v1/disk.proto";
+import "nebius/compute/v1/instance.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/ai/v1";
+option java_multiple_files = true;
+option java_outer_classname = "EndpointProto";
+option java_package = "ai.nebius.pub.ai.v1";
+
+// Represents an endpoint with a specified workload.
+message Endpoint {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  EndpointSpec spec = 2 [(buf.validate.field).required = true];
+
+  EndpointStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+// EndpointSpec defines a endpoint that will be run.
+message EndpointSpec {
+  // The Docker image to use for the endpoint's container.
+  string image = 1 [(buf.validate.field).required = true];
+
+  // Specifies the environment variables for the endpoint's container.
+  repeated EnvironmentVariable environment_variables = 2;
+
+  // Specifies the ports that the endpoint exposes.
+  repeated Port ports = 3;
+
+  // The entrypoint command for the endpoint's container.
+  string container_command = 4;
+
+  // The arguments to pass to the entrypoint command.
+  string args = 5;
+
+  // The working directory for the endpoint's container.
+  string working_dir = 6 [(buf.validate.field) = {
+    string: {max_len: 128}
+  }];
+
+  // Volumes to be mounted into the endpoint's container.
+  repeated VolumeMount volumes = 7;
+
+  // Registry credentials for private Docker registry.
+  RegistryCredentials registry_credentials = 10;
+
+  // Compute platform that the endpoint will be run on.
+  string platform = 20 [(buf.validate.field).required = true];
+
+  // Compute preset that the endpoint will be run on.
+  string preset = 21 [(buf.validate.field).required = true];
+
+  // Shared memory size in bytes for the endpoint's container.
+  int64 shm_size_bytes = 22 [(buf.validate.field) = {
+    int64: {gte: 0}
+  }];
+
+  // Disk spec for the main disk of the endpoint.
+  DiskSpec disk = 23 [(buf.validate.field).required = true];
+
+  // Subnet ID where the endpoint will be deployed.
+  string subnet_id = 24 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcsubnet"]
+    }
+  ];
+
+  // Whether to assign a public IP to the endpoint.
+  bool public_ip = 25;
+
+  // Public keys to be authorized for SSH access to the job.
+  repeated string ssh_authorized_keys = 26;
+
+  // Authentication token needed to access the endpoint.
+  //
+  // Authentication can only be enabled if the endpoint exposes one and only one HTTP port.
+  //
+  // If not provided, a authentication will be disabled.
+  string auth_token = 30 [(sensitive) = true];
+
+  // EnvironmentVariable defines an environment variable for the endpoint's container.
+  message EnvironmentVariable {
+    // The name of the environment variable.
+    string name = 1 [(buf.validate.field).required = true];
+
+    // Environment variable value.
+    string value = 2 [(sensitive) = true];
+  }
+
+  message Port {
+    // Container port.
+    int32 container_port = 1 [(buf.validate.field) = {
+      int32: {
+        lte: 65535
+        gte: 1
+      }
+    }];
+
+    // Host port.
+    //
+    // If not specified, will be same as container_port.
+    int32 host_port = 2 [(buf.validate.field) = {
+      int32: {
+        lte: 65535
+        gte: 0
+      }
+    }];
+
+    // Port's protocol.
+    Protocol protocol = 3 [(buf.validate.field).required = true];
+
+    // Represents protocol of the endpoint's port which will be exposed.
+    enum Protocol {
+      PROTOCOL_UNSPECIFIED = 0;
+
+      // HTTP protocol.
+      HTTP = 1;
+
+      // TCP protocol.
+      TCP = 2;
+
+      // UDP protocol.
+      UDP = 3;
+    }
+  }
+
+  // VolumeMount represents a volume mount for the endpoint's container.
+  message VolumeMount {
+    // Source of the volume mount.
+    //
+    // Can be a name of an ID of Nebius Storage bucket or filesystem.
+    string source = 1 [(nid) = {
+      resource: [
+        "computefilesystem",
+        "storagebucket"
+      ]
+    }];
+
+    // Path inside the source volume.
+    //
+    // Optional.
+    string source_path = 2;
+
+    // Path inside the endpoint's container where the volume is mounted.
+    //
+    // Must be an absolute path.
+    string container_path = 3;
+
+    // Mount mode.
+    Mode mode = 4 [(buf.validate.field).required = true];
+
+    // Mode that will be used to mount the volume.
+    enum Mode {
+      MODE_UNSPECIFIED = 0;
+
+      // Read-only mode.
+      READ_ONLY = 1;
+
+      // Read-write mode.
+      READ_WRITE = 2;
+    }
+  }
+
+  message DiskSpec {
+    // Disk type.
+    nebius.compute.v1.DiskSpec.DiskType type = 1 [(buf.validate.field).required = true];
+
+    // Disk size in bytes.
+    int64 size_bytes = 2;
+  }
+
+  message RegistryCredentials {
+    // Registry username for private Docker registry.
+    string username = 1;
+
+    // Registry password for private Docker registry.
+    string password = 2 [(sensitive) = true];
+
+    // Secret version storing the registry credentials.
+    // Must have keys "REGISTRY_USERNAME" and "REGISTRY_PASSWORD".
+    string mysterybox_secret_version = 3;
+  }
+}
+
+// EndpointStatus represents the status of a VM app.
+message EndpointStatus {
+  // Private endpoints to access the workload.
+  repeated string private_endpoints = 1;
+
+  // Public endpoints to access the workload.
+  repeated string public_endpoints = 2;
+
+  // Status of individual endpoint instances.
+  repeated EndpointInstanceStatus instances = 10;
+
+  // State of the endpoint.
+  State state = 20;
+
+  // Details of the endpoint's state.
+  EndpointStateDetails state_details = 21;
+
+  // Endpoint state.
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    // The endpoint is creating resources.
+    PROVISIONING = 1;
+
+    // The endpoint is being started.
+    STARTING = 2;
+
+    // The endpoint is running.
+    RUNNING = 3;
+
+    // The endpoint is being stopped.
+    STOPPING = 4;
+
+    // The endpoint is being deleted.
+    DELETING = 5;
+
+    // The endpoint has been stopped.
+    STOPPED = 6;
+
+    // The endpoint encountered an error.
+    ERROR = 8;
+  }
+}
+
+// Endpoint state details.
+message EndpointStateDetails {
+  // Short state description.
+  string code = 1 [(buf.validate.field).required = true];
+
+  // Detailed human-readable description.
+  string message = 2;
+}
+
+// EndpointInstanceStatus represents the status of a endpoint instance.
+message EndpointInstanceStatus {
+  // The current state of the endpoint's workload.
+  State state = 1 [(buf.validate.field).required = true];
+
+  // ID of the compute instance running the endpoint.
+  string compute_instance_id = 10 [(nid) = {
+    resource: ["computeinstance"]
+  }];
+
+  // The current state of the compute instance.
+  nebius.compute.v1.InstanceStatus.InstanceState compute_instance_state = 11;
+
+  // Private IP address of the instance.
+  string private_ip = 12;
+
+  // Public IP address of the instance.
+  string public_ip = 13;
+
+  // Endpoint instance state.
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    // The endpoint is creating resources.
+    PROVISIONING = 1;
+
+    // The endpoint is being started.
+    STARTING = 2;
+
+    // The endpoint is running.
+    RUNNING = 3;
+
+    // The endpoint is being stopped.
+    STOPPING = 4;
+
+    // The endpoint is being deleted.
+    DELETING = 5;
+
+    // The endpoint has been stopped.
+    STOPPED = 6;
+
+    // The endpoint has failed.
+    FAILED = 7;
+
+    // The endpoint encountered an error.
+    ERROR = 8;
+  }
+}
