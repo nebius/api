@@ -52,7 +52,12 @@ message ListSubnetsRequest {
 }
 
 message ListSubnetsByNetworkRequest {
-  string network_id = 1 [(buf.validate.field).required = true];
+  string network_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcnetwork"]
+    }
+  ];
 
   int64 page_size = 2;
 

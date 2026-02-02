@@ -41,7 +41,9 @@ message GetFederationCertificateRequest {
 
 message ListFederationCertificateByFederationRequest {
   // Represents the parent federation ID. Corresponds to the parent_id value.
-  string federation_id = 1;
+  string federation_id = 1 [(nid) = {
+    resource: ["federation"]
+  }];
 
   // Specifies the maximum number of items to return in the response.
   // Default value: 10

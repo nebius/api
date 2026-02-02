@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package nebius.ai.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/ai/v1/endpoint.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/ai/v1";
+option java_multiple_files = true;
+option java_outer_classname = "EndpointServiceProto";
+option java_package = "ai.nebius.pub.ai.v1";
+
+// Service to create/manage endpoints.
+service EndpointService {
+  option (api_service_name) = "apps.msp";
+
+  // Returns the specified endpoint.
+  rpc Get(GetEndpointRequest) returns (Endpoint);
+
+  // Returns the specified endpoint by name.
+  rpc GetByName(GetEndpointByNameRequest) returns (Endpoint);
+
+  // Retrieves a list of endpoints.
+  rpc List(ListEndpointsRequest) returns (ListEndpointsResponse);
+
+  // Creates an endpoint.
+  rpc Create(CreateEndpointRequest) returns (common.v1.Operation);
+
+  // Deletes an endpoint.
+  rpc Delete(DeleteEndpointRequest) returns (common.v1.Operation);
+
+  // Updates an endpoint.
+  rpc Update(UpdateEndpointRequest) returns (common.v1.Operation);
+
+  // Starts an endpoint.
+  rpc Start(StartEndpointRequest) returns (common.v1.Operation);
+
+  // Stops an endpoint.
+  rpc Stop(StopEndpointRequest) returns (common.v1.Operation);
+}
+
+message GetEndpointRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["aiendpoint"]
+    }
+  ];
+}
+
+message GetEndpointByNameRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListEndpointsRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
+message CreateEndpointRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  EndpointSpec spec = 2 [(buf.validate.field).required = true];
+
+  // Dry run creation of the endpoint.
+  bool dry_run = 3;
+}
+
+message DeleteEndpointRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["aiendpoint"]
+    }
+  ];
+}
+
+message UpdateEndpointRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  EndpointSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message StartEndpointRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["aiendpoint"]
+    }
+  ];
+}
+
+message StopEndpointRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["aiendpoint"]
+    }
+  ];
+}
+
+message ListEndpointsResponse {
+  repeated Endpoint items = 1;
+
+  string next_page_token = 2;
+}

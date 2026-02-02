@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package nebius.ai.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/ai/v1/job.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/ai/v1";
+option java_multiple_files = true;
+option java_outer_classname = "JobServiceProto";
+option java_package = "ai.nebius.pub.ai.v1";
+
+// Service to create/manage jobs.
+service JobService {
+  option (api_service_name) = "apps.msp";
+
+  // Returns the specified job.
+  rpc Get(GetJobRequest) returns (Job);
+
+  // Returns the specified job by name.
+  rpc GetByName(GetJobByNameRequest) returns (Job);
+
+  // Retrieves a list of jobs.
+  rpc List(ListJobsRequest) returns (ListJobsResponse);
+
+  // Creates a job.
+  rpc Create(CreateJobRequest) returns (common.v1.Operation);
+
+  // Deletes a job.
+  rpc Delete(DeleteJobRequest) returns (common.v1.Operation);
+
+  // Cancels a job.
+  rpc Cancel(CancelJobRequest) returns (common.v1.Operation);
+}
+
+message GetJobRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["aijob"]
+    }
+  ];
+}
+
+message GetJobByNameRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListJobsRequest {
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
+message CreateJobRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  JobSpec spec = 2 [(buf.validate.field).required = true];
+
+  // Dry run creation of the job.
+  bool dry_run = 3;
+}
+
+message DeleteJobRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["aijob"]
+    }
+  ];
+}
+
+message CancelJobRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["aijob"]
+    }
+  ];
+}
+
+message ListJobsResponse {
+  repeated Job items = 1;
+
+  string next_page_token = 2;
+}

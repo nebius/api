@@ -52,7 +52,12 @@ message ListPoolsRequest {
 }
 
 message ListPoolsBySourcePoolRequest {
-  string pool_id = 1 [(buf.validate.field).required = true];
+  string pool_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcpool"]
+    }
+  ];
 
   int64 page_size = 2;
 

@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package nebius.storage.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
+option java_multiple_files = true;
+option java_outer_classname = "BucketPolicyProto";
+option java_package = "ai.nebius.pub.storage.v1";
+
+// Bucket policy specifies granular permissions for a bucket.
+message BucketPolicy {
+  // Rule specifies which role must be given to a subject to access a set of objects with given
+  // prefixes or a whole bucket.
+  repeated Rule rules = 1 [(buf.validate.field) = {
+    repeated: {max_items: 10}
+  }];
+
+  message Rule {
+    // A list of paths each of which is either a full object key or a prefix ending with a
+    // single "*" wildcard character. A rule is only applied to objects matching any of paths.
+    // If there is a path equal to "*", a rule applies to a whole bucket.
+    repeated string paths = 1 [(buf.validate.field) = {
+      repeated: {max_items: 10}
+    }];
+
+    // A set of roles which a subject will have. All `storage.*` roles are supported.
+    repeated string roles = 2;
+
+    reserved 3;
+
+    // A subject of a rule.
+    oneof subject {
+      // Group ID to grant access to.
+      string group_id = 4;
+
+      // Enable anonymous access. Only read-only roles are allowed in anonymous mode.
+      AnonymousAccess anonymous = 5 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+    }
+
+    message AnonymousAccess {}
+  }
+}
