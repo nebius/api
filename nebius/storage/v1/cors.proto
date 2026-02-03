@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package nebius.storage.v1;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
+option java_multiple_files = true;
+option java_outer_classname = "CorsProto";
+option java_package = "ai.nebius.pub.storage.v1";
+
+// Cross-origin resource sharing (CORS) configuration.
+message CORSConfiguration {
+  // CORS rules.
+  repeated CORSRule rules = 1 [(buf.validate.field) = {
+    repeated: {max_items: 100}
+  }];
+}
+
+message CORSRule {
+  // Optional rule identifier.
+  optional string id = 1;
+
+  // Headers that are allowed in a preflight request through the Access-Control-Request-Headers header
+  repeated string allowed_headers = 2;
+
+  // The origins that you want to allow cross-domain requests from. Single wildcard * is allowed.
+  repeated string allowed_origins = 3 [(buf.validate.field).required = true];
+
+  // HTTP methods CORS is allowed for: GET, PUT, POST, DELETE, HEAD.
+  repeated string allowed_methods = 4 [(buf.validate.field).required = true];
+
+  // Headers in the response that you want customers to be able to access from their applications.
+  repeated string expose_headers = 5;
+
+  // Time in seconds that your browser can cache the response for a preflight request as identified by the resource.
+  optional int32 max_age_seconds = 6;
+}

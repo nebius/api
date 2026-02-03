@@ -26,12 +26,10 @@ service FederationService {
 
   rpc Update(UpdateFederationRequest) returns (common.v1.Operation);
 
-  // *
   // Activates an existing federation.
   // By default, a newly created federation is in the active state.
   rpc Activate(ActivateFederationRequest) returns (common.v1.Operation);
 
-  // *
   // Deactivates an existing federation.
   // When a federation is inactive, all users under it will be unable to authenticate.
   rpc Deactivate(DeactivateFederationRequest) returns (common.v1.Operation);

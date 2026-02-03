@@ -133,6 +133,8 @@ message DiskStatus {
   SourceImageCPUArchitecture source_image_cpu_architecture = 9;
 
   message LockState {
+    // Disk is locked for deletion and for read-write operations while image is being created.
+    // Here is the list of these images.
     repeated string images = 1;
   }
 
