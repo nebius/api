@@ -9,6 +9,7 @@ import "nebius/common/v1/metadata.proto";
 import "nebius/storage/v1/base.proto";
 import "nebius/storage/v1/bucket_counters.proto";
 import "nebius/storage/v1/bucket_policy.proto";
+import "nebius/storage/v1/cors.proto";
 import "nebius/storage/v1/lifecycle.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
@@ -40,6 +41,9 @@ message BucketSpec {
   int64 max_size_bytes = 4;
 
   LifecycleConfiguration lifecycle_configuration = 5;
+
+  // Cross-origin resource sharing configuration.
+  CORSConfiguration cors = 8;
 
   // Storage class to use by default for uploads to the bucket. It may be overridden by `x-amz-storage-class` header.
   // If not set - STANDARD is used as a default storage class.

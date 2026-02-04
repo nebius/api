@@ -12,7 +12,7 @@ option java_package = "ai.nebius.pub.capacity.v1";
 // First version of Compute service resource affinity
 message ResourceAffinityComputeV1 {
   // The fabric where the Capacity Block Group is allocated.
-  string fabric = 1 [(buf.validate.field).required = true];
+  string fabric = 1;
 
   // The platform for which the Capacity Block Group is allocated.
   string platform = 2 [(buf.validate.field).required = true];

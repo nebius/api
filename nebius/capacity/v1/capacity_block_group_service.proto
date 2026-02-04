@@ -24,6 +24,9 @@ service CapacityBlockGroupService {
 
   // List all Capacity Block Groups for the specified Tenant.
   rpc List(ListCapacityBlockGroupsRequest) returns (ListCapacityBlockGroupsResponse);
+
+  // List virtual machines instances' IDs that occupy a Capacity Block Group by its ID.
+  rpc ListResources(ListCapacityBlockGroupResourcesRequest) returns (ListCapacityBlockGroupResourcesResponse);
 }
 
 // Get a Capacity Block Group by its ID.
@@ -86,4 +89,22 @@ message ListCapacityBlockGroupsResponse {
 
   // Listing continuation token for the next page of results.
   string next_page_token = 2;
+}
+
+// List reservations instances in a Capacity Block Group by its ID.
+message ListCapacityBlockGroupResourcesRequest {
+  // ID of a Capacity Block Group.
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IDENTIFIER,
+    (nid) = {
+      resource: ["capacityblockgroup"]
+    }
+  ];
+}
+
+// All VM instances' IDs that occupy the Capacity Block Group.
+message ListCapacityBlockGroupResourcesResponse {
+  // List of instances' IDs.
+  repeated string resource_ids = 1;
 }
