@@ -81,7 +81,7 @@ message JobSpec {
 
   // Restart attempts for the job.
   int64 restart_attempts = 30 [(buf.validate.field) = {
-    int64: {gte: 0}
+    int64: {gte: -1}
   }];
 
   // Job timeout.
