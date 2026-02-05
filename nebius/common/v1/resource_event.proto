@@ -12,7 +12,8 @@ option java_multiple_files = true;
 option java_outer_classname = "ResourceEventProto";
 option java_package = "ai.nebius.pub.common.v1";
 
-// Represents an API Resource-related event which is potentially important to the end-user. What exactly constitutes an *event* to be reported is service-dependent
+// Represents an API Resource-related event which is potentially important to the end-user. What exactly constitutes an *event* to be
+// reported is service-dependent
 message ResourceEvent {
   // Time at which the event has occurred
   google.protobuf.Timestamp occurred_at = 1 [(buf.validate.field).required = true];
@@ -23,10 +24,13 @@ message ResourceEvent {
   // Event code (unique within the API service), in UpperCamelCase, e.g. `"DiskAttached"`
   string code = 3 [(buf.validate.field).required = true];
 
-  // A human-readable message describing what has happened (and suggested actions for the user, if this is a `WARN`- or `ERROR`-level event)
+  // A human-readable message describing what has happened
+  // (and suggested actions for the user, if this is a `WARN` or `ERROR` level event)
   string message = 4 [(buf.validate.field).required = true];
 
-  // Describes a GRPC error status associated with an `ERROR`- or `WARN`-level event, if known. The `error` **must** have a standard GRPC `code` (which **must not** be `OK` (0)) and a human-readable `message`. A standard `common.v1.ServiceError` **should** also be included in `details`
+  // Describes a GRPC error status associated with an `ERROR` or `WARN` level event, if known. The `error` **must** have a standard GRPC
+  // `code` (which **must not** be `OK` (0)) and a human-readable `message`. A standard `common.v1.ServiceError` **should** also be
+  // included in `details`
   google.rpc.Status error = 10 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
 
   enum Level {
@@ -39,7 +43,8 @@ message ResourceEvent {
     // A normal event or state change. Informs what is happening with the API resource. Does not require user attention or interaction
     INFO = 2;
 
-    // Warning event. Indicates a potential or minor problem with the API resource and/or the corresponding processes. Needs user attention, but requires no immediate action (yet)
+    // Warning event. Indicates a potential or minor problem with the API resource and/or the corresponding processes. Needs user attention,
+    // but requires no immediate action (yet)
     WARN = 3;
 
     // Error event. Indicates a serious problem with the API resource and/or the corresponding processes. Requires immediate user action

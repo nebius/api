@@ -59,7 +59,9 @@ message RecordSpec {
 
   // Record data in text format
   //
-  // This should be the RDATA part of this Resource Record's [presentation (zonefile) format](https://datatracker.ietf.org/doc/html/rfc9499#name-resource-records). E.g., `10 xyz.tuv` for a `@ 600 IN MX 10 xyz.tuv.` resource record in a zonefile
+  // This should be the RDATA part of this Resource Record's
+  // [presentation (zonefile) format](https://datatracker.ietf.org/doc/html/rfc9499#name-resource-records).
+  // E.g., `10 xyz.tuv` for a `@ 600 IN MX 10 xyz.tuv.` resource record in a zonefile
   string data = 4 [(buf.validate.field).required = true];
 
   // Mark this record as delete-protected
@@ -104,7 +106,8 @@ message RecordSpec {
     // `SVCB` record: service binding. See [RFC 9460, section 2.3](https://www.rfc-editor.org/rfc/rfc9460.html#section-2.3)
     SVCB = 11;
 
-    // `HTTPS` record: service binding with HTTPS protocol configuration. See [RFC 9460, section 9.1](https://www.rfc-editor.org/rfc/rfc9460.html#section-9.1)
+    // `HTTPS` record: service binding with HTTPS protocol configuration.
+    // See [RFC 9460, section 9.1](https://www.rfc-editor.org/rfc/rfc9460.html#section-9.1)
     HTTPS = 12;
   }
 }
@@ -132,7 +135,8 @@ message GetRecordRequest {
   ];
 
   // Optional: expected record version (`metadata.resource_version`)
-  // - If specified, the requested version will be returned if possible (if the version has changed, you will get a `FAILED_PRECONDITION` error)
+  // - If specified, the requested version will be returned if possible
+  //   (if the version has changed, you will get a `FAILED_PRECONDITION` error)
   // - If not specified or set to `0`, the latest version will be returned
   int64 resource_version = 2 [(buf.validate.field) = {
     int64: {gte: 0}

@@ -89,7 +89,7 @@ message SubnetCidr {
     required: true
   }];
 
-  // Controls provisioning of IP addresses from the CIDR block . Defaults to AVAILABLE.
+  // Controls provisioning of IP addresses from the CIDR block. Defaults to AVAILABLE.
   AddressBlockState state = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
 
   // Maximum mask length for an allocation from this block. Defaults to /32 for IPv4.

@@ -33,7 +33,8 @@ message Operation {
   // The request that generated this operation.
   google.protobuf.Any request = 6;
 
-  // Request header is a container for all the values of a particular header of a request because there is no such thing as `map<string, repeated string>`
+  // Request header is a container for all the values of a particular header of a request because there is no such thing as
+  // `map<string, repeated string>`
   message RequestHeader {
     // The values of a particular header from a request
     repeated string values = 1;
@@ -76,7 +77,8 @@ message Operation {
   // the operation is running and after it has been completed.
   ProgressTracker progress_tracker = 12;
 
-  // Extra information about this operation's progress. MAY be absent while the operation is running, MUST be absent after the operation has completed.
+  // Extra information about this operation's progress. MAY be absent while the operation is running, MUST be absent after the operation has
+  // completed.
   //
   // Type of message that's stored inside [progress_data] is service-dependent.
   google.protobuf.Any progress_data = 9;

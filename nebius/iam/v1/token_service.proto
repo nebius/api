@@ -23,9 +23,12 @@ message ExchangeTokenRequest {
 
   string audience = 6; // optional, name of the oauth client id on which this token will be used
 
-  string actor_token = 7 [(credentials) = true]; // optional, subject token for impersonation/delegation (who want to impersonate/delegate) in subject_token.
+  // optional, subject token for impersonation/delegation (who want to impersonate/delegate) in subject_token.
+  string actor_token = 7 [(credentials) = true];
 
-  string actor_token_type = 8; // optional, token type for the impersonation/delegation (who want to impersonate/delegate). Usually it's urn:ietf:params:oauth:token-type:access_token
+  // optional, token type for the impersonation/delegation (who want to impersonate/delegate). Usually it's
+  // urn:ietf:params:oauth:token-type:access_token
+  string actor_token_type = 8;
 
   repeated string resource = 9; // optional, list of resources approved to use by token, if applicable
 }
