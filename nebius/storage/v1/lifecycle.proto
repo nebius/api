@@ -118,10 +118,12 @@ message LifecycleAccessFilter {
     enum Type {
       TYPE_UNSPECIFIED = 0;
 
-      // If an include type condition is the first condition that the request match, the request will be included in `days_since_last_access` calculation.
+      // If an include type condition is the first condition that the request match, the request will be included in
+      // `days_since_last_access` calculation.
       INCLUDE = 1;
 
-      // If an exclude type condition is the first condition that the request match, the request will be ignored in `days_since_last_access` calculation.
+      // If an exclude type condition is the first condition that the request match, the request will be ignored in `days_since_last_access`
+      // calculation.
       EXCLUDE = 2;
     }
 

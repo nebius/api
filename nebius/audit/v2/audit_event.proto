@@ -28,7 +28,8 @@ message AuditEvent {
   // Version of CloudEvents spec. See https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#specversion
   string spec_version = 3 [(buf.validate.field).required = true];
 
-  // The type of event related to the originating occurrence. Formed according to template: `ai.nebius.<serviceName>.<resourceType>.<action>`
+  // The type of event related to the originating occurrence. Formed according to template:
+  // `ai.nebius.<serviceName>.<resourceType>.<action>`
   string type = 4 [(buf.validate.field).required = true];
 
   // Indicates the service that generated the event.

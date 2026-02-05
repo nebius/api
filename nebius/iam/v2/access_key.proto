@@ -30,7 +30,8 @@ message AccessKeySpec {
 
   string description = 3;
 
-  // Specifies how the secret will be delivered upon creation. This field is immutable — it cannot be changed after the resource is created.
+  // Specifies how the secret will be delivered upon creation. This field is immutable — it cannot be changed after the resource is
+  // created.
   SecretDeliveryMode secret_delivery_mode = 4 [(field_behavior) = IMMUTABLE];
 }
 

@@ -8,6 +8,7 @@ option java_outer_classname = "AuthorizationProto";
 option java_package = "ai.nebius.pub.audit.v2";
 
 message Authorization {
-  // Field is required. We do not use «(buf.validate.field).required = true» here as false value considered as unset (validation violation)
+  // Field is required. We do not use `(buf.validate.field).required = true` here as false value
+  // considered as unset (validation violation)
   bool authorized = 1;
 }

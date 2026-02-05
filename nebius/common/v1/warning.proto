@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package nebius.common.v1;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1";
+option java_multiple_files = true;
+option java_outer_classname = "WarningProto";
+option java_package = "ai.nebius.pub.common.v1";
+
+message Warnings {
+  // List of warnings associated with the response.
+  repeated Warning warnings = 1;
+}
+
+message Warning {
+  // Target client or tool for which this warning is intended.
+  Target target = 1;
+
+  // Warning category.
+  Code code = 2;
+
+  // User-facing summary text. Can contain a liquid format template which must be executed on client side.
+  // Empty means use summary_fallback.
+  string summary = 3;
+
+  // Summary text to use when summary is empty or not applicable.
+  // Can contain a liquid format template which must be executed on client side.
+  string summary_fallback = 4;
+
+  // User-facing details text. Can contain a liquid format template which must be executed on client side.
+  // Empty means use details_fallback.
+  string details = 5;
+
+  // Details text to use when details is empty or not applicable.
+  // Can contain a liquid format template which must be executed on client side.
+  string details_fallback = 6;
+
+  // Contains a Full Service/Method name or a select mask for a field.
+  // Examples:
+  //   nebius.compute.v1.InstanceService
+  //   nebius.compute.v1.InstanceService/Get
+  //   spec.control_plane.version
+  //   spec.network_interfaces.0.subnet_id
+  //   items.0.spec.control_plane.version
+  string path = 7;
+
+  enum Target {
+    // Target is not specified.
+    TARGET_UNSPECIFIED = 0;
+
+    // Warning is intended for CLI users.
+    TARGET_CLI = 1;
+
+    // Warning is intended for Terraform provider users.
+    TARGET_TF = 2;
+
+    // Warning is intended for console users.
+    TARGET_CONSOLE = 3;
+  }
+
+  enum Code {
+    // Code is not specified.
+    CODE_UNSPECIFIED = 0;
+
+    // The request was served via failover routing.
+    CODE_REGION_ROUTING_FAILOVER = 1;
+
+    // Client tool version is deprecated.
+    CODE_DEPRECATED_TOOL_VERSION = 2;
+
+    // Endpoint is deprecated.
+    CODE_DEPRECATED_ENDPOINT = 3;
+
+    // Proto field, message or service is deprecated.
+    CODE_DEPRECATED_PROTO = 4;
+
+    // Deprecated value was used in the request.
+    CODE_DEPRECATED_SPEC_VALUE_REQUEST = 5;
+
+    // Deprecated value was observed in the response.
+    CODE_DEPRECATED_SPEC_VALUE_RESPONSE = 6;
+  }
+}

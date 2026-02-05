@@ -25,7 +25,8 @@ message UserAccountStatus {
     // federated user can be blocked (manually or by any specific automated process), in this state user cannot log into the system
     INACTIVE = 2;
 
-    // federated user can be deleted/forgot, in this state user cannot log into the system and various internal removal interactions are in progress
+    // federated user can be deleted/forgot, in this state user cannot log into the system and various internal removal interactions are in
+    // progress
     DELETING = 3;
   }
 

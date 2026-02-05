@@ -168,7 +168,11 @@ message OSInfo {
   string name = 1;
 
   // Detailed system information from uname command.
-  // Example: "Linux computeimage-abcdef 6.5.0-44-generic #44~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Jun 18 14:36:16 UTC 2 x86_64 x86_64 x86_64 GNU/Linux"
+  //
+  // Example:
+  // ```
+  // Linux computeimage-abcdef 6.5.0-44-generic #44~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Jun 18 14:36:16 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+  // ```
   string uname = 2;
 
   // System architecture.

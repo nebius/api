@@ -99,15 +99,18 @@ message TenantUserAccountStatus {
   enum State {
     STATE_UNSPECIFIED = 0;
 
-    // in case of ordinary tenant user account a corresponding user can log into the system and use granted tenant resources
-    // in case of invited tenant user account once the invitation is accepted a corresponding user can start using granted resources immediately
+    // - in case of ordinary tenant user account a corresponding user can log into the system and use granted tenant resources
+    // - in case of invited tenant user account once the invitation is accepted a corresponding user can start using granted resources
+    //   immediately
     ACTIVE = 1;
 
     // unused
     INACTIVE = 2;
 
-    // in case of ordinary tenant user account a corresponding user can log into the system but cannot be authorized to use tenant resources
-    // in case of invited tenant user account once the invitation is accepted a corresponding user cannot start using granted resources until is unblocked
+    // - in case of ordinary tenant user account a corresponding user can log into the system but cannot be authorized to use tenant
+    //   resources
+    // - in case of invited tenant user account once the invitation is accepted a corresponding user cannot start using granted resources
+    //   until is unblocked
     BLOCKED = 3;
   }
 
@@ -117,7 +120,8 @@ message TenantUserAccountStatus {
   // once invitation is accepted it looses this reference (and internally gets a reference to their global federated user account)
   string invitation_id = 2;
 
-  // the federation id of the linked user account. Could be empty in a case of a tenant user account belongs to an invitation which wasn't accepted.
+  // the federation id of the linked user account. Could be empty in a case of a tenant user account belongs to an invitation which wasn't
+  // accepted.
   string federation_id = 3;
 
   // user account state can help distinguish case when account is blocked globally
