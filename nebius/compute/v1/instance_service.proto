@@ -33,7 +33,8 @@ service InstanceService {
   // Updates an existing VM instance with new configuration parameters.
   rpc Update(UpdateInstanceRequest) returns (common.v1.Operation);
 
-  // Deletes a VM instance by its ID.
+  // Deletes a VM instance by its ID. Also deletes all the managed disks, declared in the instance spec.
+  // Fails if cannot delete any of the managed disks.
   rpc Delete(DeleteInstanceRequest) returns (common.v1.Operation);
 
   // Starts a stopped VM instance.

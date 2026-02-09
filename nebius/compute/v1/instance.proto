@@ -146,6 +146,19 @@ message AttachedDiskSpec {
   oneof type {
     option (buf.validate.oneof).required = true;
 
+    // Attach an existing disk.
+    //
+    // Lifecycle:
+    // - The disk is preserved when the instance is deleted (it will be detached).
+    //
+    // Switching to a managed disk:
+    // - To delete the disk together with the instance, switch to ManagedDisk in the instance spec.
+    // - For the switch, `ManagedDisk.name` MUST match the current disk `name`
+    //   (see DiskService.Get for the disk referenced by `ExistingDisk.id`).
+    // - When converting an ExistingDisk to a ManagedDisk, you must provide `ManagedDisk.name` and `ManagedDisk.spec`
+    //   exactly as they are currently defined in the disk resource.
+    //   Obtain the current values via `DiskService.Get` and copy them verbatim.
+    //   If `ManagedDisk.spec` differs from the current disk spec, the instance update will fail.
     ExistingDisk existing_disk = 2;
   }
 
