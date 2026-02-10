@@ -48,7 +48,12 @@ service TransferService {
 }
 
 message GetTransferRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagetransfer"]
+    }
+  ];
 }
 
 message ListTransfersRequest {
@@ -83,21 +88,41 @@ message UpdateTransferRequest {
 }
 
 message StopTransferRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagetransfer"]
+    }
+  ];
 }
 
 message ResumeTransferRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagetransfer"]
+    }
+  ];
 }
 
 message DeleteTransferRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagetransfer"]
+    }
+  ];
 
   int64 resource_version = 2;
 }
 
 message GetIterationHistoryRequest {
-  string transfer_id = 1 [(buf.validate.field).required = true];
+  string transfer_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagetransfer"]
+    }
+  ];
 
   // Specifies the maximum number of items to return in the response.
   int64 page_size = 2;

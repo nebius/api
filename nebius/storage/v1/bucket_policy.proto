@@ -34,7 +34,9 @@ message BucketPolicy {
     // A subject of a rule.
     oneof subject {
       // Group ID to grant access to.
-      string group_id = 4;
+      string group_id = 4 [(nid) = {
+        resource: ["group"]
+      }];
 
       // Enable anonymous access. Only read-only roles are allowed in anonymous mode.
       AnonymousAccess anonymous = 5 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];

@@ -40,7 +40,12 @@ service BucketService {
 }
 
 message GetBucketRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagebucket"]
+    }
+  ];
 
   reserved 2;
 }
@@ -82,11 +87,21 @@ message DeleteBucketRequest {
 }
 
 message PurgeBucketRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagebucket"]
+    }
+  ];
 }
 
 message UndeleteBucketRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagebucket"]
+    }
+  ];
 }
 
 message ListBucketsRequest {

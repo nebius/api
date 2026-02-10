@@ -34,6 +34,9 @@ service ImageService {
   // Creates a new image resource.
   rpc Create(CreateImageRequest) returns (common.v1.Operation);
 
+  // Updates an existing image resource. Only specific fields can be updated, such as labels and name.
+  rpc Update(UpdateImageRequest) returns (common.v1.Operation);
+
   // Deletes an existing image resource by its ID.
   rpc Delete(DeleteImageRequest) returns (common.v1.Operation);
 
@@ -74,6 +77,12 @@ message ListImagesRequest {
 }
 
 message CreateImageRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  ImageSpec spec = 2;
+}
+
+message UpdateImageRequest {
   common.v1.ResourceMetadata metadata = 1;
 
   ImageSpec spec = 2;
