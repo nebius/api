@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package nebius.vpc.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
+option java_multiple_files = true;
+option java_outer_classname = "SecurityGroupProto";
+option java_package = "ai.nebius.pub.vpc.v1";
+
+// SecurityGroup is a logical grouping of resources
+// used to manage and apply network security policies collectively.
+// Security group applies implicit deny at the end (traffic not matched by any rule will be denied).
+message SecurityGroup {
+  // `metadata.parent_id` represents the Project.
+  common.v1.ResourceMetadata metadata = 1;
+
+  // Specification of the security group's configuration.
+  SecurityGroupSpec spec = 2;
+
+  // Current status of the security group.
+  SecurityGroupStatus status = 3;
+}
+
+message SecurityGroupSpec {
+  // ID of the VPC network this security group belongs to.
+  string network_id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
+}
+
+message SecurityGroupStatus {
+  // Enumeration of possible states of the security group.
+  enum State {
+    STATE_UNSPECIFIED = 0; // Default state, unspecified.
+
+    READY = 2; // Security group is ready for use.
+  }
+
+  // Current state of the security group.
+  State state = 1;
+
+  // Indicates if this is the default security group for the network.
+  // Only one security group can be default per network.
+  // Will be used on the interface if no other is specified.
+  bool default = 2;
+}
