@@ -1,0 +1,240 @@
+syntax = "proto3";
+
+package nebius.vpc.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
+option java_multiple_files = true;
+option java_outer_classname = "SecurityRuleProto";
+option java_package = "ai.nebius.pub.vpc.v1";
+
+// SecurityRules define rules for controlling network traffic within a network.
+// These rules specify when traffic is ALLOWED or DENIED based on direction, protocol,
+// match source, and ports.
+message SecurityRule {
+  // `metadata.parent_id` represents the SecurityGroup.
+  common.v1.ResourceMetadata metadata = 1;
+
+  // Specification of the security rule's configuration.
+  // Defines the parameters and constraints for rules that control network traffic.
+  SecurityRuleSpec spec = 2;
+
+  // Current status of the security rule.
+  SecurityRuleStatus status = 3;
+}
+
+message SecurityRuleSpec {
+  // Access action for the rule.
+  // Required. Determines whether matching traffic is allowed or denied.
+  RuleAccessAction access = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
+
+  // Priority of the rule. Valid range: 0-1000.
+  // Optional. If not specified or set to 0, defaults to 500.
+  // Rules are evaluated in priority order (lower numbers first) using a first-match algorithm:
+  // only the first matching rule takes effect (ALLOW or DENY), and subsequent rules are skipped.
+  //
+  // When multiple rules share the same priority, DENY rules are evaluated before ALLOW rules.
+  // The final evaluation order is reflected in 'effective_priority' (see SecurityRuleStatus).
+  int32 priority = 2 [
+    (field_behavior) = IMMUTABLE,
+    (field_behavior) = NON_EMPTY_DEFAULT,
+    (buf.validate.field) = {
+      int32: {
+        lte: 1000
+        gte: 0
+      }
+    }
+  ];
+
+  // Protocol used in the rule.
+  // Supported values: ANY, TCP, UDP, ICMP.
+  RuleProtocol protocol = 3 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
+
+  // Indicating whether the rule matches incoming or outgoing traffic.
+  oneof match {
+    option (buf.validate.oneof).required = true;
+    option (oneof_behavior) = IMMUTABLE;
+
+    RuleIngress ingress = 4 [(field_behavior) = IMMUTABLE];
+
+    RuleEgress egress = 5 [(field_behavior) = IMMUTABLE];
+  }
+
+  // Type of the rule (STATEFUL or STATELESS)
+  // Default value is STATEFUL
+  RuleType type = 6 [
+    (field_behavior) = IMMUTABLE,
+    (field_behavior) = NON_EMPTY_DEFAULT
+  ];
+}
+
+// Defines match for incoming traffic.
+message RuleIngress {
+  // ID of the referenced Security Group as the source.
+  string source_security_group_id = 1;
+
+  // CIDR blocks as the source.
+  // Optional. Empty list means any address.
+  // Must be a valid IPv4
+  // Maximum of 8 CIDRs can be specified.
+  repeated string source_cidrs = 2 [(buf.validate.field) = {
+    repeated: {
+      max_items: 8
+      items: {
+        cel: [
+          {
+            id: "string.valid_cidr"
+            message: "value must be a valid CIDR"
+            expression: "this.isIpPrefix(true)"
+          }
+        ]
+      }
+    }
+  }];
+
+  // List of destination ports to which the rule applies.
+  // Optional. Empty list means any port.
+  // Valid range: 1–65535.
+  // Maximum of 8 ports can be specified.
+  repeated int32 destination_ports = 3 [(buf.validate.field) = {
+    repeated: {
+      max_items: 8
+      items: {
+        int32: {
+          lte: 65535
+          gte: 1
+        }
+      }
+    }
+  }];
+}
+
+// Defines match for outgoing traffic.
+message RuleEgress {
+  // ID of the referenced Security Group as the destination.
+  string destination_security_group_id = 1;
+
+  // CIDR blocks as the destination.
+  // Optional. Empty list means any address.
+  // Must be a valid IPv4.
+  // Maximum of 8 CIDRs can be specified.
+  repeated string destination_cidrs = 2 [(buf.validate.field) = {
+    repeated: {
+      max_items: 8
+      items: {
+        cel: [
+          {
+            id: "string.valid_cidr"
+            message: "value must be a valid CIDR"
+            expression: "this.isIpPrefix(true)"
+          }
+        ]
+      }
+    }
+  }];
+
+  // List of ports to which the rule applies.
+  // Optional. Empty list means any port.
+  // Valid range: 1–65535.
+  // Maximum of 8 ports can be specified.
+  repeated int32 destination_ports = 3 [(buf.validate.field) = {
+    repeated: {
+      max_items: 8
+      items: {
+        int32: {
+          lte: 65535
+          gte: 1
+        }
+      }
+    }
+  }];
+}
+
+// Direction specifies whether traffic is INGRESS (incoming) or EGRESS (outgoing).
+enum RuleDirection {
+  DIRECTION_UNSPECIFIED = 0;
+
+  INGRESS = 1;
+
+  EGRESS = 2;
+}
+
+// Protocol specifies traffic protocol.
+enum RuleProtocol {
+  PROTOCOL_UNSPECIFIED = 0;
+
+  ANY = 1;
+
+  TCP = 2;
+
+  UDP = 3;
+
+  ICMP = 4;
+}
+
+// Access specifies action on matching traffic: ALLOW or DENY.
+enum RuleAccessAction {
+  ACCESS_UNSPECIFIED = 0;
+
+  ALLOW = 1;
+
+  DENY = 2;
+}
+
+// RuleType specifies whether the security rule is stateful or stateless.
+enum RuleType {
+  RULE_TYPE_UNSPECIFIED = 0;
+
+  STATEFUL = 1;
+
+  STATELESS = 2;
+}
+
+message SecurityRuleStatus {
+  // State describes lifecycle phases of a security rule.
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    CREATING = 1;
+
+    READY = 2;
+
+    DELETING = 3;
+  }
+
+  State state = 1;
+
+  // Effective priority used for rule evaluation order, calculated by the system.
+  // This value is computed from the user-specified 'priority' (SecurityRuleSpec).
+  // Rules are evaluated in ascending order of effective_priority using a first-match algorithm.
+  int32 effective_priority = 4;
+
+  // Direction of traffic affected by the rule.
+  RuleDirection direction = 6;
+
+  // Source of the traffic that matched the rule.
+  RuleMatchStatus source = 7;
+
+  // Destination of the traffic that matched the rule.
+  RuleMatchStatus destination = 8;
+}
+
+message RuleMatchStatus {
+  // ID of the Security Group.
+  string security_group_id = 1;
+
+  // List of CIDR blocks.
+  repeated string cidrs = 2;
+
+  // List of ports.
+  repeated int32 ports = 3;
+}

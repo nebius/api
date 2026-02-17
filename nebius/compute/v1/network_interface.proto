@@ -45,6 +45,11 @@ message NetworkInterfaceSpec {
 
   // Assign ranges of IP addresses as aliases
   repeated IPAlias aliases = 6;
+
+  // Security groups associated with the network interface.
+  // If an empty list is provided, the default security group for the network will be used.
+  // Effective security groups can be seen in the status.
+  repeated SecurityGroup security_groups = 7;
 }
 
 // Describes an IPv4 address.
@@ -120,4 +125,9 @@ message PublicIPAddressStatus {
 
 message IPAliasesStatus {
   repeated string cidrs = 2;
+}
+
+message SecurityGroup {
+  // Security group identifier
+  string id = 1;
 }
