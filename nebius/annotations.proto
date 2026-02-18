@@ -35,11 +35,25 @@ extend google.protobuf.MethodOptions {
 
   MethodPySDKSettings method_py_sdk = 1195;
 
+  // Deprecated. Until removed, use along `(method_behavior) = METHOD_UPDATER`.
   // If true, the method requires the reset mask to be sent along with the request.
   // If false, the reset mask will be sent only in resource Update methods by default.
   // If set, the reset mask will be calculated relative to the root of the request,
   // the mask sanitization will be applied on the gateway as usual.
   bool send_reset_mask = 1196;
+
+  // method_behavior describes how the method behaves, if its behavior differs
+  // from the default one.
+  //
+  // For example, it can be used to specify that the method is an update method,
+  // so the reset mask will be sent by default, or that the method is a delete
+  // method, so the CLI will not get the resource after the operation is done.
+  //
+  // Set the value to `METHOD_BEHAVIOR_UNSPECIFIED` to clear any special
+  // behavior that might be inferred from the method name or other annotations.
+  //
+  // Read `MethodBehavior` enum for more details and examples.
+  repeated MethodBehavior method_behavior = 1197;
 }
 
 extend google.protobuf.MessageOptions {
@@ -216,4 +230,31 @@ message NIDFieldSettings {
   // Leave empty to allow any type. Validation only produces warnings.
   // Typically set on the resource message; request-level overrides are supported.
   repeated string parent_resource = 2;
+}
+
+// MethodBehavior describes special behaviors of a method that affect
+// code generation and tooling.
+enum MethodBehavior {
+  // Indicates that the method behavior is default and is not specified.
+  // For instance, an Update method will lose its update semantics if this value
+  // is set.
+  // Does not mean anything if set along with other values.
+  METHOD_BEHAVIOR_UNSPECIFIED = 0;
+
+  // Indicates that the method is used to update a resource or a number of
+  // resources, therefore it requires a reset mask to unset fields.
+  // This will enable SDKs to generate the reset mask on request, as well as the
+  // gateway to pass and sanitize it. The CLI will add flags to set partial or
+  // full updates and custom reset masks.
+  METHOD_UPDATER = 2;
+
+  // Indicates that the method is used to list something, and supports
+  // pagination.
+  METHOD_PAGINATED = 3;
+
+  // Indicates that the method will create an operation, which doesn't have a
+  // gettable resource after its completion, and therefore must not call a `get`
+  // method. For instance, it can be used for long-running operations that
+  // don't return any resource, or for resource deletion operations.
+  METHOD_WITHOUT_GET = 4;
 }

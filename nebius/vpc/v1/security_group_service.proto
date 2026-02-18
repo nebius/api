@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package nebius.vpc.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/vpc/v1/security_group.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
+option java_multiple_files = true;
+option java_outer_classname = "SecurityGroupServiceProto";
+option java_package = "ai.nebius.pub.vpc.v1";
+
+// SecurityGroupService provides operations for managing security groups.
+service SecurityGroupService {
+  option (api_service_name) = "vpc";
+
+  rpc Get(GetSecurityGroupRequest) returns (SecurityGroup);
+
+  rpc GetByName(GetSecurityGroupByNameRequest) returns (SecurityGroup);
+
+  rpc List(ListSecurityGroupsRequest) returns (ListSecurityGroupsResponse);
+
+  // Lists security groups in a specific network.
+  rpc ListByNetwork(ListSecurityGroupsByNetworkRequest) returns (ListSecurityGroupsResponse);
+
+  rpc Create(CreateSecurityGroupRequest) returns (common.v1.Operation);
+
+  rpc Update(UpdateSecurityGroupRequest) returns (common.v1.Operation);
+
+  rpc Delete(DeleteSecurityGroupRequest) returns (common.v1.Operation);
+}
+
+message GetSecurityGroupRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message GetSecurityGroupByNameRequest {
+  // ID of the Project.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListSecurityGroupsRequest {
+  // ID of the Project.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
+message ListSecurityGroupsByNetworkRequest {
+  // ID of the Network.
+  string network_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcnetwork"]
+    }
+  ];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
+message ListSecurityGroupsResponse {
+  repeated SecurityGroup items = 1;
+
+  string next_page_token = 2;
+}
+
+message CreateSecurityGroupRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field) = {
+    cel: [
+      {
+        id: "metadata_name"
+        message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters."
+        expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+      }
+    ]
+    required: true
+  }];
+
+  SecurityGroupSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message UpdateSecurityGroupRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field) = {
+    cel: [
+      {
+        id: "metadata_name"
+        message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters."
+        expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+      }
+    ]
+  }];
+
+  SecurityGroupSpec spec = 2;
+}
+
+message DeleteSecurityGroupRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}

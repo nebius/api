@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package nebius.vpc.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/vpc/v1/security_rule.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
+option java_multiple_files = true;
+option java_outer_classname = "SecurityRuleServiceProto";
+option java_package = "ai.nebius.pub.vpc.v1";
+
+// SecurityRuleService provides operations for managing security rules.
+service SecurityRuleService {
+  option (api_service_name) = "vpc";
+
+  rpc Get(GetSecurityRuleRequest) returns (SecurityRule);
+
+  rpc GetByName(GetSecurityRuleByNameRequest) returns (SecurityRule);
+
+  rpc List(ListSecurityRulesRequest) returns (ListSecurityRulesResponse);
+
+  rpc Create(CreateSecurityRuleRequest) returns (common.v1.Operation);
+
+  rpc Update(UpdateSecurityRuleRequest) returns (common.v1.Operation);
+
+  rpc Delete(DeleteSecurityRuleRequest) returns (common.v1.Operation);
+}
+
+message GetSecurityRuleRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message GetSecurityRuleByNameRequest {
+  // ID of the Security Group.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListSecurityRulesRequest {
+  // ID of the Security Group.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
+message ListSecurityRulesResponse {
+  repeated SecurityRule items = 1;
+
+  string next_page_token = 2;
+}
+
+message CreateSecurityRuleRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field) = {
+    cel: [
+      {
+        id: "metadata_name"
+        message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters."
+        expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+      }
+    ]
+    required: true
+  }];
+
+  SecurityRuleSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message UpdateSecurityRuleRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field) = {
+    cel: [
+      {
+        id: "metadata_name"
+        message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters."
+        expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+      }
+    ]
+  }];
+
+  SecurityRuleSpec spec = 2;
+}
+
+message DeleteSecurityRuleRequest {
+  string id = 1 [(buf.validate.field).required = true];
+}

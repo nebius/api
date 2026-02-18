@@ -106,6 +106,8 @@
   * [nebius.vpc.v1.PoolService](nebius/vpc/v1/pool_service.proto)
   * [nebius.vpc.v1.RouteService](nebius/vpc/v1/route_service.proto)
   * [nebius.vpc.v1.RouteTableService](nebius/vpc/v1/route_table_service.proto)
+  * [nebius.vpc.v1.SecurityGroupService](nebius/vpc/v1/security_group_service.proto)
+  * [nebius.vpc.v1.SecurityRuleService](nebius/vpc/v1/security_rule_service.proto)
   * [nebius.vpc.v1.SubnetService](nebius/vpc/v1/subnet_service.proto)
   * [nebius.vpc.v1.TargetGroupService](nebius/vpc/v1/target_group_service.proto)
   * [nebius.vpc.v1alpha1.AllocationService](nebius/vpc/v1alpha1/allocation_service.proto)
