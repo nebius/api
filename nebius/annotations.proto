@@ -35,13 +35,6 @@ extend google.protobuf.MethodOptions {
 
   MethodPySDKSettings method_py_sdk = 1195;
 
-  // Deprecated. Until removed, use along `(method_behavior) = METHOD_UPDATER`.
-  // If true, the method requires the reset mask to be sent along with the request.
-  // If false, the reset mask will be sent only in resource Update methods by default.
-  // If set, the reset mask will be calculated relative to the root of the request,
-  // the mask sanitization will be applied on the gateway as usual.
-  bool send_reset_mask = 1196;
-
   // method_behavior describes how the method behaves, if its behavior differs
   // from the default one.
   //

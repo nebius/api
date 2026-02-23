@@ -129,4 +129,8 @@ message BucketStatus {
 
   // The name of the region where the bucket is located for use with S3 clients, i.e. "eu-west1".
   string region = 8;
+
+  // Indicator flag showing whether the bucket has any BucketPolicy rule
+  // that grants anonymous access to any object, prefix, or the entire bucket.
+  bool anonymous_access_enabled = 9;
 }
