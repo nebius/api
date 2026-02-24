@@ -32,9 +32,6 @@ service EndpointService {
   // Deletes an endpoint.
   rpc Delete(DeleteEndpointRequest) returns (common.v1.Operation);
 
-  // Updates an endpoint.
-  rpc Update(UpdateEndpointRequest) returns (common.v1.Operation);
-
   // Starts an endpoint.
   rpc Start(StartEndpointRequest) returns (common.v1.Operation);
 
@@ -81,12 +78,6 @@ message DeleteEndpointRequest {
       resource: ["aiendpoint"]
     }
   ];
-}
-
-message UpdateEndpointRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
-
-  EndpointSpec spec = 2 [(buf.validate.field).required = true];
 }
 
 message StartEndpointRequest {

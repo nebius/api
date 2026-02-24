@@ -210,6 +210,9 @@ message GetVersionResponse {
     // Parameters for restart action.
     RestartActionParams restart = 4;
   }
+
+  // Feature flags for the agent. Keys are UPPER_CASE flag names, values are flag values (typically "true"/"false").
+  map<string, string> feature_flags = 5;
 }
 
 // Parameters when no operation is required.
