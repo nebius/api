@@ -29,7 +29,9 @@ message ImageSpec {
     ARM64 = 2;
   }
 
-  string description = 1;
+  string description = 1 [(buf.validate.field) = {
+    string: {max_len: 1024}
+  }];
 
   string image_family = 2 [(field_behavior) = IMMUTABLE];
 
