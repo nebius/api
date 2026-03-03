@@ -98,6 +98,9 @@ message AuditEventExportStatus {
   // Identifier of the audit logs export operation.
   // This value is used as the final path prefix for exported files in the destination object storage bucket.
   string export_operation_id = 2;
+
+  // Error message in case of export failure.
+  string message = 3;
 }
 
 enum AuditEventExportState {
