@@ -79,6 +79,10 @@ message JobSpec {
   // Public keys to be authorized for SSH access to the job.
   repeated string ssh_authorized_keys = 26;
 
+  // Whether to use a preemptible VM for the job.
+  // Preemptible VMs are cheaper but can be stopped by the platform at any time.
+  bool preemptible = 27;
+
   // Restart attempts for the job.
   int64 restart_attempts = 30 [(buf.validate.field) = {
     int64: {gte: -1}
