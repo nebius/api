@@ -78,6 +78,10 @@ message EndpointSpec {
   // Public keys to be authorized for SSH access to the job.
   repeated string ssh_authorized_keys = 26;
 
+  // Whether to use a preemptible VM for the endpoint.
+  // Preemptible VMs are cheaper but can be stopped by the platform at any time.
+  bool preemptible = 27;
+
   // Authentication token needed to access the endpoint.
   //
   // Authentication can only be enabled if the endpoint exposes one and only one HTTP port.
