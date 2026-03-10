@@ -93,7 +93,12 @@ message NodeTemplate {
 
   GpuClusterSpec gpu_cluster = 4;
 
-  repeated NetworkInterfaceTemplate network_interfaces = 5 [(field_behavior) = NON_EMPTY_DEFAULT];
+  repeated NetworkInterfaceTemplate network_interfaces = 5 [
+    (field_behavior) = NON_EMPTY_DEFAULT,
+    (buf.validate.field) = {
+      repeated: {max_items: 1}
+    }
+  ];
 
   repeated AttachedFilesystemSpec filesystems = 7;
 

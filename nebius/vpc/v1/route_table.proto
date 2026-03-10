@@ -16,7 +16,9 @@ option java_package = "ai.nebius.pub.vpc.v1";
 // and contains rules for routing traffic to different destinations.
 message RouteTable {
   // `metadata.parent_id` represents the Project.
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // Specification of the route table's configuration.
   RouteTableSpec spec = 2;
@@ -29,7 +31,10 @@ message RouteTableSpec {
   // ID of the VPC network this route table belongs to.
   string network_id = 1 [
     (buf.validate.field).required = true,
-    (field_behavior) = IMMUTABLE
+    (field_behavior) = IMMUTABLE,
+    (nid) = {
+      resource: ["vpcnetwork"]
+    }
   ];
 }
 
@@ -56,5 +61,7 @@ message RouteTableStatus {
 
 message RouteTableAssignment {
   // List of subnet IDs that use this route table for their routing configuration.
-  repeated string subnets = 1;
+  repeated string subnets = 1 [(nid) = {
+    resource: ["vpcsubnet"]
+  }];
 }

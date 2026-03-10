@@ -15,7 +15,9 @@ option java_package = "ai.nebius.pub.vpc.v1";
 // specifying the path that traffic should take based on destination addresses.
 message Route {
   // `metadata.parent_id` represents the RouteTable.
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["vpcroutetable"]
+  }];
 
   // Specification of the route's configuration.
   RouteSpec spec = 2;
@@ -85,7 +87,12 @@ message NextHop {
 // AllocationNextHop specifies an IP allocation as the next hop.
 message AllocationNextHop {
   // ID of the IP allocation to use as the next hop.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcallocation"]
+    }
+  ];
 }
 
 message RouteStatus {

@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.vpc.v1alpha1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1alpha1";
@@ -13,7 +14,9 @@ option java_package = "ai.nebius.pub.vpc.v1alpha1";
 message Scope {
   // Metadata associated with the Scope.
   // `metadata.parent_id` represents the parent IAM container.
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // Specification of the Scope.
   ScopeSpec spec = 2;

@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package nebius.billing.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/billing/v1alpha1/one_time_export.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/billing/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "OneTimeExportServiceProto";
+option java_package = "ai.nebius.pub.billing.v1alpha1";
+
+// Service for managing one-time billing report exports.
+// Enables creation of downloadable archives of billing data for a specified period.
+service OneTimeExportService {
+  option (api_service_name) = "api.billing-report-exporter.billing-data-plane";
+
+  // Creates a new one-time export of billing reports for the requested period.
+  rpc Create(CreateOneTimeExportRequest) returns (common.v1.Operation);
+
+  // Retrieves details of a specific one-time export.
+  // When the export is complete, the response includes a fresh presigned download URL.
+  rpc Get(GetOneTimeExportRequest) returns (OneTimeExport);
+
+  // Lists one-time exports for a given contract.
+  rpc List(ListOneTimeExportsRequest) returns (ListOneTimeExportsResponse);
+}
+
+message CreateOneTimeExportRequest {
+  // Resource metadata including parent contract ID.
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["contract"]
+    }
+  ];
+
+  // Export configuration specification.
+  OneTimeExportSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message GetOneTimeExportRequest {
+  // Unique identifier of the one-time export.
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IDENTIFIER,
+    (nid) = {
+      resource: ["billingonetimeexport"]
+    }
+  ];
+}
+
+message ListOneTimeExportsRequest {
+  // Parent contract ID for which to list one-time exports.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["contract"]
+    }
+  ];
+
+  // Maximum number of items to return per page.
+  int64 page_size = 2;
+
+  // Token for retrieving the next page of results.
+  string page_token = 3;
+}
+
+message ListOneTimeExportsResponse {
+  // List of one-time exports for the specified contract.
+  repeated OneTimeExport items = 1;
+
+  // Token for retrieving the next page of results. Empty if no more pages.
+  string next_page_token = 2;
+}

@@ -17,7 +17,9 @@ option java_package = "ai.nebius.pub.vpc.v1";
 message Network {
   // Metadata for the network resource.
   // `metadata.parent_id` represents IAM container
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // Specification of the network.
   NetworkSpec spec = 2;
@@ -48,7 +50,12 @@ message IPv4PublicNetworkPools {
 
 message NetworkPool {
   // ID of the pool.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcpool"]
+    }
+  ];
 }
 
 message NetworkStatus {
@@ -67,5 +74,7 @@ message NetworkStatus {
   State state = 1;
 
   // ID of the network's default route table.
-  string default_route_table_id = 5;
+  string default_route_table_id = 5 [(nid) = {
+    resource: ["vpcroutetable"]
+  }];
 }

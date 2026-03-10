@@ -15,7 +15,9 @@ option java_package = "ai.nebius.pub.vpc.v1alpha1";
 message Allocation {
   // Metadata for the Allocation.
   // `metadata.parent_id` represents IAM Container.
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // Specifications for the allocation, detailing its name and IP configuration.
   AllocationSpec spec = 2;
@@ -58,10 +60,20 @@ message IPv4PrivateAllocationSpec {
 
     // Subnet ID.
     // Required same subnet to use allocation in subnet-resources (e.g. Network Interface)
-    string subnet_id = 2 [(field_behavior) = IMMUTABLE];
+    string subnet_id = 2 [
+      (field_behavior) = IMMUTABLE,
+      (nid) = {
+        resource: ["vpcsubnet"]
+      }
+    ];
 
     // Pool for the IPv4 private allocation.
-    string pool_id = 3 [(field_behavior) = IMMUTABLE];
+    string pool_id = 3 [
+      (field_behavior) = IMMUTABLE,
+      (nid) = {
+        resource: ["vpcpool"]
+      }
+    ];
   }
 }
 
@@ -84,7 +96,12 @@ message IPv4PublicAllocationSpec {
   ];
 
   // Pool for the IPv4 public allocation.
-  string pool_id = 2 [(field_behavior) = IMMUTABLE];
+  string pool_id = 2 [
+    (field_behavior) = IMMUTABLE,
+    (nid) = {
+      resource: ["vpcpool"]
+    }
+  ];
 }
 
 message AllocationStatus {
@@ -119,7 +136,9 @@ message AllocationStatus {
 message AllocationDetails {
   string allocated_cidr = 1;
 
-  string pool_id = 2;
+  string pool_id = 2 [(nid) = {
+    resource: ["vpcpool"]
+  }];
 
   IpVersion version = 4;
 }
@@ -136,7 +155,9 @@ message Assignment {
 
 message NetworkInterfaceAssignment {
   // ID of the Compute instance network interface belongs to.
-  string instance_id = 1;
+  string instance_id = 1 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 
   // Network interface name
   string name = 2;
@@ -144,5 +165,7 @@ message NetworkInterfaceAssignment {
 
 message LoadBalancerAssignment {
   // ID of the Load Balancer.
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["vpcloadbalancer"]
+  }];
 }

@@ -15,7 +15,9 @@ option java_package = "ai.nebius.pub.vpc.v1";
 message Allocation {
   // Metadata for the Allocation.
   // `metadata.parent_id` represents IAM Container.
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // Specifications for the allocation, detailing its name and IP configuration.
   AllocationSpec spec = 2;
@@ -65,10 +67,20 @@ message IPv4PrivateAllocationSpec {
     // with this subnet.
     // In order to assign an allocation to a resource (i.e. network interface)
     // both must be associated with the same subnet.
-    string subnet_id = 2 [(field_behavior) = IMMUTABLE];
+    string subnet_id = 2 [
+      (field_behavior) = IMMUTABLE,
+      (nid) = {
+        resource: ["vpcsubnet"]
+      }
+    ];
 
     // ID of the pool that allocation will receive its IP address from.
-    string pool_id = 3 [(field_behavior) = IMMUTABLE];
+    string pool_id = 3 [
+      (field_behavior) = IMMUTABLE,
+      (nid) = {
+        resource: ["vpcpool"]
+      }
+    ];
   }
 }
 
@@ -101,10 +113,20 @@ message IPv4PublicAllocationSpec {
     // this subnet.
     // Assigning an allocation to a resource (i.e. network interface) requires
     // both to be associated with the same subnet.
-    string subnet_id = 2 [(field_behavior) = IMMUTABLE];
+    string subnet_id = 2 [
+      (field_behavior) = IMMUTABLE,
+      (nid) = {
+        resource: ["vpcsubnet"]
+      }
+    ];
 
     // ID of the pool that allocation will receive its IP address from.
-    string pool_id = 3 [(field_behavior) = IMMUTABLE];
+    string pool_id = 3 [
+      (field_behavior) = IMMUTABLE,
+      (nid) = {
+        resource: ["vpcpool"]
+      }
+    ];
   }
 }
 
@@ -142,7 +164,9 @@ message AllocationDetails {
   string allocated_cidr = 1;
 
   // ID of the pool from which this allocation was made.
-  string pool_id = 2;
+  string pool_id = 2 [(nid) = {
+    resource: ["vpcpool"]
+  }];
 
   // The IP version of this allocation (IPv4 or IPv6).
   IpVersion version = 4;
@@ -150,7 +174,9 @@ message AllocationDetails {
   // ID of the subnet associated with this allocation.
   // Populated when created with explicit subnet_id, from a subnet-specific pool,
   // or when assigned to a resource.
-  string subnet_id = 5;
+  string subnet_id = 5 [(nid) = {
+    resource: ["vpcsubnet"]
+  }];
 }
 
 message Assignment {
@@ -165,7 +191,9 @@ message Assignment {
 
 message NetworkInterfaceAssignment {
   // ID of the Compute instance network interface belongs to.
-  string instance_id = 1;
+  string instance_id = 1 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 
   // Network interface name
   string name = 2;
@@ -173,5 +201,7 @@ message NetworkInterfaceAssignment {
 
 message LoadBalancerAssignment {
   // ID of the Load Balancer.
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["vpcloadbalancer"]
+  }];
 }

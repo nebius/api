@@ -31,19 +31,34 @@ service SecurityRuleService {
 }
 
 message GetSecurityRuleRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcsecurityrule"]
+    }
+  ];
 }
 
 message GetSecurityRuleByNameRequest {
   // ID of the Security Group.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcsecuritygroup"]
+    }
+  ];
 
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListSecurityRulesRequest {
   // ID of the Security Group.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcsecuritygroup"]
+    }
+  ];
 
   int64 page_size = 2;
 
@@ -57,34 +72,49 @@ message ListSecurityRulesResponse {
 }
 
 message CreateSecurityRuleRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field) = {
-    cel: [
-      {
-        id: "metadata_name"
-        message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters."
-        expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
-      }
-    ]
-    required: true
-  }];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name"
+          message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters."
+          expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+        }
+      ]
+      required: true
+    },
+    (nid) = {
+      parent_resource: ["vpcsecuritygroup"]
+    }
+  ];
 
   SecurityRuleSpec spec = 2 [(buf.validate.field).required = true];
 }
 
 message UpdateSecurityRuleRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field) = {
-    cel: [
-      {
-        id: "metadata_name"
-        message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters."
-        expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
-      }
-    ]
-  }];
+  common.v1.ResourceMetadata metadata = 1 [
+    (nid) = {
+      parent_resource: ["vpcsecuritygroup"]
+    },
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name"
+          message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters."
+          expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+        }
+      ]
+    }
+  ];
 
   SecurityRuleSpec spec = 2;
 }
 
 message DeleteSecurityRuleRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcsecurityrule"]
+    }
+  ];
 }

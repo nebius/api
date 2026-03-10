@@ -112,7 +112,12 @@ message NodeTemplate {
   // Nebius Compute GPUCluster ID that will be attached to node.
   GpuClusterSpec gpu_cluster = 4;
 
-  repeated NetworkInterfaceTemplate network_interfaces = 5 [(field_behavior) = NON_EMPTY_DEFAULT];
+  repeated NetworkInterfaceTemplate network_interfaces = 5 [
+    (field_behavior) = NON_EMPTY_DEFAULT,
+    (buf.validate.field) = {
+      repeated: {max_items: 1}
+    }
+  ];
 
   // Static attachments of Compute Filesystem.
   // Can be used as a workaround, until CSI for Compute Disk and Filesystem will be available.
