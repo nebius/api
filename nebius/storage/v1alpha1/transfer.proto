@@ -82,6 +82,13 @@ message TransferSpec {
     // Credentials for accessing the destination bucket. These credentials must have head and write permissions.
     // This parameter must be specified only during create operations.
     BucketCredentials credentials = 2 [(field_behavior) = INPUT_ONLY];
+
+    // The endpoint must be in the form of a URL, starting with the protocol (https),
+    // followed by the endpoint address without a trailing slash.
+    // Example: https://storage.us-central1.nebius.cloud
+    string endpoint = 10 [(field_behavior) = IMMUTABLE];
+
+    string region = 11 [(field_behavior) = IMMUTABLE];
   }
 
   message BucketCredentials {

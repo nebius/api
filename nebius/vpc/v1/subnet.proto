@@ -17,7 +17,9 @@ option java_package = "ai.nebius.pub.vpc.v1";
 message Subnet {
   // Metadata for the subnet resource.
   // `metadata.parent_id` represents IAM container
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // Specification of the subnet.
   SubnetSpec spec = 2;
@@ -28,7 +30,12 @@ message Subnet {
 
 message SubnetSpec {
   // ID of the network this subnet belongs to.
-  string network_id = 1 [(buf.validate.field).required = true];
+  string network_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcnetwork"]
+    }
+  ];
 
   // Private IPv4 address pools for this subnet.
   // If unspecified, pools from the associated network are used.
@@ -40,7 +47,9 @@ message SubnetSpec {
 
   // ID of the route table to associate with the subnet.
   // If unspecified, the network's default route table is used.
-  string route_table_id = 5;
+  string route_table_id = 5 [(nid) = {
+    resource: ["vpcroutetable"]
+  }];
 }
 
 message IPv4PrivateSubnetPools {
@@ -132,7 +141,9 @@ message SubnetStatus {
 
 message SubnetAssociatedRouteTable {
   // ID of the route table.
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["vpcroutetable"]
+  }];
 
   // Indicates whether this is the network's default route table.
   // If true, this is the default route table inherited from the network.

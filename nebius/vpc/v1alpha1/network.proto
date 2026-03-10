@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.vpc.v1alpha1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1alpha1";
@@ -16,7 +17,9 @@ option java_package = "ai.nebius.pub.vpc.v1alpha1";
 message Network {
   // Metadata for the network resource.
   // `metadata.parent_id` represents IAM container
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // Specification of the network.
   NetworkSpec spec = 2;
@@ -31,7 +34,12 @@ message NetworkSpec {
 }
 
 message NetworkPool {
-  string pool_id = 1 [(buf.validate.field).required = true];
+  string pool_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcpool"]
+    }
+  ];
 }
 
 message NetworkStatus {
@@ -50,5 +58,7 @@ message NetworkStatus {
   State state = 1;
 
   // Scope ID of all pools
-  string scope_id = 2;
+  string scope_id = 2 [(nid) = {
+    resource: ["vpcscope"]
+  }];
 }

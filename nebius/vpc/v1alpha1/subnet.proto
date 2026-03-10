@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.vpc.v1alpha1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/vpc/v1alpha1/pool.proto";
 
@@ -16,7 +17,9 @@ option java_package = "ai.nebius.pub.vpc.v1alpha1";
 message Subnet {
   // Metadata for the subnet resource.
   // `metadata.parent_id` represents IAM container
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // Specification of the subnet.
   SubnetSpec spec = 2;
@@ -27,7 +30,12 @@ message Subnet {
 
 message SubnetSpec {
   // Network ID.
-  string network_id = 1 [(buf.validate.field).required = true];
+  string network_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcnetwork"]
+    }
+  ];
 
   // Pool for addresses
   repeated SubnetPool pools = 2 [(buf.validate.field).required = true];
@@ -42,7 +50,9 @@ message SubnetPool {
 
     SubnetPoolSpec spec = 1;
 
-    string pool_id = 2;
+    string pool_id = 2 [(nid) = {
+      resource: ["vpcpool"]
+    }];
   }
 }
 

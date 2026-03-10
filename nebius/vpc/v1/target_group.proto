@@ -15,7 +15,9 @@ option java_package = "ai.nebius.pub.vpc.v1";
 message TargetGroup {
   // Metadata for the TargetGroup resource.
   // `metadata.parent_id` represents IAM container
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // Specification of the TargetGroup.
   TargetGroupSpec spec = 2;
@@ -42,7 +44,12 @@ message Target {
 // Target representing compute instance
 message ComputeInstance {
   // Compute instance id to send traffic to
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["computeinstance"]
+    }
+  ];
 
   // Name of the compute instance's NetworkInterface to send traffic to. If not specified the first one will be used.
   string network_interface_name = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
@@ -50,14 +57,18 @@ message ComputeInstance {
 
 message TargetGroupStatus {
   // LoadBalancer ids target group is attached to
-  repeated string load_balancer_ids = 1;
+  repeated string load_balancer_ids = 1 [(nid) = {
+    resource: ["vpcloadbalancer"]
+  }];
 
   // Statuses of specified targets
   repeated TargetStatus target_statuses = 2;
 }
 
 message TargetStatus {
-  string compute_instance_id = 1;
+  string compute_instance_id = 1 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 
   TargetState target_state = 2;
 

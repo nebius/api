@@ -34,19 +34,34 @@ service SecurityGroupService {
 }
 
 message GetSecurityGroupRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcsecuritygroup"]
+    }
+  ];
 }
 
 message GetSecurityGroupByNameRequest {
   // ID of the Project.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListSecurityGroupsRequest {
   // ID of the Project.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   int64 page_size = 2;
 
@@ -74,34 +89,49 @@ message ListSecurityGroupsResponse {
 }
 
 message CreateSecurityGroupRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field) = {
-    cel: [
-      {
-        id: "metadata_name"
-        message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters."
-        expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
-      }
-    ]
-    required: true
-  }];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name"
+          message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters."
+          expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+        }
+      ]
+      required: true
+    },
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   SecurityGroupSpec spec = 2 [(buf.validate.field).required = true];
 }
 
 message UpdateSecurityGroupRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field) = {
-    cel: [
-      {
-        id: "metadata_name"
-        message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters."
-        expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
-      }
-    ]
-  }];
+  common.v1.ResourceMetadata metadata = 1 [
+    (nid) = {
+      parent_resource: ["project"]
+    },
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name"
+          message: "'name' must start with a letter or digit, allow '-', '_', '.', '/', and have a length between 2 and 255 characters."
+          expression: "this.name.matches('^[a-zA-Z0-9][-_./a-zA-Z0-9]{1,254}$')"
+        }
+      ]
+    }
+  ];
 
   SecurityGroupSpec spec = 2;
 }
 
 message DeleteSecurityGroupRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcsecuritygroup"]
+    }
+  ];
 }

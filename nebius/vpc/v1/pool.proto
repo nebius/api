@@ -14,7 +14,9 @@ option java_package = "ai.nebius.pub.vpc.v1";
 message Pool {
   // Metadata associated with the Pool.
   // `metadata.parent_id` represents the Project.
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // Specification of the Pool.
   PoolSpec spec = 2;
@@ -26,7 +28,12 @@ message Pool {
 message PoolSpec {
   // ID of the source pool.
   // CIDR blocks of a pool must be within the range defined by its source pool.
-  string source_pool_id = 1 [(field_behavior) = IMMUTABLE];
+  string source_pool_id = 1 [
+    (field_behavior) = IMMUTABLE,
+    (nid) = {
+      resource: ["vpcpool"]
+    }
+  ];
 
   // IP version of the pool.
   IpVersion version = 3 [
@@ -111,7 +118,9 @@ message PoolStatus {
   repeated string cidrs = 2;
 
   // Scope is the unique identifier for single pool tree.
-  string scope_id = 3;
+  string scope_id = 3 [(nid) = {
+    resource: ["vpcscope"]
+  }];
 
   // Assignment details for this Pool
   PoolAssignment assignment = 4;
@@ -135,8 +144,12 @@ enum IpVisibility {
 
 message PoolAssignment {
   // IDs of Networks to which the Pool is assigned.
-  repeated string networks = 1;
+  repeated string networks = 1 [(nid) = {
+    resource: ["vpcnetwork"]
+  }];
 
   // IDs of Subnets to which the Pool is assigned.
-  repeated string subnets = 2;
+  repeated string subnets = 2 [(nid) = {
+    resource: ["vpcsubnet"]
+  }];
 }

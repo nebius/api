@@ -22,17 +22,32 @@ service NetworkService {
 }
 
 message GetNetworkRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcnetwork"]
+    }
+  ];
 }
 
 message GetNetworkByNameRequest {
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListNetworksRequest {
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   int64 page_size = 2;
 

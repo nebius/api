@@ -14,7 +14,9 @@ option java_package = "ai.nebius.pub.vpc.v1alpha1";
 message Pool {
   // Metadata associated with the Pool.
   // `metadata.parent_id` represents the Project.
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // Specification of the Pool.
   PoolSpec spec = 2;
@@ -28,10 +30,20 @@ message PoolSpec {
     option (buf.validate.oneof).required = true;
 
     // ID of source pool. Current pool will be created with the same scope.
-    string source_pool_id = 1 [(field_behavior) = IMMUTABLE];
+    string source_pool_id = 1 [
+      (field_behavior) = IMMUTABLE,
+      (nid) = {
+        resource: ["vpcpool"]
+      }
+    ];
 
     // ID of the scope. Pool will be considered as top-level pool within scope.
-    string source_scope_id = 2 [(field_behavior) = IMMUTABLE];
+    string source_scope_id = 2 [
+      (field_behavior) = IMMUTABLE,
+      (nid) = {
+        resource: ["vpcscope"]
+      }
+    ];
   }
 
   // IP version for the Pool.
@@ -104,7 +116,9 @@ message PoolStatus {
   repeated string cidrs = 2;
 
   // ID of the scope
-  string scope_id = 3;
+  string scope_id = 3 [(nid) = {
+    resource: ["vpcscope"]
+  }];
 }
 
 enum IpVersion {

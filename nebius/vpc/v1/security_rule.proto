@@ -16,7 +16,9 @@ option java_package = "ai.nebius.pub.vpc.v1";
 // match source, and ports.
 message SecurityRule {
   // `metadata.parent_id` represents the SecurityGroup.
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["vpcsecuritygroup"]
+  }];
 
   // Specification of the security rule's configuration.
   // Defines the parameters and constraints for rules that control network traffic.
@@ -80,7 +82,9 @@ message SecurityRuleSpec {
 // Defines match for incoming traffic.
 message RuleIngress {
   // ID of the referenced Security Group as the source.
-  string source_security_group_id = 1;
+  string source_security_group_id = 1 [(nid) = {
+    resource: ["vpcsecuritygroup"]
+  }];
 
   // CIDR blocks as the source.
   // Optional. Empty list means any address.
@@ -121,7 +125,9 @@ message RuleIngress {
 // Defines match for outgoing traffic.
 message RuleEgress {
   // ID of the referenced Security Group as the destination.
-  string destination_security_group_id = 1;
+  string destination_security_group_id = 1 [(nid) = {
+    resource: ["vpcsecuritygroup"]
+  }];
 
   // CIDR blocks as the destination.
   // Optional. Empty list means any address.
@@ -230,7 +236,9 @@ message SecurityRuleStatus {
 
 message RuleMatchStatus {
   // ID of the Security Group.
-  string security_group_id = 1;
+  string security_group_id = 1 [(nid) = {
+    resource: ["vpcsecuritygroup"]
+  }];
 
   // List of CIDR blocks.
   repeated string cidrs = 2;

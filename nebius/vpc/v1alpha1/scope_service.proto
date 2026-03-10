@@ -22,17 +22,32 @@ service ScopeService {
 }
 
 message GetScopeRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcscope"]
+    }
+  ];
 }
 
 message GetScopeByNameRequest {
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListScopesRequest {
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   int64 page_size = 2;
 

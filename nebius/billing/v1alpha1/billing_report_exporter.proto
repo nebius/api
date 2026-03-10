@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package nebius.billing.v1alpha1;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/billing/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "BillingReportExporterProto";
+option java_package = "ai.nebius.pub.billing.v1alpha1";
+
+// Supported export formats for billing reports.
+enum ExportFormat {
+  EXPORT_FORMAT_UNSPECIFIED = 0;
+
+  // FOCUS (FinOps Open Cost and Usage Specification) v1.2 CSV format.
+  // See: https://focus.finops.org/focus-specification/v1-2/
+  EXPORT_FORMAT_FOCUS_1_2_CSV = 1;
+}

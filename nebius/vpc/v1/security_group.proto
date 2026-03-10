@@ -16,7 +16,9 @@ option java_package = "ai.nebius.pub.vpc.v1";
 // Security group applies implicit deny at the end (traffic not matched by any rule will be denied).
 message SecurityGroup {
   // `metadata.parent_id` represents the Project.
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // Specification of the security group's configuration.
   SecurityGroupSpec spec = 2;
@@ -29,7 +31,10 @@ message SecurityGroupSpec {
   // ID of the VPC network this security group belongs to.
   string network_id = 1 [
     (buf.validate.field).required = true,
-    (field_behavior) = IMMUTABLE
+    (field_behavior) = IMMUTABLE,
+    (nid) = {
+      resource: ["vpcnetwork"]
+    }
   ];
 }
 

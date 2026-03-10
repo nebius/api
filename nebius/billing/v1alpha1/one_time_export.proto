@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package nebius.billing.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+import "nebius/billing/v1alpha1/billing_report_exporter.proto";
+import "nebius/common/v1/error.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/billing/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "OneTimeExportProto";
+option java_package = "ai.nebius.pub.billing.v1alpha1";
+
+// One-time export of billing reports as a downloadable archive.
+// Creates a .tar.gz archive of FOCUS billing data for the requested period
+// and provides a presigned download URL.
+message OneTimeExport {
+  option (resource_behavior) = UNNAMED;
+
+  // Parent is Contract ID.
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["contract"]
+    }
+  ];
+
+  // Export configuration specification.
+  OneTimeExportSpec spec = 2 [(buf.validate.field).required = true];
+
+  // Current status of the one-time export.
+  OneTimeExportStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+// Specification for one-time billing report export.
+message OneTimeExportSpec {
+  // Format of the exported billing reports.
+  ExportFormat format = 1 [(buf.validate.field).required = true];
+
+  // The first billing period to include in the export (inclusive).
+  // Example: "2025-04".
+  string start_period = 2 [(buf.validate.field).required = true];
+
+  // The last billing period to include in the export (inclusive).
+  // Example: "2025-06".
+  string end_period = 3 [(buf.validate.field).required = true];
+}
+
+// Status information for one-time export.
+message OneTimeExportStatus {
+  // Current state of the export.
+  OneTimeExportState state = 1;
+
+  // Presigned download URL for the archive.
+  // Populated only when state is DONE. Each Get request generates a fresh URL.
+  string download_url = 2 [(sensitive) = true];
+
+  // Timestamp when this export expires.
+  google.protobuf.Timestamp expires_at = 3;
+
+  // Additional details about the current state.
+  OneTimeExportStateDetails state_details = 4;
+}
+
+// Additional details about the current state of the export.
+message OneTimeExportStateDetails {
+  // Error encountered during export.
+  // Populated only when state is FAILED.
+  common.v1.ServiceError error = 1;
+}
+
+// Lifecycle states for one-time export.
+enum OneTimeExportState {
+  ONE_TIME_EXPORT_STATE_UNSPECIFIED = 0;
+
+  // Export has been created and is scheduled for processing.
+  ONE_TIME_EXPORT_STATE_SCHEDULED = 1;
+
+  // Export is in progress.
+  ONE_TIME_EXPORT_STATE_RUNNING = 2;
+
+  // Export completed successfully. Download URL is available.
+  ONE_TIME_EXPORT_STATE_SUCCESS = 3;
+
+  // Export failed. See error field for details.
+  ONE_TIME_EXPORT_STATE_FAILED = 4;
+
+  // Export has been archived and the archive is no longer available for download.
+  ONE_TIME_EXPORT_STATE_ARCHIVED = 5;
+}
