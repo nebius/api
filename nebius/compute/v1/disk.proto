@@ -72,6 +72,9 @@ message DiskSpec {
 
   // Defines how data on the disk is encrypted. By default, no encryption is applied.
   DiskEncryption disk_encryption = 11 [(field_behavior) = IMMUTABLE];
+
+  // Prevents deletion whilst set
+  bool forbid_deletion = 12;
 }
 
 message SourceImageFamily {

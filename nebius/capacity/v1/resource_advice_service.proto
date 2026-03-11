@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package nebius.capacity.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/capacity/v1/resource_advice.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/capacity/v1";
+option java_multiple_files = true;
+option java_outer_classname = "ResourceAdviceServiceProto";
+option java_package = "ai.nebius.pub.capacity.v1";
+
+// ResourceAdvisorService provides insights into capacity availability for various resources.
+// It helps users understand where they can launch instances or allocate storage based on their
+// quotas and the current physical buffers in the data centers.
+service ResourceAdviceService {
+  option (api_service_name) = "capacity-advisor.billing-cpl";
+
+  // Lists resource advice resources.
+  // Supports filtering by region, resource type, or platform.
+  rpc List(ListResourceAdviceRequest) returns (ListResourceAdviceResponse);
+}
+
+message ListResourceAdviceRequest {
+  // Tenant NID.
+  // Required to calculate 'available' numbers clipped by user quotas.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["tenant"]
+    }
+  ];
+
+  // Maximum number of items to return.
+  int64 page_size = 2;
+
+  // Page token for pagination.
+  string page_token = 3;
+}
+
+message ListResourceAdviceResponse {
+  // List of resource advice items matching the request.
+  // Each item represents a unique combination of Resource Type + Tier/Preset.
+  repeated ResourceAdvice items = 1;
+
+  // Token for retrieving the next page of results.
+  string next_page_token = 2;
+}
