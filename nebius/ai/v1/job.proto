@@ -142,12 +142,7 @@ message JobSpec {
     // Source of the volume mount.
     //
     // Can be a name of an ID of Nebius Storage bucket or filesystem.
-    string source = 1 [(nid) = {
-      resource: [
-        "computefilesystem",
-        "storagebucket"
-      ]
-    }];
+    string source = 1;
 
     // Path inside the source volume.
     //

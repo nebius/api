@@ -59,6 +59,9 @@ message FilesystemSpec {
     (buf.validate.field).required = true,
     (field_behavior) = IMMUTABLE
   ];
+
+  // Prevents deletion whilst set
+  bool forbid_deletion = 7;
 }
 
 message FilesystemStatus {

@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+package nebius.capacity.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/capacity/v1";
+option java_multiple_files = true;
+option java_outer_classname = "ResourceAdviceProto";
+option java_package = "ai.nebius.pub.capacity.v1";
+
+// ResourceAdvice is a virtual resource representing the availability
+// of a specific technical configuration in a specific scope.
+message ResourceAdvice {
+  option (resource_behavior) = UNNAMED;
+
+  // Standard metadata. parent_id is the User's Tenant/Project NID.
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["tenant"]
+    }
+  ];
+
+  // Identifiers for the capacity scope and technical configuration.
+  ResourceAdviceSpec spec = 2 [(buf.validate.field).required = true];
+
+  // The current state of availability, including quotas and data freshness.
+  ResourceAdviceStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+// Resource Advice specification.
+message ResourceAdviceSpec {
+  // Geographical region identifier.
+  string region = 1 [(field_behavior) = IMMUTABLE];
+
+  // Data center fabric or cluster identifier.
+  string fabric = 2 [(field_behavior) = IMMUTABLE];
+
+  // Details specific to the type of resource being advised.
+  oneof resource_details {
+    ComputeInstanceDetails compute_instance = 10;
+  }
+}
+
+// Details for Compute/GPU capacity.
+message ComputeInstanceDetails {
+  // Preset details.
+  message Preset {
+    // All resources existing in a preset.
+    message Resources {
+      // Number of vCPUs.
+      int32 vcpu_count = 1;
+
+      // Memory size.
+      int32 memory_gibibytes = 2;
+
+      // Number of GPU cores.
+      int32 gpu_count = 3;
+    }
+
+    // Name of the preset (e.g., "8gpu-128vcpu-1600gb").
+    string name = 1;
+
+    // Resources for the specified preset.
+    Resources resources = 2;
+  }
+
+  // Specific platform. Example: "gpu-h200-sxm".
+  string platform = 1 [(field_behavior) = IMMUTABLE];
+
+  // The specific VM preset this advice applies to.
+  Preset preset = 2 [(field_behavior) = IMMUTABLE];
+
+  // GPU memory size.
+  int32 gpu_memory_gigabytes = 3;
+}
+
+// Resource Advice status.
+message ResourceAdviceStatus {
+  // Shows the available resources.
+  message Availability {
+    // Shows if data could be trusted.
+    enum DataState {
+      // Shouldn't ever happen.
+      DATA_STATE_UNSPECIFIED = 0;
+
+      // Data is relevant and reflects current state of the system.
+      DATA_STATE_FRESH = 1;
+
+      // Data is not relevant anymore as it was fetched long time ago.
+      DATA_STATE_STALE = 2;
+
+      // Failed to retrieve data.
+      DATA_STATE_UNKNOWN = 10;
+    }
+
+    // Reflects relevance of the data.
+    DataState data_state = 1;
+
+    // Current units that can be allocated immediately (clipped by quota).
+    uint32 available = 2;
+
+    // The user's maximum quota limit for this resource type.
+    uint32 limit = 4;
+
+    // The timestamp of the actual infrastructure measurement.
+    google.protobuf.Timestamp effective_at = 10;
+  }
+
+  // Capacity for reserved/guaranteed resources through Capacity Blocks.
+  Availability reserved = 1;
+
+  // Capacity for regular on-demand resources.
+  Availability on_demand = 2;
+
+  // Capacity for preemptible/spot resources.
+  Availability preemptible = 3;
+}
