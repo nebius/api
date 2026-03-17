@@ -47,6 +47,9 @@ extend google.protobuf.MethodOptions {
   //
   // Read `MethodBehavior` enum for more details and examples.
   repeated MethodBehavior method_behavior = 1197;
+
+  // Overrides for some settings for fields of this method's input.
+  repeated SubfieldSettings request_fields = 1198;
 }
 
 extend google.protobuf.MessageOptions {
@@ -86,6 +89,9 @@ extend google.protobuf.FieldOptions {
   // in the NID itself.
   // See `NIDFieldSettings` for more details.
   NIDFieldSettings nid = 1196;
+
+  // Overrides for some settings for subfields of this field.
+  repeated SubfieldSettings subfield_settings = 1197;
 }
 
 extend google.protobuf.OneofOptions {
@@ -164,6 +170,9 @@ enum FieldBehavior {
 
   // This indicates that the field can't be changed during a resource update.
   // Changing the field value will cause an `INVALID_ARGUMENT` error.
+  // For message fields, this applies to the field itself. Nested immutable
+  // fields do not make a mutable parent message immutable, and such a parent
+  // message may still be cleared.
   // Resource recreate requires a change of the field value.
   IMMUTABLE = 2;
 
@@ -215,12 +224,12 @@ message DeprecationDetails {
 
 message NIDFieldSettings {
   // Fields annotated with this option are treated as NIDs.
-  // `resource` lists allowed NID resource types (prefixes). Leave empty to accept any type.
+  // `resource` lists allowed NID resource types (prefixes). Leave empty or set to `*` to accept any type.
   // Validation only produces warnings.
   repeated string resource = 1;
 
   // For metadata fields, `parent_resource` lists allowed parent resource types for `metadata.parent_id`.
-  // Leave empty to allow any type. Validation only produces warnings.
+  // Leave empty or set to `*` to allow any type. Validation only produces warnings.
   // Typically set on the resource message; request-level overrides are supported.
   repeated string parent_resource = 2;
 }
@@ -250,4 +259,47 @@ enum MethodBehavior {
   // method. For instance, it can be used for long-running operations that
   // don't return any resource, or for resource deletion operations.
   METHOD_WITHOUT_GET = 4;
+}
+
+// SubfieldSettings describes overrides for some settings for subfields of a
+// field. Overrides are applied to fields in order of appearance, so the first
+// matching override is applied, and the rest are ignored.
+//
+// Example:
+// ```protobuf
+// message MyMessage {
+//   string field1 = 1;
+// }
+// message MyMessage2 {
+//   MyMessage field2 = 1 [(subfield_settings) = { field_path: "field1", is_required: true }];
+// }
+// ```
+// In this example, `field1` in `MyMessage2` is required, even if it is not
+// required in `MyMessage`.
+// The following example will override the setting again:
+// ```protobuf
+// service MyService {
+//   rpc MyMethod(MyMessage2) returns (MyMessage2) {
+//     option (method_behavior) = METHOD_UPDATER;
+//     option (request_fields) = { field_path: "field2.field1", is_required: false };
+//   }
+// }
+// ```
+// In this example, `field1` in `MyMessage2` is not required for the `MyMethod`,
+// even if it is required in `MyMessage2`.
+message SubfieldSettings {
+  // Subfield path in the message, for example `metadata.parent_id` or `metadata.name`.
+  // Must be a valid SelectMask.
+  // May match several fields, if necessary. For example, `some.*.subfield` or
+  // `some.(subfield,another_field)`.
+  string field_path = 1;
+
+  // For fields annotated with this option, values are treated as NIDs and
+  // warnings are emitted when they are not valid. These warnings are separate from server-side validation.
+  NIDFieldSettings nid = 2;
+
+  // Mark a field as required, even if it is not required in the message it contains.
+  // Unlike cel expressions, this setting can be reflected in tools documentation and
+  // help messages.
+  optional bool is_required = 4;
 }

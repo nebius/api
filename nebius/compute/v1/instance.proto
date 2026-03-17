@@ -42,7 +42,7 @@ message InstanceSpec {
   }];
 
   // Specified boot disk attached to the instance.
-  AttachedDiskSpec boot_disk = 5 [(field_behavior) = IMMUTABLE];
+  AttachedDiskSpec boot_disk = 5;
 
   // List of additional data disks attached to the instance beyond the boot disk.
   repeated AttachedDiskSpec secondary_disks = 6;
@@ -87,6 +87,14 @@ message InstanceSpec {
   }];
 
   ReservationPolicy reservation_policy = 23;
+
+  // Local disks are meaningfully different from regular (remote) disks:
+  // they are provided by the underlying host and are tied to a particular VM run.
+  // Local disk data is not preserved across Stop-Start initiated via Compute API.
+  // Local disks are not provided by default. To get them, explicitly request them via this field.
+  // Availability depends on the selected platform, preset and region.
+  // Changing this field will result in disks change and content loss, but only after stop and start the instance.
+  LocalDisksSpec local_disks = 24;
 }
 
 message PreemptibleSpec {
@@ -271,4 +279,24 @@ message ReservationPolicy {
 
   // Capacity block groups, order matters
   repeated string reservation_ids = 2;
+}
+
+message LocalDisksSpec {
+  oneof request {
+    option (buf.validate.oneof).required = true;
+
+    // Requests passthrough local disks from the host.
+    // Topology of the provided disks is preserved during stop and start
+    // for every instance of a specific platform and preset in the region.
+    PassthroughGroupRequest passthrough_group = 1;
+  }
+}
+
+message PassthroughGroupRequest {
+  // Passthrough local disks from the underlying host.
+  //
+  // Devices are expected to appear in the guest as NVMe devices (nvme0, nvme1, ...),
+  // but the exact number depends on the preset.
+  // Enabled only when this field is explicitly set.
+  bool requested = 1;
 }

@@ -14,7 +14,7 @@ enum StorageClass {
 
   ENHANCED_THROUGHPUT = 2;
 
-  INTELLIGENT_TIERING = 3;
+  INTELLIGENT = 3;
 }
 
 enum VersioningPolicy {
