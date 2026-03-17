@@ -38,16 +38,20 @@ message Zone {
 // DNS Zone specification
 message ZoneSpec {
   // Fully qualified domain name of this zone, including `.` at the end
-  string domain_name = 1 [(buf.validate.field) = {
-    cel: [
-      {
-        id: "domain_name_format"
-        message: "domain_name must be a fully-qualified domain name with '.' at the end, e.g. 'x.y.z.'"
-        expression: "size(this) < 253 && this.matches('^[a-z0-9][-a-z0-9.]*[.]$')"
-      }
-    ]
-    required: true
-  }];
+  // Cannot be changed after creating the zone
+  string domain_name = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "domain_name_format"
+          message: "domain_name must be a fully-qualified domain name with '.' at the end, e.g. 'x.y.z.'"
+          expression: "size(this) < 253 && this.matches('^[a-z0-9][-a-z0-9.]*[.]$')"
+        }
+      ]
+      required: true
+    },
+    (field_behavior) = IMMUTABLE
+  ];
 
   // Scope for this zone
   // The scope is chosen at zone creation time and cannot be changed, but scope's attributes can sometimes be changed

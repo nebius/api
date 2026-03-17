@@ -34,6 +34,8 @@ message BucketSpec {
   //  * enabled <-> suspended
   VersioningPolicy versioning_policy = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
 
+  reserved 3;
+
   // Maximum bucket size.
   // Zero means unlimited.
   // Actual limit can be lower if customer doesn't have enough quota.
@@ -49,16 +51,7 @@ message BucketSpec {
   // If not set - STANDARD is used as a default storage class.
   StorageClass default_storage_class = 9;
 
-  // Storage class to override any other storage class of uploading objects. It overrides the storage class regardless
-  // of how the original storage class was specified - either the default storage class
-  // or the one provided via the `x-amz-storage-class` header.
-  StorageClass override_storage_class = 10 [
-    deprecated = true,
-    (field_deprecation_details) = {
-      effective_at: "2025-12-01"
-      description: "Use `default_storage_class` with `force_storage_class` instead"
-    }
-  ];
+  reserved 10;
 
   // Flag to force usage of default_storage_class, ignoring `x-amz-storage-class` header.
   bool force_storage_class = 11;

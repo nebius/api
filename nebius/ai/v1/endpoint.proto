@@ -139,7 +139,8 @@ message EndpointSpec {
   message VolumeMount {
     // Source of the volume mount.
     //
-    // Can be a name of an ID of Nebius Storage bucket or filesystem.
+    // Can be a name or an ID of Nebius Storage bucket or filesystem,
+    // or an S3 URI (e.g. "s3://bucket-name") when using external S3 storage.
     string source = 1;
 
     // Path inside the source volume.
@@ -155,6 +156,11 @@ message EndpointSpec {
     // Mount mode.
     Mode mode = 4 [(buf.validate.field).required = true];
 
+    // Source Config
+    oneof source_config {
+      S3Config s3_config = 5;
+    }
+
     // Mode that will be used to mount the volume.
     enum Mode {
       MODE_UNSPECIFIED = 0;
@@ -164,6 +170,45 @@ message EndpointSpec {
 
       // Read-write mode.
       READ_WRITE = 2;
+    }
+
+    // Config for accessing an external S3-compatible storage.
+    //
+    // The bucket name is specified in the `source` field as an S3 URI.
+    message S3Config {
+      // S3-compatible endpoint URL (e.g. "https://s3.amazonaws.com").
+      string endpoint = 1 [(buf.validate.field).required = true];
+
+      reserved 2;
+
+      reserved "bucket";
+
+      // S3 region.
+      string region = 3 [(buf.validate.field).required = true];
+
+      // Authentication method.
+      oneof auth {
+        // Inline S3 credentials.
+        S3Credentials credentials = 4;
+      }
+
+      // Inline S3 credentials.
+      message S3Credentials {
+        // Access key ID.
+        string access_key_id = 1 [
+          (buf.validate.field).required = true,
+          (sensitive) = true
+        ];
+
+        // Secret access key.
+        string secret_access_key = 2 [
+          (buf.validate.field).required = true,
+          (sensitive) = true
+        ];
+
+        // Session token (optional, for temporary credentials).
+        string session_token = 3 [(sensitive) = true];
+      }
     }
   }
 

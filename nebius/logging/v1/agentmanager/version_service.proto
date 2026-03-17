@@ -129,6 +129,15 @@ message ModulesHealth {
 
   // Health status of the vm service logs pipeline module.
   ModuleHealth vm_service_logs_pipeline = 7;
+
+  // Health status of the compute GPU logs pipeline module.
+  ModuleHealth compute_gpu_logs_pipeline = 8;
+
+  // Health status of the journald pipeline module.
+  ModuleHealth journald_pipeline = 9;
+
+  // Health status of the NCCL metrics pipeline module.
+  ModuleHealth nccl_metrics_pipeline = 10;
 }
 
 // Health check logs information for monitoring disk usage.
