@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package nebius.compute.v1;
 
+import "buf/validate/validate.proto";
+import "google/rpc/status.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
@@ -22,6 +24,10 @@ service InstanceService {
 
   // Retrieves detailed information about a specific VM instance by its parent and name.
   rpc GetByName(common.v1.GetByNameRequest) returns (Instance);
+
+  // Retrieves detailed information about specific VMs by their IDs.
+  // If instance cannot be retrieved (e.g. not found) error is returned in place of instance instead.
+  rpc BatchGet(BatchGetRequest) returns (BatchGetResponse);
 
   // Lists all VM instances within a specified parent.
   rpc List(ListInstancesRequest) returns (ListInstancesResponse);
@@ -87,4 +93,27 @@ message StartInstanceRequest {
 
 message StopInstanceRequest {
   string id = 1;
+}
+
+message BatchGetRequest {
+  // List of instances to fetch.
+  repeated string instance_ids = 1 [(buf.validate.field) = {
+    repeated: {max_items: 1000}
+    required: true
+  }];
+}
+
+message BatchGetResponse {
+  message BatchGetResult {
+    oneof result {
+      // Will be set if we successfully fetched instance info.
+      Instance instance = 1;
+
+      // Will be set if any error happened during instance info fetch (not found, permission denied).
+      google.rpc.Status error = 2;
+    }
+  }
+
+  // Map where key is instance id from original request array.
+  map<string, BatchGetResult> items = 1;
 }
