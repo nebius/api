@@ -141,6 +141,10 @@ message NodeTemplate {
 
   // reservation_policy is an interface of the "capacity block" (or "capacity block group") mechanism of Nebius Compute.
   ReservationPolicy reservation_policy = 18;
+
+  // local_disks enables the provisioning of fast local drives.
+  // This type of storage is strictly ephemeral: on node restart, all data is erased, similar to RAM.
+  LocalDisksSpec local_disks = 19;
 }
 
 message NodeMetadataTemplate {
@@ -382,6 +386,41 @@ message ReservationPolicy {
 
   // Capacity block groups, order matters
   repeated string reservation_ids = 2;
+}
+
+message LocalDisksSpec {
+  oneof request {
+    option (buf.validate.oneof).required = true;
+
+    // Requests passthrough local disks from the host.
+    // Topology of the provided disks is preserved during stop and start
+    // for every instance of a specific platform and preset in the region.
+    PassthroughGroupRequest passthrough_group = 1;
+  }
+
+  // config defines actions that managed Kubernetes service performs on mounted local disks
+  // to provide them inside Kubernetes cluster with a convenient interface.
+  LocalDisksSpecConfig config = 101 [(buf.validate.field).required = true];
+}
+
+message PassthroughGroupRequest {
+  // Passthrough local disks from the underlying host.
+  //
+  // Devices are expected to appear in the guest as NVMe devices (nvme0, nvme1, ...),
+  // but the exact number depends on the preset.
+  // Enabled only when this field is explicitly set.
+  bool requested = 1;
+}
+
+// LocalDisksSpecConfig defines actions that managed Kubernetes service performs on mounted local disks
+// to provide them inside Kubernetes cluster with a convenient interface.
+message LocalDisksSpecConfig {
+  oneof type {
+    option (buf.validate.oneof).required = true;
+
+    // none: "do nothing" - local disks will be provisioned as on a regular compute instance.
+    bool none = 1;
+  }
 }
 
 message NodeGroupStatus {
