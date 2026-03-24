@@ -52,10 +52,10 @@ message ImageSpec {
   string image_family_human_readable = 7 [(field_behavior) = IMMUTABLE];
 
   // list of platforms where this image is recommended to use
-  repeated string recommended_platforms = 8 [(field_behavior) = IMMUTABLE];
+  repeated string recommended_platforms = 8;
 
   // list of platforms where this image is not supported with explanation
-  map<string, string> unsupported_platforms = 9 [(field_behavior) = IMMUTABLE];
+  map<string, string> unsupported_platforms = 9;
 }
 
 message ImageStatus {
