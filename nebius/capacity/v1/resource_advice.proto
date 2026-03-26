@@ -98,6 +98,27 @@ message ResourceAdviceStatus {
       DATA_STATE_UNKNOWN = 10;
     }
 
+    // Indicates the likelihood of a successful allocation.
+    enum AvailabilityLevel {
+      // Shouldn't ever happen.
+      AVAILABILITY_LEVEL_UNSPECIFIED = 0;
+
+      // Plenty of room for large requests.
+      AVAILABILITY_LEVEL_HIGH = 1;
+
+      // Room for medium requests.
+      AVAILABILITY_LEVEL_MEDIUM = 2;
+
+      // High risk of Not Enough Resources (NER).
+      AVAILABILITY_LEVEL_LOW = 3;
+
+      // Not enough quota or capacity block on the customer's side.
+      AVAILABILITY_LEVEL_LIMIT_REACHED = 4;
+
+      // Failed to retrieve data.
+      AVAILABILITY_LEVEL_UNKNOWN = 5;
+    }
+
     // Reflects relevance of the data.
     DataState data_state = 1;
 
@@ -106,6 +127,9 @@ message ResourceAdviceStatus {
 
     // The user's maximum quota limit for this resource type.
     uint32 limit = 4;
+
+    // Categorical indicator for resources availability.
+    AvailabilityLevel availability_level = 5;
 
     // The timestamp of the actual infrastructure measurement.
     google.protobuf.Timestamp effective_at = 10;

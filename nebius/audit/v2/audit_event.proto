@@ -4,6 +4,7 @@ package nebius.audit.v2;
 
 import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
 import "nebius/audit/v2/authentication.proto";
 import "nebius/audit/v2/authorization.proto";
 import "nebius/audit/v2/region.proto";
@@ -63,5 +64,8 @@ message AuditEvent {
   Status status = 16 [(buf.validate.field).required = true];
 
   // Region of an application
-  Region project_region = 17;
+  Region project_region = 17 [
+    deprecated = true,
+    (field_deprecation_details) = {description: "Region should be tied to a resource, not to a project."}
+  ];
 }
