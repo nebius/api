@@ -97,7 +97,13 @@ message JobSpec {
     string name = 1 [(buf.validate.field).required = true];
 
     // Environment variable value.
+    // Mutually exclusive with `mysterybox_secret`.
     string value = 2 [(sensitive) = true];
+
+    // Secret storing the environment variable value.
+    // Mutually exclusive with `value`.
+    // Must reference a secret payload containing a key matching `name`.
+    MysteryBoxSecretRef mysterybox_secret = 3;
   }
 
   message Port {
@@ -192,6 +198,9 @@ message JobSpec {
       oneof auth {
         // Inline S3 credentials.
         S3Credentials credentials = 4;
+
+        // Reference to a MysteryBox secret containing S3 credentials.
+        MysteryBoxSecretRef mysterybox_secret = 5;
       }
 
       // Inline S3 credentials.
@@ -210,6 +219,25 @@ message JobSpec {
 
         // Session token (optional, for temporary credentials).
         string session_token = 3 [(sensitive) = true];
+      }
+
+      // Reference to a MysteryBox secret.
+      message MysteryBoxSecretRef {
+        // MysteryBox secret ID.
+        string secret_id = 1 [
+          (buf.validate.field).required = true,
+          (nid) = {
+            resource: ["mbsec"]
+          }
+        ];
+
+        // MysteryBox secret version ID.
+        string version_id = 2 [
+          (buf.validate.field).required = true,
+          (nid) = {
+            resource: ["mbsecver"]
+          }
+        ];
       }
     }
   }
@@ -232,6 +260,25 @@ message JobSpec {
     // Secret version storing the registry credentials.
     // Must have keys "REGISTRY_USERNAME" and "REGISTRY_PASSWORD".
     string mysterybox_secret_version = 3;
+  }
+
+  // Reference to a MysteryBox secret.
+  message MysteryBoxSecretRef {
+    // MysteryBox secret ID.
+    string secret_id = 1 [
+      (buf.validate.field).required = true,
+      (nid) = {
+        resource: ["mbsec"]
+      }
+    ];
+
+    // MysteryBox secret version ID.
+    string version_id = 2 [
+      (buf.validate.field).required = true,
+      (nid) = {
+        resource: ["mbsecver"]
+      }
+    ];
   }
 }
 

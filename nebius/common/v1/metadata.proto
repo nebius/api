@@ -40,8 +40,8 @@ message ResourceMetadata {
   map<string, string> labels = 7;
 }
 
-// if service supports uniqueness of ResourceMetadata.name within tuple (scope) <resource_type, parent_id>
-// it also must have grpc method GetByName
+// This message is used as the request for the `GetByName` method in services supporting uniqueness
+// of `ResourceMetadata.name` within tuple (scope) <resource_type, `parent_id`>.
 message GetByNameRequest {
   string parent_id = 1 [(buf.validate.field).required = true];
 
