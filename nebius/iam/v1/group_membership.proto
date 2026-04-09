@@ -37,6 +37,8 @@ message GroupMembershipStatus {
 
     ServiceAccountStatus service_account_status = 2;
   }
+
+  common.v1.ResourceMetadata group_member_metadata = 3;
 }
 
 message GroupMemberKind {
