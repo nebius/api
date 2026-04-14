@@ -38,11 +38,19 @@ message ImageSpec {
   // part of identifier into the image family
   string version = 3 [(field_behavior) = IMMUTABLE];
 
+  message SourceStorage {
+    string bucket_name = 1;
+
+    string object_name = 2;
+  }
+
   oneof source {
     option (buf.validate.oneof).required = true;
 
     // ID of the disk to create the image from
     string source_disk_id = 4 [(field_behavior) = IMMUTABLE];
+
+    SourceStorage source_storage = 11 [(field_behavior) = IMMUTABLE];
   }
 
   // CPU architecture supported by the image
