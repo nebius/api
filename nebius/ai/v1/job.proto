@@ -4,6 +4,7 @@ package nebius.ai.v1;
 
 import "buf/validate/validate.proto";
 import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/compute/v1/disk.proto";
@@ -298,6 +299,12 @@ message JobStatus {
 
   // Details of the job's state.
   JobStateDetails state_details = 21;
+
+  // Time when the job workload started.
+  google.protobuf.Timestamp started_at = 22;
+
+  // Time when the job workload finished.
+  google.protobuf.Timestamp finished_at = 23;
 
   // Job state.
   enum State {
