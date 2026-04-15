@@ -39,7 +39,16 @@ service ClusterService {
 }
 
 message CreateClusterRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field) = {
+    cel: [
+      {
+        id: "metadata_name"
+        message: "'name' must be 1 to 63 characters long and use only letters, digits, '-', or '.', starting and ending with a letter or digit"
+        expression: "size(this.name) >= 1 && size(this.name) <= 63 && this.name.matches('^(([A-Za-z0-9][-A-Za-z0-9.]*)?[A-Za-z0-9])?$')"
+      }
+    ]
+    required: true
+  }];
 
   ClusterSpec spec = 2 [(buf.validate.field).required = true];
 }
