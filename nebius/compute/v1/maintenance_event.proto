@@ -32,4 +32,6 @@ message MaintenanceEventStatus {
   google.protobuf.Timestamp sla_deadline_ts = 7; // Time when the instance will be force stopped
 
   string support_center_ticket_id = 9; // Ticket key, can be transformed into url where support is talking with the client
+
+  string maintenance_reason = 12; // Reason of the maintenance
 }
