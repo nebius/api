@@ -63,6 +63,9 @@
 * cpl.storage.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.storage.v1.BucketService](nebius/storage/v1/bucket_service.proto)
+* cpl.teplo.api.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+  * [nebius.logging.v1.LogExportService](nebius/logging/v1/log_export_service.proto)
 * deployment-manager.mkt.api.nebius.cloud:443
   * [nebius.applications.v1alpha1.K8sReleaseService](nebius/applications/v1alpha1/k8s_release_service.proto)
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
