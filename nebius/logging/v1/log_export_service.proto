@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package nebius.logging.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/empty.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/logging/v1/log_export.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/logging/v1";
+option java_multiple_files = true;
+option java_outer_classname = "LogExportServiceProto";
+option java_package = "ai.nebius.pub.logging.v1";
+
+// Export logs to a specified destination.
+service LogExportService {
+  option (api_service_name) = "cpl.teplo";
+
+  // Create a new log export
+  rpc ExportLogs(ExportLogsRequest) returns (common.v1.Operation);
+
+  // Get the status of a single export operation by its ID.
+  rpc GetExportInfo(GetExportInfoRequest) returns (ExportStatus);
+
+  // List export operations in the container given by `--parent-id`.
+  rpc ListExports(ListExportsRequest) returns (ListExportsResponse);
+
+  // Cancel an in-progress export operation by its ID. Has no effect on exports that have already finished or failed.
+  rpc CancelExportLogs(CancelExportLogsRequest) returns (google.protobuf.Empty);
+}
+
+message ExportLogsRequest {
+  // What to export and where to write it.
+  ExportParams params = 1 [(buf.validate.field).required = true];
+
+  // Project ID whose logs are exported. Also used as the default owner of the destination bucket when the bucket is
+  // resolved by name and `--bucket-parent-id` is not set.
+  string parent_id = 2 [(buf.validate.field).required = true];
+}
+
+message CancelExportLogsRequest {
+  // ID of the export operation to cancel, as returned by `create` or shown by `list`.
+  string export_operation_id = 1 [(buf.validate.field).required = true];
+}
+
+message ListExportsRequest {
+  // Project ID whose export operations are listed.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Listing continuation token. Pass an empty string to start listing from the first page.
+  string page_token = 2;
+
+  // Maximum number of export operations to return in a single response page.
+  int64 page_size = 3;
+
+  // Sort order for the returned export operations by creation time (ascending or descending).
+  OrderBy order_by = 4;
+}
+
+message ListExportsResponse {
+  // List of export operations on this result page.
+  repeated ExportStatus exports = 1;
+
+  // Listing continuation token for the next page of results.
+  string next_page_token = 2;
+}
+
+message GetExportInfoRequest {
+  // ID of the export operation to look up, as returned by `create` or shown by `list`.
+  string export_operation_id = 1 [(buf.validate.field).required = true];
+}

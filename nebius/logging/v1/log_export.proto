@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package nebius.logging.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/common/v1/operation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/logging/v1";
+option java_multiple_files = true;
+option java_outer_classname = "LogExportProto";
+option java_package = "ai.nebius.pub.logging.v1";
+
+// Sort order for `list` output, applied to export operations by creation time.
+enum OrderBy {
+  ORDER_BY_UNSPECIFIED = 0;
+
+  ORDER_BY_ASC = 1;
+
+  ORDER_BY_DESC = 2;
+}
+
+message ExportStatus {
+  // Long-running operation backing the export.
+  common.v1.Operation operation = 1;
+
+  // Path to the resulting objects in the destination bucket, as an ordered
+  // sequence of segments (join with `/` to get the full path). Individual objects
+  // appear below this prefix under `<timestamp>/<segment>.<ext>` (e.g.
+  // `logs/oplogexport-.../2025-12-21-20:00:00/0.parquet`).
+  repeated string result_path = 2;
+}
+
+// Output file format for exported log data, chosen via `--log-format`.
+enum LogsExportFormat {
+  EXPORT_FORMAT_UNSUPPORTED = 0;
+
+  // JSON lines (one JSON object per line) compressed with gzip. Written as `.json.gz`.
+  JSON_GZIP = 1;
+
+  // Apache Parquet. Written as `.parquet`.
+  PARQUET = 2;
+}
+
+message ExportFilter {
+  // Start of the time range to export, ISO 8601 (e.g. `2025-12-21T20:00:00Z`).
+  google.protobuf.Timestamp from = 1 [(buf.validate.field).required = true];
+
+  // End of the time range to export, ISO 8601 (e.g. `2025-12-22T00:00:00Z`).
+  google.protobuf.Timestamp to = 2 [(buf.validate.field).required = true];
+
+  // LogQL match expression selecting log entries to export.
+  string match_expression = 3;
+}
+
+message LogsExport {
+  // Time range and LogQL match expression selecting log entries to export.
+  ExportFilter filter = 1 [(buf.validate.field).required = true];
+
+  // Label names to include as columns in the exported data. Empty means export all labels.
+  repeated string export_labels = 2;
+
+  // Output file format.
+  LogsExportFormat format = 3 [(buf.validate.field).required = true];
+}
+
+message NebiusObjectStorageBucketByName {
+  // Name of the destination Object Storage bucket.
+  string name = 1 [(buf.validate.field).required = true];
+
+  // Project ID that owns the bucket. Required only when the bucket lives in a different project than `--parent-id`;
+  // defaults to `--parent-id` otherwise.
+  string parent_id = 2;
+}
+
+message NebiusObjectStorageDestination {
+  // Destination bucket, specified either by ID or by name within a project.
+  oneof bucket {
+    // ID of the destination Object Storage bucket.
+    string id = 1;
+
+    // Destination bucket.
+    NebiusObjectStorageBucketByName by_name = 2;
+  }
+
+  // Key prefix under which exported objects are written. Defaults to `logs/`.
+  string object_prefix = 3;
+}
+
+message ExportParams {
+  // What to export: the kind of source data and how to shape it.
+  oneof export_mode {
+    // Export log entries selected by a LogQL match expression.
+    LogsExport log = 2;
+  }
+
+  // Where to write the exported data.
+  oneof export_destination {
+    // Write the export to a Nebius Object Storage bucket.
+    NebiusObjectStorageDestination nebius_object_storage = 4;
+    // NebiusObjectStorageDestinationRegistered nebius_object_storage_registered = 5; // to be added later
+    // ObjectStorage object_storage = 6; // to be added later
+  }
+}

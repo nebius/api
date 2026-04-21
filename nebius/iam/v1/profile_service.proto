@@ -43,12 +43,16 @@ message UserProfile {
   }
 
   repeated UserTenantInfo tenants = 5;
+
+  UserAccountStatus.State user_account_state = 6;
 }
 
 message UserTenantInfo {
   string tenant_id = 1;
 
   string tenant_user_account_id = 2;
+
+  TenantUserAccountStatus.State tenant_user_account_state = 3;
 }
 
 message ServiceAccountProfile {

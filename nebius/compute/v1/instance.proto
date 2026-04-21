@@ -5,6 +5,7 @@ package nebius.compute.v1;
 import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
+import "nebius/compute/v1/disk.proto";
 import "nebius/compute/v1/network_interface.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
@@ -168,6 +169,44 @@ message AttachedDiskSpec {
     //   Obtain the current values via `DiskService.Get` and copy them verbatim.
     //   If `ManagedDisk.spec` differs from the current disk spec, the instance update will fail.
     ExistingDisk existing_disk = 2;
+
+    // Attach a managed disk.
+    //
+    // Lifecycle:
+    // - The disk is deleted when the instance is deleted.
+    //
+    // Semantics:
+    // - Specifying a ManagedDisk expresses an intent to have that managed disk attached.
+    // - If this intent cannot be satisfied, the entire operation fails.
+    // - You can check the intent status in `instance.status.disk_attachments`.
+    //
+    // Updates and matching:
+    // - Managed disks can be updated only via instance spec updates. Updates via DiskService are not allowed.
+    // - During updates, disks are matched by `name`.
+    //
+    // Renaming and data loss:
+    // - Changing the disk `name` triggers disk replacement (create a new disk and delete the old one),
+    //   which causes data loss.
+    // - To rename a managed disk safely:
+    //   1) switch it to ExistingDisk in the instance spec, and
+    //   2) update/rename it via DiskService.
+    //
+    // Conflicts:
+    // - Instance create/update fails if there is already a disk with the same `name`.
+    //   as requested by any ManagedDisk.
+    //
+    // Finding the disk ID:
+    // - The disk ID is available in `instance.status.disk_attachments` after it is created.
+    //   Use `DiskAttachmentStatus.name` to find the desired disk which matches `name`.
+    //
+    // Switching to an existing (non-managed) disk:
+    // - To preserve the disk after instance deletion, switch it to ExistingDisk in the instance spec,
+    //   use the disk ID from `instance.status.disk_attachments`.
+    //
+    // Deletion protection:
+    // - Switching ExistingDisk to ManagedDisk fails if `Disk.spec.deletion_protection` is enabled.
+    // - Deleting an instance that has a ManagedDisk fails if `Disk.spec.deletion_protection` is enabled.
+    ManagedDisk managed_disk = 4;
   }
 
   // Specifies the user-defined identifier, allowing to use '/dev/disk/by-id/virtio-{device_id}' as a device path in mount command.
@@ -178,6 +217,19 @@ message AttachedDiskSpec {
 
 message ExistingDisk {
   string id = 1 [(buf.validate.field).required = true];
+}
+
+message ManagedDisk {
+  // Name of a dependent disk.
+  // Use it to convert an ExistingDisk to a dependent disk.
+  // Changing the name will replace the disk and cause data loss.
+  string name = 1 [(buf.validate.field).required = true];
+
+  // Labels associated with disk resource.
+  map<string, string> labels = 2;
+
+  // Specification of a dependent disk to be created.
+  DiskSpec spec = 4 [(buf.validate.field).required = true];
 }
 
 message ExistingFilesystem {
@@ -245,6 +297,30 @@ message InstanceStatus {
   }
 
   string reservation_id = 12;
+
+  // Status of the requested disk attachments.
+  repeated DiskAttachmentStatus disk_attachments = 13;
+}
+
+message DiskAttachmentStatus {
+  // Disk ID.
+  // - For ExistingDisk, this is the referenced disk ID.
+  // - For ManagedDisk, may be empty while the attachment intent is still pending.
+  string id = 1;
+
+  // Disk name used to match this status entry with the desired attachment
+  // from the instance specification.
+  //
+  // Consistency:
+  // - For ManagedDisk, this value is derived from the instance spec (ManagedDisk.name).
+  // - For ExistingDisk, this value is derived from the disk resource name and may lag behind
+  //   in case of renaming. It is updated asynchronously and is eventually consistent.
+  string name = 2;
+
+  // Indicates whether this attachment is managed by the instance lifecycle.
+  // If true, the disk is expected to be deleted when the instance is deleted.
+  // If false, the disk is preserved and only detached on instance deletion.
+  bool is_managed = 3;
 }
 
 enum InstanceRecoveryPolicy {

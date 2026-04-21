@@ -24,7 +24,9 @@ service FederationCertificateService {
   rpc Update(UpdateFederationCertificateRequest) returns (common.v1.Operation);
 
   // Replaces all federation's certificates with provided in the request. Certificates which are not presented will be removed.
-  rpc UpdateBulk(UpdateBulkFederationCertificateRequest) returns (common.v1.Operation);
+  rpc UpdateBulk(UpdateBulkFederationCertificateRequest) returns (common.v1.Operation) {
+    option (method_behavior) = METHOD_UPDATER;
+  }
 
   rpc Delete(DeleteFederationCertificateRequest) returns (common.v1.Operation);
 }
