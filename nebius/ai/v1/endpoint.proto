@@ -24,6 +24,16 @@ message Endpoint {
 
 // EndpointSpec defines a endpoint that will be run.
 message EndpointSpec {
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "auth_token_mysterybox_secret_if_set"
+        message: "auth_token_mysterybox_secret must set secret_id or version_id"
+        expression: "!has(this.auth_token_mysterybox_secret) || this.auth_token_mysterybox_secret.secret_id != '' || this.auth_token_mysterybox_secret.version_id != ''"
+      }
+    ]
+  };
+
   // The Docker image to use for the endpoint's container.
   string image = 1 [(buf.validate.field).required = true];
 
@@ -97,6 +107,16 @@ message EndpointSpec {
 
   // EnvironmentVariable defines an environment variable for the endpoint's container.
   message EnvironmentVariable {
+    option (buf.validate.message) = {
+      cel: [
+        {
+          id: "mysterybox_secret_if_set"
+          message: "mysterybox_secret must set secret_id or version_id"
+          expression: "!has(this.mysterybox_secret) || this.mysterybox_secret.secret_id != '' || this.mysterybox_secret.version_id != ''"
+        }
+      ]
+    };
+
     // The name of the environment variable.
     string name = 1 [(buf.validate.field).required = true];
 
@@ -188,6 +208,16 @@ message EndpointSpec {
     //
     // The bucket name is specified in the `source` field as an S3 URI.
     message S3Config {
+      option (buf.validate.message) = {
+        cel: [
+          {
+            id: "mysterybox_secret_if_set"
+            message: "mysterybox_secret must set secret_id or version_id"
+            expression: "!has(this.mysterybox_secret) || this.mysterybox_secret.secret_id != '' || this.mysterybox_secret.version_id != ''"
+          }
+        ]
+      };
+
       // S3-compatible endpoint URL (e.g. "https://s3.amazonaws.com").
       string endpoint = 1 [(buf.validate.field).required = true];
 
@@ -228,20 +258,14 @@ message EndpointSpec {
       // Reference to a MysteryBox secret.
       message MysteryBoxSecretRef {
         // MysteryBox secret ID.
-        string secret_id = 1 [
-          (buf.validate.field).required = true,
-          (nid) = {
-            resource: ["mbsec"]
-          }
-        ];
+        string secret_id = 1 [(nid) = {
+          resource: ["mbsec"]
+        }];
 
         // MysteryBox secret version ID.
-        string version_id = 2 [
-          (buf.validate.field).required = true,
-          (nid) = {
-            resource: ["mbsecver"]
-          }
-        ];
+        string version_id = 2 [(nid) = {
+          resource: ["mbsecver"]
+        }];
       }
     }
   }
@@ -269,20 +293,14 @@ message EndpointSpec {
   // Reference to a MysteryBox secret.
   message MysteryBoxSecretRef {
     // MysteryBox secret ID.
-    string secret_id = 1 [
-      (buf.validate.field).required = true,
-      (nid) = {
-        resource: ["mbsec"]
-      }
-    ];
+    string secret_id = 1 [(nid) = {
+      resource: ["mbsec"]
+    }];
 
     // MysteryBox secret version ID.
-    string version_id = 2 [
-      (buf.validate.field).required = true,
-      (nid) = {
-        resource: ["mbsecver"]
-      }
-    ];
+    string version_id = 2 [(nid) = {
+      resource: ["mbsecver"]
+    }];
   }
 }
 
