@@ -103,6 +103,7 @@
   * [nebius.iam.v1.TokenExchangeService](nebius/iam/v1/token_exchange_service.proto)
 * transfer.storage.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+  * [nebius.storage.v1.TransferService](nebius/storage/v1/transfer_service.proto)
   * [nebius.storage.v1alpha1.TransferService](nebius/storage/v1alpha1/transfer_service.proto)
 * vpc.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)

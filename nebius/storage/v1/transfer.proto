@@ -1,0 +1,465 @@
+syntax = "proto3";
+
+package nebius.storage.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
+option java_multiple_files = true;
+option java_outer_classname = "TransferProto";
+option java_package = "ai.nebius.pub.storage.v1";
+
+// Transfer that migrates data from other providers or across different regions of Nebius Object Storage.
+// Transfer consists of consecutive iterations where the service lists objects in the source bucket and
+// moves those that need to be transferred according to the specified overwrite strategy and touch unmanaged flag value.
+// After an iteration completes, the transfer will stop if its stop condition is met. Otherwise,
+// it will wait for the defined inter-iteration interval before starting the next iteration.
+message Transfer {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  TransferSpec spec = 2 [(buf.validate.field).required = true];
+
+  TransferStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message TransferSpec {
+  // Source from which the transfer reads data.
+  TransferSource source = 1 [(buf.validate.field).required = true];
+
+  // Destination to which the transfer writes data.
+  TransferDestination destination = 2 [(buf.validate.field).required = true];
+
+  // Limiters applied to source bucket operations. These limits include all operations
+  // required for transfer (HeadObject, GetObject, ListObjects). For details about
+  // which operations are used, see public documentation: http://docs.nebius.com/object-storage/transfer/quickstart#background.
+  //
+  // Note: Since the service performs comparable request volumes and data transfers
+  // to both source and destination, these limits will indirectly constrain
+  // destination operations as well.
+  Limiters limiters = 3;
+
+  message Limiters {
+    // Maximum bandwidth in bytes per second. If set to zero, default limit will be applied.
+    uint64 bandwidth_bytes_per_second = 1;
+
+    // Maximum number of requests per second. If set to zero, default limit will be applied.
+    uint64 requests_per_second = 2;
+  }
+
+  // The stop condition is checked after every iteration. If the condition is met, the transfer will stop.
+  oneof stop_condition {
+    option (buf.validate.oneof).required = true;
+
+    StopConditionAfterOneIteration after_one_iteration = 4 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+    StopConditionAfterNEmptyIterations after_n_empty_iterations = 5;
+
+    // Infinite transfers do not stop automatically and can be stopped manually by the user.
+    StopConditionInfinite infinite = 6 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+  }
+
+  message StopConditionAfterOneIteration {}
+
+  message StopConditionAfterNEmptyIterations {
+    // Number of consecutive iterations with zero transferred objects required to stop transfer.
+    uint32 empty_iterations_threshold = 1 [(buf.validate.field).required = true];
+  }
+
+  message StopConditionInfinite {}
+
+  // The time to wait since the previous iteration before starting the next one.
+  // Default is 15 minutes if not specified.
+  google.protobuf.Duration inter_iteration_interval = 7 [
+    (buf.validate.field) = {
+      duration: {
+        gte: {}
+      }
+    },
+    (field_behavior) = NON_EMPTY_DEFAULT
+  ];
+
+  // Overwrite strategy set logic of overwrite already existed objects in destination bucket.
+  OverwriteStrategy overwrite_strategy = 8 [
+    (field_behavior) = IMMUTABLE,
+    (buf.validate.field).required = true
+  ];
+
+  enum OverwriteStrategy {
+    OVERWRITE_STRATEGY_UNSPECIFIED = 0;
+
+    // Never overwrite objects that exist in the destination.
+    // If object exists in destination bucket, skip it.
+    // Safest option to prevent any data loss.
+    NEVER = 1;
+
+    // Overwrite only if source object is newer than destination.
+    // Comparison based on Last-Modified timestamp.
+    // Recommended for incremental sync scenarios.
+    // If touch_unmanaged flag isn't set, we do not overwrite objects that haven't been created by Data Transfer service.
+    IF_NEWER = 2;
+  }
+
+  // If touch_unmanaged flag is set, service will be allowed to overwrite and delete from destination objects that were not
+  // created by Data Transfer Service. If this flag is false, Data Transfer Service will never overwrite or delete objects
+  // that haven't been created by Data Transfer service.
+  bool touch_unmanaged = 10 [(field_behavior) = IMMUTABLE];
+}
+
+message TransferSource {
+  // Source storage provider configuration.
+  oneof provider {
+    option (buf.validate.oneof).required = true;
+
+    NebiusProvider nebius = 1;
+
+    S3CompatibleProvider s3_compatible = 2;
+
+    AzureBlobStorageProvider azure_blob_storage = 3;
+  }
+
+  // Prefix to filter objects in the source. Only objects whose keys start with this prefix will be transferred.
+  // During transfer, the resulting object key in the destination is computed
+  // by removing source.prefix from the original key and then prepending destination.prefix (if provided).
+  // Important: This transformation may result in an empty object key or one that exceeds allowed length limits.
+  // Use prefixes that guarantee valid resulting object keys for your objects after transformation.
+  string prefix = 4 [
+    (field_behavior) = IMMUTABLE,
+    (buf.validate.field) = {
+      string: {max_len: 1000}
+    }
+  ];
+
+  message NebiusProvider {
+    // Nebius region where the source bucket is located.
+    string region = 1 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field) = {
+        string: {max_len: 50}
+        required: true
+      }
+    ];
+
+    // Name of the source bucket.
+    string bucket_name = 2 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field) = {
+        string: {max_len: 100}
+        required: true
+      }
+    ];
+
+    // Credentials for accessing the source bucket. These credentials must have list and get permissions.
+    oneof credentials {
+      option (buf.validate.oneof).required = true;
+
+      TransferCredentialsAnonymous anonymous = 3 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+      TransferCredentialsAccessKey access_key = 4;
+    }
+  }
+
+  message S3CompatibleProvider {
+    // The endpoint must be in the form of a URL, starting with the protocol (https),
+    // followed by the endpoint address without a trailing slash.
+    // Example: "https://storage.some-cloud".
+    string endpoint = 1 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field) = {
+        string: {max_len: 1000}
+        required: true
+      }
+    ];
+
+    // S3-compatible provider region where source bucket is located.
+    string region = 2 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field) = {
+        string: {max_len: 50}
+        required: true
+      }
+    ];
+
+    // Name of the source bucket.
+    string bucket_name = 3 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field) = {
+        string: {max_len: 100}
+        required: true
+      }
+    ];
+
+    // Credentials for accessing the source bucket. These credentials must have list and get permissions.
+    oneof credentials {
+      option (buf.validate.oneof).required = true;
+
+      TransferCredentialsAnonymous anonymous = 4 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+      TransferCredentialsAccessKey access_key = 5;
+    }
+  }
+
+  message AzureBlobStorageProvider {
+    // The endpoint must be in the form of a URL, starting with the protocol (https),
+    // followed by the endpoint address without a trailing slash.
+    // Example: "https://storageaccountname.blob.core.windows.net".
+    string endpoint = 1 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field) = {
+        string: {max_len: 1000}
+        required: true
+      }
+    ];
+
+    // Name of the source Azure Blob Storage container.
+    string container_name = 2 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field) = {
+        string: {max_len: 100}
+        required: true
+      }
+    ];
+
+    // Credentials for accessing the source container. These credentials must have list and get permissions.
+    oneof credentials {
+      option (buf.validate.oneof).required = true;
+
+      TransferCredentialsAnonymous anonymous = 3 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+      TransferCredentialsAzureStorageAccount azure_storage_account = 4;
+    }
+  }
+}
+
+message TransferDestination {
+  // Destination storage provider configuration.
+  oneof provider {
+    option (buf.validate.oneof).required = true;
+
+    NebiusProvider nebius = 1;
+
+    S3CompatibleProvider s3_compatible = 2;
+  }
+
+  // Prefix to add to the beginning of each transferred object key in the destination.
+  // During transfer, the resulting object key in the destination is computed
+  // by removing source.prefix (if provided) from the original key and then prepending destination.prefix.
+  // Important: This transformation may result in an empty object key or one that exceeds allowed length limits.
+  // Use prefixes that guarantee valid resulting object keys for your objects after transformation.
+  string prefix = 3 [
+    (field_behavior) = IMMUTABLE,
+    (buf.validate.field) = {
+      string: {max_len: 1000}
+    }
+  ];
+
+  message NebiusProvider {
+    // Nebius region where the destination bucket is located.
+    string region = 1 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field) = {
+        string: {max_len: 50}
+        required: true
+      }
+    ];
+
+    // Name of the destination bucket.
+    string bucket_name = 2 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field) = {
+        string: {max_len: 100}
+        required: true
+      }
+    ];
+
+    // Credentials for accessing the destination bucket.
+    // These credentials must have head, write permissions.
+    oneof credentials {
+      option (buf.validate.oneof).required = true;
+
+      TransferCredentialsAccessKey access_key = 3;
+    }
+  }
+
+  message S3CompatibleProvider {
+    // The endpoint must be in the form of a URL, starting with the protocol (https),
+    // followed by the endpoint address without a trailing slash.
+    // Example: "https://storage.some-cloud".
+    string endpoint = 1 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field) = {
+        string: {max_len: 1000}
+        required: true
+      }
+    ];
+
+    // S3-compatible provider region where destination bucket is located.
+    string region = 2 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field) = {
+        string: {max_len: 50}
+        required: true
+      }
+    ];
+
+    // Name of the destination bucket.
+    string bucket_name = 3 [
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field) = {
+        string: {max_len: 100}
+        required: true
+      }
+    ];
+
+    // Credentials for accessing the destination bucket.
+    // These credentials must have head, write permissions.
+    oneof credentials {
+      option (buf.validate.oneof).required = true;
+
+      TransferCredentialsAnonymous anonymous = 4 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+      TransferCredentialsAccessKey access_key = 5;
+    }
+  }
+}
+
+message TransferCredentialsAnonymous {}
+
+message TransferCredentialsAccessKey {
+  // Access key ID.
+  string access_key_id = 1 [(buf.validate.field) = {
+    string: {max_len: 1000}
+    required: true
+  }];
+
+  // Secret access key.
+  string secret_access_key = 2 [
+    (sensitive) = true,
+    (field_behavior) = INPUT_ONLY,
+    (buf.validate.field) = {
+      string: {max_len: 1000}
+    }
+  ];
+}
+
+message TransferCredentialsAzureStorageAccount {
+  // Storage account name.
+  string account_name = 1 [(buf.validate.field) = {
+    string: {max_len: 1000}
+    required: true
+  }];
+
+  // Storage account access key.
+  string access_key = 2 [
+    (sensitive) = true,
+    (field_behavior) = INPUT_ONLY,
+    (buf.validate.field) = {
+      string: {max_len: 1000}
+    }
+  ];
+}
+
+message TransferStatus {
+  // Current transfer state.
+  State state = 1;
+
+  // Transfer state.
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    ACTIVE = 1;
+
+    STOPPING = 2;
+
+    STOPPED = 3;
+
+    FAILING = 4;
+
+    FAILED = 5;
+
+    DELETING = 6;
+  }
+
+  // Error information if the transfer has failed.
+  TransferError error = 2;
+
+  // If the transfer is suspended, transfer's suspension state becomes SUSPENDED.
+  SuspensionState suspension_state = 3;
+
+  // Transfer suspension state.
+  enum SuspensionState {
+    SUSPENSION_STATE_UNSPECIFIED = 0;
+
+    NOT_SUSPENDED = 1;
+
+    SUSPENDED = 2;
+  }
+
+  // If there is active iteration, its status will be given.
+  // If it is a new transfer that doesn't have iteration yet, nothing will be returned.
+  // Otherwise, last finished transaction will be returned.
+  TransferIteration last_iteration = 4;
+}
+
+message TransferIteration {
+  // Sequence number of the iteration in the transfer, starting from 1.
+  int64 sequence_number = 1;
+
+  // Current iteration state.
+  State state = 2;
+
+  // Iteration state.
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    IN_PROGRESS = 1;
+
+    COMPLETED = 2;
+
+    INTERRUPTED = 3;
+
+    FAILED = 4;
+  }
+
+  // Human-readable error description. Populated only if state is FAILED.
+  TransferError error = 3;
+
+  // Iteration start time.
+  google.protobuf.Timestamp start_time = 4;
+
+  // Iteration end time.
+  google.protobuf.Timestamp end_time = 5;
+
+  // Number of objects transferred during this iteration.
+  int64 objects_transferred_count = 6;
+
+  // Total size of objects transferred during this iteration.
+  int64 objects_transferred_size = 8;
+
+  // Average throughput in bytes per second during the iteration.
+  int64 average_throughput_bytes = 9;
+}
+
+message TransferError {
+  // Endpoint where the error occurred.
+  Origin origin = 1;
+
+  enum Origin {
+    ORIGIN_UNSPECIFIED = 0;
+
+    // Error originated from the source.
+    SOURCE = 1;
+
+    // Error originated from the destination.
+    DESTINATION = 2;
+  }
+
+  // Error code, usually taken from the endpoint response.
+  string code = 2;
+
+  // Error message, usually taken from the endpoint response.
+  string message = 3;
+}
