@@ -14,4 +14,8 @@ enum ExportFormat {
   // FOCUS (FinOps Open Cost and Usage Specification) v1.2 CSV format.
   // See: https://focus.finops.org/focus-specification/v1-2/
   EXPORT_FORMAT_FOCUS_1_2_CSV = 1;
+
+  // Consumption Breakdown PDF format.
+  // Single-period human-readable cost breakdown report exported as a PDF file.
+  EXPORT_FORMAT_CONSUMPTION_BREAKDOWN_PDF = 100;
 }
