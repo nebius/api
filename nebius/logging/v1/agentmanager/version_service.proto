@@ -221,7 +221,15 @@ message GetVersionResponse {
   }
 
   // Feature flags for the agent. Keys are UPPER_CASE flag names, values are flag values (typically "true"/"false").
+  // When feature_flags_unavailable is true the agent must ignore this field and
+  // keep its current flag set unchanged.
   map<string, string> feature_flags = 5;
+
+  // True when the server could not load feature-flag state. The agent must
+  // keep its current flag set instead of treating an empty feature_flags map
+  // as "clear all". The default value of false means feature_flags is
+  // authoritative — including legitimately empty.
+  bool feature_flags_unavailable = 6;
 }
 
 // Parameters when no operation is required.

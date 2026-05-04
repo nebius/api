@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.mk8s.v1;
 
 import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
@@ -98,4 +99,11 @@ message ListClusterControlPlaneVersionsResponse {
 message ClusterControlPlaneVersion {
   // Format of the version includes only MAJOR.MINOR, the same as can be passed to cluster creation API. For example "1.31".
   string version = 1;
+
+  // Restricted shows versions available only for internal Nebius use, mostly those about to get released to public.
+  // To use such versions - a feature restricted_k8s_versions should be enabled on a cluster.
+  bool restricted = 2;
+
+  // EndOfLife determines when the version will be forced out of use.
+  google.protobuf.Timestamp end_of_life = 3;
 }
