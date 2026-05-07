@@ -21,6 +21,13 @@ option java_package = "ai.nebius.pub.storage.v1alpha1";
 // it will wait for the defined inter-iteration interval before starting the next iteration.
 service TransferService {
   option (api_service_name) = "transfer.storage";
+  option deprecated = true;
+
+  option (service_deprecation_details) = {
+    effective_at: "2026-06-01"
+    description: "Data Transfer v1alpha1 API is deprecated. Please use the v1 API instead. All existing transfers remain accessible through the v1 API."
+    description_cli: "Please use the 'storage transfer' command instead. All existing transfers remain accessible through the new command."
+  };
 
   rpc Get(GetTransferRequest) returns (Transfer);
 
