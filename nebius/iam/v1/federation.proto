@@ -12,18 +12,24 @@ option java_outer_classname = "FederationProto";
 option java_package = "ai.nebius.pub.iam.v1";
 
 message Federation {
+  // Federation resource metadata.
   common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
 
+  // Federation resource specification.
   FederationSpec spec = 2 [(buf.validate.field).required = true];
 
+  // Federation resource status.
   FederationStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
 }
 
 message FederationSpec {
+  // If false, users with access to the federation cannot sign in automatically
+  // and user accounts for them must be pre-created by a federation administrator.
   bool user_account_auto_creation = 1;
 
   reserved 3;
 
+  // Specifies if the federation in active state
   bool active = 4 [
     deprecated = true,
     (field_deprecation_details) = {description: "'active' field ignored. Use 'Activate/Deactivate' methods to manage federation state. A newly created federation is always active by default."}
@@ -32,13 +38,16 @@ message FederationSpec {
   oneof settings {
     option (buf.validate.oneof).required = true;
 
+    // SAML federation settings.
     SamlSettings saml_settings = 10;
   }
 }
 
 message SamlSettings {
+  // The unique identifier of the SAML Identity Provider. It usually matches the entityID from the IdP metadata.
   string idp_issuer = 1;
 
+  // Identity Provider’s Single Sign-On endpoint. This is the URL where the user is redirected to start SAML login.
   string sso_url = 2;
 
   // if "true", the identity provider MUST authenticate the presenter directly rather than rely on a previous security context.
@@ -54,9 +63,12 @@ message FederationStatus {
     INACTIVE = 2;
   }
 
+  // Federation state.
   State state = 3;
 
+  // Number of users registered in the IAM federation. This value may differ from the number of users in the identity provider.
   int32 users_count = 1;
 
+  // Number of certificates attached to the SAML federation for verifying SAML responses.
   int32 certificates_count = 2;
 }

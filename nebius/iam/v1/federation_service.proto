@@ -16,14 +16,19 @@ option java_package = "ai.nebius.pub.iam.v1";
 service FederationService {
   option (api_service_name) = "cpl.iam";
 
+  // Creates a federation.
   rpc Create(CreateFederationRequest) returns (common.v1.Operation);
 
+  // Retrieves information about a federation by ID.
   rpc Get(GetFederationRequest) returns (Federation);
 
+  // Retrieves information about a federation by name and parent container.
   rpc GetByName(common.v1.GetByNameRequest) returns (Federation);
 
+  // Lists federations by parent container.
   rpc List(ListFederationsRequest) returns (ListFederationsResponse);
 
+  // Updates a federation.
   rpc Update(UpdateFederationRequest) returns (common.v1.Operation);
 
   // Activates an existing federation.
@@ -31,42 +36,53 @@ service FederationService {
   rpc Activate(ActivateFederationRequest) returns (common.v1.Operation);
 
   // Deactivates an existing federation.
-  // When a federation is inactive, all users under it will be unable to authenticate.
+  // When a federation is inactive, all users under it cannot authenticate.
   rpc Deactivate(DeactivateFederationRequest) returns (common.v1.Operation);
 
+  // Deletes a federation. An active federation cannot be deleted and must be deactivated first.
   rpc Delete(DeleteFederationRequest) returns (common.v1.Operation);
 }
 
 message CreateFederationRequest {
+  // Federation resource metadata.
   common.v1.ResourceMetadata metadata = 1;
 
+  // Federation resource specification.
   FederationSpec spec = 2;
 }
 
 message GetFederationRequest {
+  // Target federation ID.
   string id = 1 [(buf.validate.field).required = true];
 }
 
 message ListFederationsRequest {
+  // Parent container ID for the federations.
   string parent_id = 1 [(buf.validate.field).required = true];
 
-  // Default value: 10
+  // Maximum number of items to return in the response. Default value: 10.
   int64 page_size = 2;
 
+  // Token for pagination, allowing the retrieval of the next set of results.
   string page_token = 3;
 
+  // Filter expression for narrowing down the results.
   string filter = 4;
 }
 
 message ListFederationsResponse {
+  // List of federations returned in the response.
   repeated Federation items = 1;
 
+  // Token for pagination, allowing the retrieval of the next set of results.
   string next_page_token = 2;
 }
 
 message UpdateFederationRequest {
+  // Federation resource metadata.
   common.v1.ResourceMetadata metadata = 1;
 
+  // Federation resource specification.
   FederationSpec spec = 2;
 
   FederationStatus status = 3 [
@@ -76,13 +92,16 @@ message UpdateFederationRequest {
 }
 
 message ActivateFederationRequest {
+  // Target federation ID.
   string federation_id = 1 [(buf.validate.field).required = true];
 }
 
 message DeactivateFederationRequest {
+  // Target federation ID.
   string federation_id = 1 [(buf.validate.field).required = true];
 }
 
 message DeleteFederationRequest {
+  // Target federation ID.
   string id = 1 [(buf.validate.field).required = true];
 }
