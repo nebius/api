@@ -15,6 +15,9 @@ enum StorageClass {
   ENHANCED_THROUGHPUT = 2;
 
   INTELLIGENT = 3;
+
+  // Special storage class only for filesystem buckets.
+  FILESYSTEM = 4;
 }
 
 enum VersioningPolicy {

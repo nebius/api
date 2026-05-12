@@ -78,6 +78,9 @@ message UpdateProjectRequest {
 message DeleteProjectRequest {
   // Identifier of project to delete.
   string id = 1;
+
+  // If true, performs a dry run of the deletion without actually deleting the project.
+  bool dry_run = 2;
 }
 
 message ListProjectsResponse {
