@@ -109,6 +109,19 @@ message RouteStatus {
 
   // Detailed status of the next hop configuration.
   NextHopState next_hop = 2;
+
+  // Route type.
+  enum Type {
+    TYPE_UNSPECIFIED = 0;
+
+    STATIC = 1;
+
+    REDISTRIBUTED = 2;
+  }
+
+  // Indicates the route type.
+  // REDISTRIBUTED routes cannot be deleted directly.
+  Type type = 3;
 }
 
 message NextHopState {
