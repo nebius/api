@@ -87,6 +87,9 @@ message InstanceSpec {
     ]
   }];
 
+  // NVLink Instance Group ID associated with the VM
+  string nvl_instance_group_id = 21;
+
   ReservationPolicy reservation_policy = 23;
 
   // Local disks are meaningfully different from regular (remote) disks:
@@ -112,11 +115,13 @@ message PreemptibleSpec {
     (field_behavior) = IMMUTABLE
   ];
 
-  // The value can range from 1 to 5, where 5 indicates the highest priority.
-  // Affects the order in which Compute tries to preempt VMs, but does not guarantee the exact order.
   int32 priority = 2 [
-    (buf.validate.field).required = true,
-    (field_behavior) = IMMUTABLE
+    (field_behavior) = IMMUTABLE,
+    deprecated = true,
+    (field_deprecation_details) = {
+      effective_at: "2026-05-11"
+      description: "it is deprecated and doesn't affect preemption behavior anymore."
+    }
   ];
 }
 

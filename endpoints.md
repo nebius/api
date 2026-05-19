@@ -27,6 +27,7 @@
   * [nebius.compute.v1.ImageService](nebius/compute/v1/image_service.proto)
   * [nebius.compute.v1.InstanceService](nebius/compute/v1/instance_service.proto)
   * [nebius.compute.v1.MaintenanceService](nebius/compute/v1/maintenance_service.proto)
+  * [nebius.compute.v1.NVLInstanceGroupService](nebius/compute/v1/nvlinstancegroup_service.proto)
   * [nebius.compute.v1.NodeService](nebius/compute/v1/node_service.proto)
   * [nebius.compute.v1.PlatformService](nebius/compute/v1/platform_service.proto)
   * [nebius.compute.v1alpha1.DiskService](nebius/compute/v1alpha1/disk_service.proto)
@@ -70,6 +71,7 @@
   * [nebius.applications.v1alpha1.K8sReleaseService](nebius/applications/v1alpha1/k8s_release_service.proto)
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
 * dns.api.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.dns.v1.RecordService](nebius/dns/v1/record_service.proto)
   * [nebius.dns.v1.ZoneService](nebius/dns/v1/zone_service.proto)
 * dpl.mysterybox.api.nebius.cloud:443

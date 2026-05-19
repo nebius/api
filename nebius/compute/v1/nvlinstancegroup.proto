@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package nebius.compute.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/compute/v1/instance.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
+option java_multiple_files = true;
+option java_outer_classname = "NvlinstancegroupProto";
+option java_package = "ai.nebius.pub.compute.v1";
+
+// Represents an NVLink InstanceGroup.
+message NVLInstanceGroup {
+  common.v1.ResourceMetadata metadata = 1;
+
+  NVLInstanceGroupSpec spec = 2;
+
+  NVLInstanceGroupStatus status = 3;
+}
+
+message NVLInstanceGroupSpec {
+  // Type of the NVLink InstanceGroup.
+  enum NVLInstanceGroupType {
+    UNSPECIFIED = 0;
+
+    GB200 = 1;
+
+    GB300 = 2;
+  }
+
+  // Type of the NVLink InstanceGroup (corresponds to the Compute platform)
+  NVLInstanceGroupType type = 1 [(field_behavior) = IMMUTABLE];
+}
+
+message NVLInstanceGroupStatus {
+  reserved 2;
+
+  message InstanceInfo {
+    // Current state of the instance.
+    InstanceStatus.InstanceState instance_state = 1 [(buf.validate.field).required = true];
+  }
+
+  // Instances that are associated with this NVLink InstanceGroup
+  map<string, InstanceInfo> instances = 1;
+
+  // Indicates whether there is an ongoing operation with any VM in the InstanceGroup
+  bool reconciling = 3;
+}

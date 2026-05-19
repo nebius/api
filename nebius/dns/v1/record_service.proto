@@ -4,6 +4,7 @@ package nebius.dns.v1;
 
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
 import "nebius/dns/v1/record.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/dns/v1";
@@ -23,4 +24,13 @@ service RecordService {
 
   // Lists DNS records in the specified DNS zone
   rpc List(ListRecordsRequest) returns (ListRecordsResponse);
+
+  // Creates a DNS record
+  rpc Create(CreateRecordRequest) returns (common.v1.Operation);
+
+  // Updates the DNS record with the specified ID
+  rpc Update(UpdateRecordRequest) returns (common.v1.Operation);
+
+  // Deletes the DNS record with the specified ID
+  rpc Delete(DeleteRecordRequest) returns (common.v1.Operation);
 }
