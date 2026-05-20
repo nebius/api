@@ -4,6 +4,7 @@ package nebius.dns.v1;
 
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
 import "nebius/dns/v1/zone.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/dns/v1";
@@ -23,4 +24,13 @@ service ZoneService {
 
   // Lists DNS zones in the specified parent IAM container
   rpc List(ListZonesRequest) returns (ListZonesResponse);
+
+  // Creates a DNS zone
+  rpc Create(CreateZoneRequest) returns (common.v1.Operation);
+
+  // Updates the DNS zone with the specified ID
+  rpc Update(UpdateZoneRequest) returns (common.v1.Operation);
+
+  // Deletes the DNS zone with the specified ID
+  rpc Delete(DeleteZoneRequest) returns (common.v1.Operation);
 }
