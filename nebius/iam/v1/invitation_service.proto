@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.iam.v1;
 
 import "buf/validate/validate.proto";
+import "google/protobuf/duration.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
@@ -35,6 +36,9 @@ message CreateInvitationRequest {
   InvitationSpec spec = 2;
 
   bool no_send = 3; // if set, no sending is attempted (it's supposed that later a Resend method is called)
+
+  // How long the invitation remains valid after creation. If omitted, the service default is used.
+  google.protobuf.Duration expires_in = 4;
 }
 
 message GetInvitationRequest {

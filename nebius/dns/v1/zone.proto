@@ -144,3 +144,69 @@ message ListZonesResponse {
   // If `next_page_token` is empty, this is the last result page
   string next_page_token = 2;
 }
+
+// Request to create a DNS zone
+message CreateZoneRequest {
+  // Metadata for the DNS zone to create
+  // The only required field is `metadata.parent_id`, which must be set to the ID of this zone's parent IAM container
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name"
+          message: "metadata.name must start and end with a letter a-z or a digit 0-9, contain only letters a-z, digits 0-9 and hyphens, and have a length between 1 and 63 characters"
+          expression: "this.name.matches('^|[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$')"
+        }
+      ]
+      required: true
+    },
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
+
+  // Specification for the DNS zone to create
+  ZoneSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+// Request to update the DNS zone by its ID
+message UpdateZoneRequest {
+  // Metadata for the DNS zone being updated
+  // - The only required field is `metadata.id`, which must be set to the ID of the DNS zone being updated
+  // - You may also set the expected DNS zone version (`metadata.resource_version`), which ensures that only the requested version is
+  //   updated (and a `FAILED_PRECONDITION` error is returned on version mismatch)
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name"
+          message: "metadata.name must start and end with a letter a-z or a digit 0-9, contain only letters a-z, digits 0-9 and hyphens, and have a length between 1 and 63 characters"
+          expression: "this.name.matches('^|[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$')"
+        }
+      ]
+    },
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
+
+  // New specification for the DNS zone
+  ZoneSpec spec = 2;
+}
+
+message DeleteZoneRequest {
+  // ID of the DNS zone to delete
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["dnszone"]
+    }
+  ];
+
+  // Optional: expected DNS zone version (`metadata.resource_version`)
+  // - If specified, ensures that only the requested version is deleted (and a `FAILED_PRECONDITION` error is returned on version mismatch)
+  // - If not specified or set to `0`, the latest version will be deleted
+  int64 resource_version = 2 [(buf.validate.field) = {
+    int64: {gte: 0}
+  }];
+}
