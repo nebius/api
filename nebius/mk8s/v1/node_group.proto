@@ -38,7 +38,7 @@ message NodeGroupSpec {
   // `<major>.<minor>` like "1.31". Option for patch version update will be added later.
   // By default the cluster control plane `<major>.<minor>` version will be used.
   string version = 1 [(buf.validate.field) = {
-    string: {pattern: "|^\\d\\.\\d\\d$"}
+    string: {pattern: "^$|^\\d+\\.\\d+(-nebius-node\\.[1-9]\\d*)?$"}
   }];
 
   oneof size {
@@ -310,12 +310,12 @@ message NodeGroupDeploymentStrategy {
   // Such error will be visible in Operation.progress_data.
   PercentOrCount max_surge = 2;
 
-  // Maximum amount of time that the service will spend on attempting gracefully draining a node (evicting it's pods), before
-  // falling back to pod deletion.
-  // By default, node can be drained unlimited time.
-  // Important consequence of that is if PodDisruptionBudget doesn't allow to evict a pod,
-  // then NodeGroup update with node re-creation will hung on that pod eviction.
-  // Note, that it is different from `kubectl drain --timeout`
+  // Maximum amount of time that the service will spend attempting to gracefully drain a node
+  // (evicting its pods) before falling back to pod deletion.
+  // A value of 0 (or when field is omitted) means no timeout: the node can be drained for an unlimited time.
+  // Important consequence of that is if PodDisruptionBudget doesn't allow evicting a pod,
+  // then NodeGroup update with node re-creation will hang on that pod eviction.
+  // Note that this is different from `kubectl drain --timeout`, which gives up and returns an error.
   google.protobuf.Duration drain_timeout = 3 [(buf.validate.field) = {
     duration: {
       gte: {}
@@ -479,6 +479,11 @@ message NodeGroupStatus {
   int64 ready_node_count = 6;
 
   repeated common.v1.RecurrentResourceEvent events = 61;
+
+  // Deployment strategy used by the service for node group rollouts and node deletions.
+  // It includes default values applied by the service. A drain_timeout value of 0 means
+  // that node draining is not time-limited.
+  NodeGroupDeploymentStrategy strategy = 62;
 
   // Show that there are changes are in flight.
   bool reconciling = 100;

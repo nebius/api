@@ -38,6 +38,8 @@ message StaticKeySpec {
     AI_STUDIO = 3;
 
     TRACTO = 4;
+
+    LINUX_IDENTITY = 5;
   }
 }
 

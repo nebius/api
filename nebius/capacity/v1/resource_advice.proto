@@ -17,7 +17,7 @@ option java_package = "ai.nebius.pub.capacity.v1";
 message ResourceAdvice {
   option (resource_behavior) = UNNAMED;
 
-  // Standard metadata. parent_id is the User's Tenant/Project NID.
+  // Standard metadata. parent_id is the User's Tenant NID.
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field).required = true,
     (nid) = {
