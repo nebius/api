@@ -28,11 +28,20 @@ service NVLInstanceGroupService {
   // List lists all NVL InstanceGroups in the specified parent.
   rpc List(ListNVLInstanceGroupsRequest) returns (ListNVLInstanceGroupsResponse);
 
+  // Update modifies the specified NVL InstanceGroup by its ID.
+  rpc Update(UpdateNVLInstanceGroupRequest) returns (common.v1.Operation);
+
   // Delete deletes the specified NVL InstanceGroup by its ID.
   rpc Delete(DeleteNVLInstanceGroupRequest) returns (common.v1.Operation);
 }
 
 message CreateNVLInstanceGroupRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  NVLInstanceGroupSpec spec = 2;
+}
+
+message UpdateNVLInstanceGroupRequest {
   common.v1.ResourceMetadata metadata = 1;
 
   NVLInstanceGroupSpec spec = 2;

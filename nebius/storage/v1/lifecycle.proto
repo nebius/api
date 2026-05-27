@@ -83,6 +83,16 @@ message LifecycleFilter {
 
   // Maximum object size to which the rule applies.
   int64 object_size_less_than_bytes = 3;
+
+  message Tag {
+    string key = 1;
+
+    string value = 2;
+  }
+
+  // Tags to filter objects by their tagging. Rule applies only to objects that
+  // match all tags in a filter.
+  repeated Tag tags = 4;
 }
 
 // Specifies which requests are included in `days_since_last_access` calculations.
