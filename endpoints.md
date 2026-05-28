@@ -20,7 +20,6 @@
   * [nebius.capacity.v1.CapacityIntervalService](nebius/capacity/v1/capacity_interval_service.proto)
 * compute.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
-  * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)
   * [nebius.compute.v1.DiskService](nebius/compute/v1/disk_service.proto)
   * [nebius.compute.v1.FilesystemService](nebius/compute/v1/filesystem_service.proto)
   * [nebius.compute.v1.GpuClusterService](nebius/compute/v1/gpu_cluster_service.proto)
@@ -30,11 +29,6 @@
   * [nebius.compute.v1.NVLInstanceGroupService](nebius/compute/v1/nvlinstancegroup_service.proto)
   * [nebius.compute.v1.NodeService](nebius/compute/v1/node_service.proto)
   * [nebius.compute.v1.PlatformService](nebius/compute/v1/platform_service.proto)
-  * [nebius.compute.v1alpha1.DiskService](nebius/compute/v1alpha1/disk_service.proto)
-  * [nebius.compute.v1alpha1.FilesystemService](nebius/compute/v1alpha1/filesystem_service.proto)
-  * [nebius.compute.v1alpha1.GpuClusterService](nebius/compute/v1alpha1/gpu_cluster_service.proto)
-  * [nebius.compute.v1alpha1.ImageService](nebius/compute/v1alpha1/image_service.proto)
-  * [nebius.compute.v1alpha1.InstanceService](nebius/compute/v1alpha1/instance_service.proto)
 * cpl.iam.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.iam.v1.AccessKeyService](nebius/iam/v1/access_key_service.proto)
