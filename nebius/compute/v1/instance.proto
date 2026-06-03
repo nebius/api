@@ -23,7 +23,7 @@ message Instance {
 
 message InstanceSpec {
   // Unique identifier of the service account associated with this instance.
-  // For details, see https://docs.nebius.dev/en/iam/about-iam/concepts/service-accounts
+  // For details, see https://docs.nebius.com/iam/service-accounts/manage
   string service_account_id = 1 [(field_behavior) = IMMUTABLE];
 
   // Specification of compute resources allocated to the instance.
