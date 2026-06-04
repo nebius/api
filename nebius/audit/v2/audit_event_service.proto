@@ -64,6 +64,15 @@ message ListAuditEventRequest {
 
   // Type of audit event to filter by.
   EventType event_type = 7;
+
+  // Region to retrieve audit logs (e.g. eu-north2, us-central1, eu-west1)
+  // See https://docs.nebius.com/overview/regions
+  // Default: eu-north1
+  //
+  // During a transition period (until 13-08-2026), events are written to
+  // both eu-north1 and their origin region.
+  // After that, events are only stored in their origin region, and this field becomes required.
+  string region = 8;
 }
 
 enum EventType {

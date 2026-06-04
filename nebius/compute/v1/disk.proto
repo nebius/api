@@ -143,6 +143,12 @@ message DiskStatus {
 
   // Indicates resources that prevent the disk from being attached as read-write.
   LockState lock_state = 11;
+
+  // Indicates whether the disk is deleted along with an instance.
+  // Set only for disks declared in the instance spec.
+  // If set, the value is the instance ID that manages this disk's lifecycle (the disk is deleted when that instance is deleted).
+  // To change this value, update the instance specification (see AttachedDiskSpec.type).
+  string managed_by = 12;
 }
 
 message DiskEncryption {

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package nebius.billing.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/billing/v1/calculator.proto";
+import "nebius/billing/v1/offer_type.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/billing/v1";
+option java_multiple_files = true;
+option java_outer_classname = "CalculatorServiceProto";
+option java_package = "ai.nebius.pub.billing.v1";
+
+// Calculator service for estimating resource costs.
+service CalculatorService {
+  option (api_service_name) = "api.calculator.billing-data-plane";
+
+  // Estimates prices for multiple resources.
+  // Returns aggregated hourly and monthly cost estimates for all specified resources.
+  rpc EstimateBatch(EstimateBatchRequest) returns (EstimateBatchResponse);
+}
+
+message EstimateBatchRequest {
+  // List of resource specifications for cost estimation.
+  // Each resource will be priced individually and then aggregated into total costs.
+  repeated ResourceSpec resource_specs = 1 [(buf.validate.field).required = true];
+
+  // Type of offers to be applied to the cost estimate.
+  repeated OfferType offer_types = 10;
+
+  // Currency for the cost estimate (e.g., "usd", "ils"). Defaults to "usd".
+  string currency = 11;
+
+  // Filters only time-based resource units, e.g. hour, day, month, etc.
+  // If response contains other resource units like request, token, etc., it will always be presented in response.
+  FilterAggregationUnit filter_aggregation_unit = 20;
+}
+
+message EstimateBatchResponse {
+  repeated ResourceCost resource_costs = 1;
+
+  // Total cost for all resource units.
+  repeated TotalCost total_costs = 10;
+
+  // Currency used for the estimate.
+  string currency = 20;
+}
