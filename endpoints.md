@@ -4,6 +4,7 @@
   * [nebius.billing.v1alpha1.OneTimeExportService](nebius/billing/v1alpha1/one_time_export_service.proto)
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
 * api.calculator.billing-data-plane.api.nebius.cloud:443
+  * [nebius.billing.v1.CalculatorService](nebius/billing/v1/calculator_service.proto)
   * [nebius.billing.v1alpha1.CalculatorService](nebius/billing/v1alpha1/calculator_service.proto)
 * apps.msp.api.nebius.cloud:443
   * [nebius.ai.v1.EndpointService](nebius/ai/v1/endpoint_service.proto)

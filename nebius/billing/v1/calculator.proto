@@ -1,0 +1,206 @@
+syntax = "proto3";
+
+package nebius.billing.v1;
+
+import "google/protobuf/any.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/billing/v1";
+option java_multiple_files = true;
+option java_outer_classname = "CalculatorProto";
+option java_package = "ai.nebius.pub.billing.v1";
+
+// Resource specification for cost estimation.
+// Contains the specifications for creating and updating different types of resources.
+message ResourceSpec {
+  // Resource specification for cost estimation. Payload must include billing routing annotations. Must contain
+  // either a create-request or an update-request message for the target resource type. Examples:
+  // type.googleapis.com/nebius.compute.v1.CreateInstanceRequest, type.googleapis.com/nebius.compute.v1.UpdateInstanceRequest and so on
+  google.protobuf.Any spec = 1;
+}
+
+// General total cost with a single fixed amount.
+// Used for resources with predictable, non-variable pricing.
+message GeneralTotalCost {
+  // Cost breakdown including all SKUs and their individual costs.
+  CostBreakdown total = 1;
+}
+
+// Range-based total cost with minimum and maximum bounds.
+// Used for resources with variable pricing based on usage or scaling.
+message RangeTotalCost {
+  // Minimum possible cost for the resource group.
+  // Represents the cost when resources are at their minimum configuration.
+  CostBreakdown min = 1;
+
+  // Maximum possible cost for the resource group.
+  // Represents the cost when resources are at their maximum configuration.
+  CostBreakdown max = 2;
+}
+
+// Cost information for a single resource.
+// Contains metadata about the resource and its cost.
+message ResourceCost {
+  // Resource metadata.
+  common.v1.ResourceMetadata metadata = 1;
+
+  // Optional field to override the resource metadata.
+  common.v1.ResourceMetadata override_metadata = 2;
+
+  // Unit of the SKU measurement within a resource, e.g. "hour", "day", "month", etc.
+  AggregationUnit aggregation_unit = 4;
+
+  oneof cost_type {
+    // General cost for single-unit resources.
+    // Used for resources like compute instances or disks where the unit count is not variable.
+    GeneralResourceCost general = 20;
+
+    // Fixed instance cost for resources with instances.
+    // Used for resources that have a fixed number of instances.
+    FixedInstanceResourceCost fixed_instance = 21;
+
+    // Autoscale cost for resources with variable instance count.
+    // Used for resources that can automatically scale up or down.
+    AutoscaleResourceCost autoscale = 22;
+  }
+}
+
+// General resource cost for single-unit resources.
+// Used for resources like compute instances or disks where the unit count is not variable.
+message GeneralResourceCost {
+  // Cost breakdown for the resource including all SKU costs and total cost.
+  CostBreakdown total = 1;
+}
+
+// Fixed instance resource cost.
+// Used for resources that have a fixed number of instances.
+message FixedInstanceResourceCost {
+  // Total cost for all instances combined.
+  CostBreakdown total = 1;
+
+  // Cost per individual instance.
+  // Multiply by instance_count to get total cost.
+  CostBreakdown per_instance = 2;
+
+  // Number of instances in the configuration.
+  int32 instance_count = 3;
+}
+
+// Autoscale resource cost.
+// Used for resources that can automatically scale.
+message AutoscaleResourceCost {
+  // Minimum possible cost when scaled to minimum instances.
+  CostBreakdown min_cost = 1;
+
+  // Maximum possible cost when scaled to maximum instances.
+  CostBreakdown max_cost = 2;
+
+  // Cost per individual instance.
+  // Used to calculate costs at any scaling level between min and max.
+  CostBreakdown per_instance = 3;
+
+  // Minimum number of instances in the auto-scaling group.
+  int32 min_instances = 4;
+
+  // Maximum number of instances in the auto-scaling group.
+  int32 max_instances = 5;
+}
+
+// Detailed cost breakdown showing individual SKU costs and totals.
+message CostBreakdown {
+  // Individual costs for each SKU (Stock Keeping Unit) component.
+  // Each SKU represents a different billable component (e.g., CPU, memory, RAM, etc.).
+  repeated SkuCost sku_costs = 1;
+
+  // Total cost as a decimal string.
+  // Represents the sum of all SKU costs with full precision.
+  // Example: "42.123456789" for precise billing calculations.
+  string cost = 2;
+
+  // Total cost rounded up to 2 decimal places.
+  // Example: "42.13"
+  string cost_rounded = 3;
+}
+
+// Cost information for a specific SKU (Stock Keeping Unit).
+// Represents a single billable component within a resource.
+message SkuCost {
+  // Unique identifier for the SKU.
+  string sku_id = 1;
+
+  // Quantity of the SKU being used as a decimal string.
+  // Example: "2.123"
+  string quantity = 20;
+
+  // Quantity rounded up to 2 decimal places.
+  // Example: "2.13"
+  string quantity_rounded = 21;
+
+  // Cost for this SKU as a decimal string.
+  // Calculated as quantity * unit_price with full precision.
+  // Example: "15.6789012345" for precise billing calculations.
+  string cost = 30;
+
+  // Cost for this SKU rounded up to 2 decimal places.
+  // Example: "15.68"
+  string cost_rounded = 31;
+}
+
+// Total cost for a single resource unit.
+message TotalCost {
+  // Aggregation unit.
+  AggregationUnit aggregation_unit = 1;
+
+  oneof cost_type {
+    // General total cost for single-unit resources.
+    // Used for resources like compute instances or disks where the unit count is not variable.
+    GeneralResourceCost general = 20;
+
+    // Range-based total cost with minimum and maximum bounds.
+    // Used for resources with variable pricing based on usage or scaling.
+    RangeTotalCost range = 21;
+  }
+}
+
+// Filters only time-based aggregation units, e.g. hour, day, month, etc.
+// If response contains other aggregation units like request, token, etc., it will always be presented in response.
+message FilterAggregationUnit {
+  // List of time aggregation unit values to filter by.
+  // Only costs for these time units will be included in the response, but it doesn't filter not time-based units.
+  enum FilterAggregationUnitValue {
+    FILTER_AGGREGATION_UNIT_UNSPECIFIED = 0;
+
+    FILTER_AGGREGATION_UNIT_MINUTE = 1;
+
+    FILTER_AGGREGATION_UNIT_HOUR = 2;
+
+    FILTER_AGGREGATION_UNIT_DAY = 3;
+
+    FILTER_AGGREGATION_UNIT_WEEK = 4;
+
+    FILTER_AGGREGATION_UNIT_MONTH = 5;
+  }
+
+  // List of time aggregation unit values to filter by.
+  // Only costs for these time units will be included in the response, but it doesn't filter not time-based units.
+  repeated FilterAggregationUnitValue filter_aggregation_unit_values = 1;
+}
+
+message AggregationUnit {
+  // Aggregation unit type
+  // If unit type is one of minute, hour, day, week, month, then it's time-based
+  // Otherwise it's usage-based
+  enum UnitType {
+    UNIT_TYPE_UNSPECIFIED = 0;
+
+    UNIT_TYPE_TIME_BASED = 1;
+
+    UNIT_TYPE_USAGE_BASED = 2;
+  }
+
+  // Resource unit value.
+  string unit = 1;
+
+  // Resource unit type.
+  UnitType unit_type = 2;
+}
