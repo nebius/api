@@ -105,6 +105,9 @@ message GetVersionRequest {
 
   // Health check logs information for monitoring disk usage.
   HealthCheckLogs healthcheck_logs = 21;
+
+  // Largest config_version this agent has already accepted; 0 if none.
+  uint64 last_seen_config_version = 22;
 }
 
 // Health status information for all agent modules.
@@ -230,6 +233,10 @@ message GetVersionResponse {
   // as "clear all". The default value of false means feature_flags is
   // authoritative — including legitimately empty.
   bool feature_flags_unavailable = 6;
+
+  // Version of the rollout state this response was built from. Agent echoes
+  // it back as last_seen_config_version on the next request.
+  uint64 config_version = 7;
 }
 
 // Parameters when no operation is required.
