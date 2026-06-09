@@ -190,6 +190,19 @@ message Assignment {
 }
 
 message NetworkInterfaceAssignment {
+  enum Type {
+    TYPE_UNSPECIFIED = 0;
+
+    // Allocation is attached as the interface private IPv4 address.
+    PRIMARY = 1;
+
+    // Allocation is attached as an IP alias.
+    ALIAS = 2;
+
+    // Allocation is attached as the interface public IPv4 address.
+    PUBLIC = 3;
+  }
+
   // ID of the Compute instance network interface belongs to.
   string instance_id = 1 [(nid) = {
     resource: ["computeinstance"]
@@ -197,6 +210,9 @@ message NetworkInterfaceAssignment {
 
   // Network interface name
   string name = 2;
+
+  // Type of allocation attachment on the network interface.
+  Type type = 3;
 }
 
 message LoadBalancerAssignment {
