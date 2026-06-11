@@ -122,6 +122,11 @@ message RouteStatus {
   // Indicates the route type.
   // REDISTRIBUTED routes cannot be deleted directly.
   Type type = 3;
+
+  // Indicates priority of the route.
+  // That is 0 or a positive number.
+  // Lower value = higher priority; 0 is the highest priority.
+  int32 priority = 4;
 }
 
 message NextHopState {
