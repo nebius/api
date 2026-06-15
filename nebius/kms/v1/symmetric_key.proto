@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package nebius.kms.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/kms/v1/key_state.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/kms/v1";
+option java_multiple_files = true;
+option java_outer_classname = "SymmetricKeyProto";
+option java_package = "ai.nebius.pub.kms.v1";
+
+// Supported symmetric encryption algorithms.
+enum SymmetricAlgorithm {
+  SYMMETRIC_ALGORITHM_UNSPECIFIED = 0;
+
+  // Deprecated. It is impossible to create new keys with this algorithm.
+  // AES algorithm with 128-bit keys.
+  AES_128 = 1;
+
+  reserved 2;
+
+  // AES algorithm with 256-bit keys.
+  AES_256 = 3;
+}
+
+// A symmetric KMS key.
+message SymmetricKey {
+  common.v1.ResourceMetadata metadata = 1;
+
+  // The specifications of the symmetric key.
+  SymmetricKeySpec spec = 2;
+
+  // The current status of the symmetric key.
+  SymmetricKeyStatus status = 3;
+}
+
+message SymmetricKeySpec {
+  // Description of the key.
+  string description = 1;
+
+  // Encryption algorithm that should be used when using the key to encrypt plaintext.
+  // Must be specified only during create operations. Cannot be updated.
+  SymmetricAlgorithm algorithm = 2 [
+    (field_behavior) = IMMUTABLE,
+    (buf.validate.field) = {
+      enum: {defined_only: true}
+      required: true
+    }
+  ];
+
+  // Key rotation period.
+  google.protobuf.Duration rotation_period = 3 [(buf.validate.field) = {
+    duration: {
+      lte: {seconds: 315360000}
+      gte: {seconds: 86400}
+    }
+  }];
+}
+
+message SymmetricKeyStatus {
+  // State (ACTIVE, SCHEDULED_FOR_DELETION).
+  KeyState state = 1;
+
+  // Time when the key was scheduled for deletion.
+  google.protobuf.Timestamp deleted_at = 2;
+
+  // Time when the key will be permanently deleted.
+  google.protobuf.Timestamp purge_at = 3;
+}
