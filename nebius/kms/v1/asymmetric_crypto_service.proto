@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package nebius.kms.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/kms/v1";
+option java_multiple_files = true;
+option java_outer_classname = "AsymmetricCryptoServiceProto";
+option java_package = "ai.nebius.pub.kms.v1";
+
+// Data plane for KMS asymmetric cryptography operations.
+service AsymmetricCryptoService {
+  option (api_service_name) = "dpl.kms";
+
+  // Signs a hashed value using an asymmetric key.
+  rpc SignHash(AsymmetricSignHashRequest) returns (AsymmetricSignHashResponse);
+
+  // Retrieves the public key of an asymmetric key pair.
+  rpc GetPublicKey(AsymmetricGetPublicKeyRequest) returns (AsymmetricGetPublicKeyResponse);
+
+  // Decrypts the ciphertext with the specified key.
+  rpc Decrypt(AsymmetricDecryptRequest) returns (AsymmetricDecryptResponse);
+}
+
+message AsymmetricSignHashRequest {
+  // ID of the asymmetric KMS key to use for signing the hash.
+  string key_id = 1 [(buf.validate.field).required = true];
+
+  // Hash to sign.
+  bytes hash = 2 [
+    (buf.validate.field).required = true,
+    (sensitive) = true
+  ];
+}
+
+message AsymmetricSignHashResponse {
+  // ID of the asymmetric KMS key used to produce the signature.
+  string key_id = 1;
+
+  // Value of signature.
+  bytes signature = 2 [(sensitive) = true];
+}
+
+message AsymmetricGetPublicKeyRequest {
+  // ID of the asymmetric KMS key whose public key should be returned.
+  string key_id = 1 [(buf.validate.field).required = true];
+}
+
+message AsymmetricGetPublicKeyResponse {
+  // ID of the asymmetric KMS key whose public key was returned.
+  string key_id = 1;
+
+  // Public key value.
+  // The value is a PEM-encoded X.509 public key, also known as SubjectPublicKeyInfo (SPKI), as defined in RFC 5280.
+  string public_key = 2;
+}
+
+message AsymmetricDecryptRequest {
+  // ID of the asymmetric KMS key.
+  string key_id = 1 [(buf.validate.field).required = true];
+
+  // cipher text to be decrypted.
+  bytes ciphertext = 2 [
+    (buf.validate.field) = {
+      bytes: {len: 512}
+      required: true
+    },
+    (sensitive) = true
+  ];
+}
+
+message AsymmetricDecryptResponse {
+  // ID of the asymmetric KMS key that was used for decryption.
+  string key_id = 1;
+
+  // Decrypted plaintext.
+  bytes plaintext = 2 [(sensitive) = true];
+}

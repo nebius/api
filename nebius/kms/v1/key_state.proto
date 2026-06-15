@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package nebius.kms.v1;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/kms/v1";
+option java_multiple_files = true;
+option java_outer_classname = "KeyStateProto";
+option java_package = "ai.nebius.pub.kms.v1";
+
+// Key state
+enum KeyState {
+  KEY_STATE_UNSPECIFIED = 0;
+
+  // Key is active, ready for use
+  ACTIVE = 1;
+
+  // Key is scheduled for deletion.
+  SCHEDULED_FOR_DELETION = 2;
+}

@@ -52,6 +52,10 @@
   * [nebius.iam.v2.AccessKeyService](nebius/iam/v2/access_key_service.proto)
   * [nebius.iam.v2.ProjectService](nebius/iam/v2/project_service.proto)
   * [nebius.iam.v2.TenantService](nebius/iam/v2/tenant_service.proto)
+* cpl.kms.api.nebius.cloud:443
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
+  * [nebius.kms.v1.AsymmetricKeyService](nebius/kms/v1/asymmetric_key_service.proto)
+  * [nebius.kms.v1.SymmetricKeyService](nebius/kms/v1/symmetric_key_service.proto)
 * cpl.mysterybox.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.mysterybox.v1.SecretService](nebius/mysterybox/v1/secret_service.proto)
@@ -69,6 +73,9 @@
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.dns.v1.RecordService](nebius/dns/v1/record_service.proto)
   * [nebius.dns.v1.ZoneService](nebius/dns/v1/zone_service.proto)
+* dpl.kms.api.nebius.cloud:443
+  * [nebius.kms.v1.AsymmetricCryptoService](nebius/kms/v1/asymmetric_crypto_service.proto)
+  * [nebius.kms.v1.SymmetricCryptoService](nebius/kms/v1/symmetric_crypto_service.proto)
 * dpl.mysterybox.api.nebius.cloud:443
   * [nebius.mysterybox.v1.PayloadService](nebius/mysterybox/v1/payload_service.proto)
 * maintenance.msp.api.nebius.cloud:443

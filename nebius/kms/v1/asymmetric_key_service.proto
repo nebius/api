@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+package nebius.kms.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/duration.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/kms/v1/asymmetric_key.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/kms/v1";
+option java_multiple_files = true;
+option java_outer_classname = "AsymmetricKeyServiceProto";
+option java_package = "ai.nebius.pub.kms.v1";
+
+// Set of methods for managing asymmetric keys.
+service AsymmetricKeyService {
+  // control plane
+  option (api_service_name) = "cpl.kms";
+
+  // Creates an asymmetric KMS key in the specified container.
+  rpc Create(CreateAsymmetricKeyRequest) returns (common.v1.Operation);
+
+  // Updates an asymmetric KMS key.
+  rpc Update(UpdateAsymmetricKeyRequest) returns (common.v1.Operation);
+
+  // Returns the specified asymmetric KMS key by id.
+  rpc Get(GetAsymmetricKeyRequest) returns (AsymmetricKey);
+
+  // Returns the specified asymmetric KMS key by name.
+  rpc GetByName(GetAsymmetricKeyByNameRequest) returns (AsymmetricKey);
+
+  // Returns the list of asymmetric KMS keys in the specified container.
+  rpc List(ListAsymmetricKeysRequest) returns (ListAsymmetricKeysResponse);
+
+  // Schedules an asymmetric KMS key for deletion.
+  rpc Delete(DeleteAsymmetricKeyRequest) returns (common.v1.Operation);
+
+  // Update deletion delay for an asymmetric KMS key scheduled for deletion.
+  rpc UpdateDeletionDelay(UpdateAsymmetricKeyDeletionDelayRequest) returns (common.v1.Operation);
+
+  // Restores an asymmetric KMS key scheduled for deletion.
+  rpc Undelete(UndeleteAsymmetricKeyRequest) returns (common.v1.Operation);
+}
+
+message CreateAsymmetricKeyRequest {
+  // The metadata for the resource.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // The specifications for creating an asymmetric key.
+  AsymmetricKeySpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message UpdateAsymmetricKeyRequest {
+  // The metadata for the resource.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // The specifications for updating an asymmetric key.
+  AsymmetricKeySpec spec = 2;
+}
+
+message GetAsymmetricKeyRequest {
+  // ID of the asymmetric KMS key to return.
+  // To get the ID of an asymmetric KMS key use an [AsymmetricKeyService.List] request.
+  string id = 1 [(buf.validate.field).required = true];
+
+  // By default, Get doesn't return resource if it is scheduled for deletion.
+  // If show_scheduled_for_deletion = true, the Get operation returns the resource even if it is scheduled for deletion.
+  // If show_scheduled_for_deletion = false, the Get method returns the NOT_FOUND gRPC status code.
+  bool show_scheduled_for_deletion = 2;
+}
+
+message GetAsymmetricKeyByNameRequest {
+  // Parent Id and name of the asymmetric KMS key to return.
+  // To get the name of an asymmetric KMS key use an [AsymmetricKeyService.List] request.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  string name = 2 [(buf.validate.field).required = true];
+}
+
+message ListAsymmetricKeysRequest {
+  // ID of the container to list asymmetric KMS keys in.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // The maximum number of results per page to return. If the number of available
+  // results is larger than [page_size], the service returns a [ListAsymmetricKeysResponse.next_page_token]
+  // that can be used to get the next page of results in subsequent list requests.
+  // Default value: 100.
+  int64 page_size = 2;
+
+  // Page token. To get the next page of results, set [page_token] to the
+  // [ListAsymmetricKeysResponse.next_page_token] returned by a previous list request.
+  string page_token = 3;
+
+  // By default, List operation doesn't include resources that are scheduled for deletion.
+  // If show_scheduled_for_deletion = true, the listing includes resources that are scheduled for deletion.
+  bool show_scheduled_for_deletion = 4;
+}
+
+message ListAsymmetricKeysResponse {
+  // List of asymmetric KMS keys in the specified container.
+  repeated AsymmetricKey items = 1;
+
+  // This token allows you to get the next page of results for list requests. If the number
+  // of results is greater than the specified [ListAsymmetricKeysRequest.page_size], use
+  // the [next_page_token] as the value for the [ListAsymmetricKeysRequest.page_token] query parameter
+  // in the next list request. Each subsequent list request will have its own
+  // [next_page_token] to continue paging through the results.
+  string next_page_token = 2;
+}
+
+message DeleteAsymmetricKeyRequest {
+  // ID of the asymmetric KMS key to schedule for deletion.
+  // To get the ID of an asymmetric KMS key use an [AsymmetricKeyService.List] request.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+message UpdateAsymmetricKeyDeletionDelayRequest {
+  // ID of the asymmetric KMS key scheduled for deletion.
+  string id = 1 [(buf.validate.field).required = true];
+
+  // Deletion delay applied from the update timestamp.
+  // Example: "86400s" (1 day). Valid range: 86400s (1 day) to 2592000s (30 days).
+  google.protobuf.Duration deletion_delay = 2 [(buf.validate.field) = {
+    duration: {
+      lte: {seconds: 2592000}
+      gte: {seconds: 86400}
+    }
+    required: true
+  }];
+}
+
+message UndeleteAsymmetricKeyRequest {
+  // ID of the asymmetric KMS key to restore.
+  string id = 1 [(buf.validate.field).required = true];
+
+  // A new name in case the current one is already in use.
+  string name = 2;
+}
