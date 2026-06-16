@@ -211,10 +211,17 @@ message NetworkInterfaceTemplate {
   // By default Cluster control plane subnet_id used.
   // Subnet should be located in the same network with control plane.
   string subnet_id = 3 [(field_behavior) = NON_EMPTY_DEFAULT];
+
+  // User provided VPC Security Groups which will be assigned to all nodes of this NodeGroup.
+  repeated SecurityGroup security_groups = 7;
 }
 
 // Describes a public IP address.
 message PublicIPAddress {}
+
+message SecurityGroup {
+  string id = 1;
+}
 
 message AttachedFilesystemSpec {
   enum AttachMode {

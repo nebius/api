@@ -40,7 +40,9 @@ message AsymmetricKey {
 
 message AsymmetricKeySpec {
   // Description of the key.
-  string description = 1;
+  string description = 1 [(buf.validate.field) = {
+    string: {max_bytes: 1024}
+  }];
 
   // Cryptographic algorithm that should be used with the key.
   // Must be specified only during create operations. Cannot be updated.

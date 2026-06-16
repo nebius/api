@@ -85,7 +85,23 @@ message ControlPlaneEndpointsSpec {
   PublicEndpointSpec public_endpoint = 1 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
 }
 
-message PublicEndpointSpec {}
+message PublicEndpointSpec {
+  // List of CIDR blocks from which access to public endpoint is allowed.
+  // If field is not set, or list is empty, it means that access is not restricted at all.
+  repeated string allowed_cidrs = 2 [(buf.validate.field) = {
+    repeated: {
+      items: {
+        cel: [
+          {
+            id: "string.valid_ipv4_cidr"
+            message: "Value must be a valid IPv4 CIDR, the prefix must have all zeros for the masked bits of the prefix (e.g. `127.0.0.0/16`, not `127.0.0.1/16`)."
+            expression: "this.isIpPrefix(4, true)"
+          }
+        ]
+      }
+    }
+  }];
+}
 
 message KubeNetworkSpec {
   // CIDR blocks for Service ClusterIP allocation.

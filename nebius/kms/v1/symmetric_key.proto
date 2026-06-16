@@ -41,7 +41,9 @@ message SymmetricKey {
 
 message SymmetricKeySpec {
   // Description of the key.
-  string description = 1;
+  string description = 1 [(buf.validate.field) = {
+    string: {max_bytes: 1024}
+  }];
 
   // Encryption algorithm that should be used when using the key to encrypt plaintext.
   // Must be specified only during create operations. Cannot be updated.
