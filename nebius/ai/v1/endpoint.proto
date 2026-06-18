@@ -105,6 +105,10 @@ message EndpointSpec {
   // Must reference a secret payload containing `AUTH_TOKEN`.
   MysteryBoxSecretRef auth_token_mysterybox_secret = 31;
 
+  // Small config files injected into the container before the user process
+  // starts. Intended for configs, not datasets.
+  repeated FileInjection injected_files = 32 [(field_behavior) = INPUT_ONLY];
+
   // EnvironmentVariable defines an environment variable for the endpoint's container.
   message EnvironmentVariable {
     option (buf.validate.message) = {
@@ -126,7 +130,8 @@ message EndpointSpec {
 
     // Secret storing the environment variable value.
     // Mutually exclusive with `value`.
-    // Must reference a secret payload containing a key matching `name`.
+    // The payload entry is selected by `mysterybox_secret.key`, which defaults
+    // to `name` when empty.
     MysteryBoxSecretRef mysterybox_secret = 3;
   }
 
@@ -290,6 +295,32 @@ message EndpointSpec {
     string mysterybox_secret_version = 3;
   }
 
+  // FileInjection materializes a small file inside the container at launch.
+  message FileInjection {
+    // Absolute path inside the container where the content is written.
+    //
+    // Must be a clean absolute path: root, trailing slashes, empty path
+    // segments, "." and ".." are not allowed.
+    string container_path = 1 [(buf.validate.field) = {
+      string: {pattern: "^/[^/]+(/[^/]+)*$"}
+      required: true
+    }];
+
+    // File content. Between 1 byte and 64 KiB (one mystery box secret payload).
+    //
+    // Not returned by read methods.
+    bytes content = 2 [
+      (buf.validate.field) = {
+        bytes: {
+          min_len: 1
+          max_len: 65536
+        }
+      },
+      (sensitive) = true,
+      (field_behavior) = INPUT_ONLY
+    ];
+  }
+
   // Reference to a MysteryBox secret.
   message MysteryBoxSecretRef {
     // MysteryBox secret ID.
@@ -301,6 +332,12 @@ message EndpointSpec {
     string version_id = 2 [(nid) = {
       resource: ["mbsecver"]
     }];
+
+    // Optional key of the payload entry to read the value from.
+    // Honored for environment variable references, where it defaults to the
+    // environment variable name when empty. References that read a fixed
+    // payload key (such as auth token or S3 credentials) ignore this field.
+    string key = 3;
   }
 }
 
