@@ -33,6 +33,15 @@ message NVLInstanceGroupSpec {
 
   // Type of the NVLink InstanceGroup (corresponds to the Compute platform)
   NVLInstanceGroupType type = 1 [(field_behavior) = IMMUTABLE];
+
+  // Maximum number of instances in the NVLink InstanceGroup
+  int64 size = 2 [
+    (buf.validate.field) = {
+      int64: {gt: 0}
+      required: true
+    },
+    (field_behavior) = IMMUTABLE
+  ];
 }
 
 message NVLInstanceGroupStatus {

@@ -113,6 +113,7 @@ message TransferSource {
   // Source storage provider configuration.
   oneof provider {
     option (buf.validate.oneof).required = true;
+    option (oneof_behavior) = IMMUTABLE;
 
     NebiusProvider nebius = 1;
 
@@ -238,6 +239,7 @@ message TransferDestination {
   // Destination storage provider configuration.
   oneof provider {
     option (buf.validate.oneof).required = true;
+    option (oneof_behavior) = IMMUTABLE;
 
     NebiusProvider nebius = 1;
 

@@ -56,12 +56,15 @@ message SymmetricKeySpec {
   ];
 
   // Key rotation period.
-  google.protobuf.Duration rotation_period = 3 [(buf.validate.field) = {
-    duration: {
-      lte: {seconds: 315360000}
-      gte: {seconds: 86400}
+  google.protobuf.Duration rotation_period = 3 [
+    (field_behavior) = NON_EMPTY_DEFAULT,
+    (buf.validate.field) = {
+      duration: {
+        lte: {seconds: 315360000}
+        gte: {seconds: 86400}
+      }
     }
-  }];
+  ];
 }
 
 message SymmetricKeyStatus {
