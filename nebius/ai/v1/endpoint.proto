@@ -130,8 +130,8 @@ message EndpointSpec {
 
     // Secret storing the environment variable value.
     // Mutually exclusive with `value`.
-    // The payload entry is selected by `mysterybox_secret.key`, which defaults
-    // to `name` when empty.
+    // The value is read from the payload entry whose key matches the variable
+    // name, or the first entry when no such key exists.
     MysteryBoxSecretRef mysterybox_secret = 3;
   }
 
@@ -333,11 +333,9 @@ message EndpointSpec {
       resource: ["mbsecver"]
     }];
 
-    // Optional key of the payload entry to read the value from.
-    // Honored for environment variable references, where it defaults to the
-    // environment variable name when empty. References that read a fixed
-    // payload key (such as auth token or S3 credentials) ignore this field.
-    string key = 3;
+    reserved 3;
+
+    reserved "key";
   }
 }
 
