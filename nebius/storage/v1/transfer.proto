@@ -16,6 +16,8 @@ option java_package = "ai.nebius.pub.storage.v1";
 // Transfer that migrates data from other providers or across different regions of Nebius Object Storage.
 // Transfer consists of consecutive iterations where the service lists objects in the source bucket and
 // moves those that need to be transferred according to the specified overwrite strategy and touch unmanaged flag value.
+// If the enable deletes in destination flag is set, the service also lists destination bucket and deletes
+// objects which do not exist in the source bucket according to the touch unmanaged flag value.
 // After an iteration completes, the transfer will stop if its stop condition is met. Otherwise,
 // it will wait for the defined inter-iteration interval before starting the next iteration.
 message Transfer {
@@ -102,6 +104,10 @@ message TransferSpec {
     // If touch_unmanaged flag isn't set, we do not overwrite objects that haven't been created by Data Transfer service.
     IF_NEWER = 2;
   }
+
+  // If enable_deletes_in_destination flag is set, service will delete objects that exist in destination, but don't exist in source.
+  // If touch_unmanaged flag isn't set, we do not delete objects that haven't been created by Data Transfer service.
+  bool enable_deletes_in_destination = 9 [(field_behavior) = IMMUTABLE];
 
   // If touch_unmanaged flag is set, service will be allowed to overwrite and delete from destination objects that were not
   // created by Data Transfer Service. If this flag is false, Data Transfer Service will never overwrite or delete objects
@@ -278,7 +284,7 @@ message TransferDestination {
     ];
 
     // Credentials for accessing the destination bucket.
-    // These credentials must have head, write permissions.
+    // These credentials must have head, write and delete (if enable_deletes_in_destination flag is enabled) permissions.
     oneof credentials {
       option (buf.validate.oneof).required = true;
 
@@ -317,7 +323,7 @@ message TransferDestination {
     ];
 
     // Credentials for accessing the destination bucket.
-    // These credentials must have head, write permissions.
+    // These credentials must have head, write and delete (if enable_deletes_in_destination flag is enabled) permissions.
     oneof credentials {
       option (buf.validate.oneof).required = true;
 
@@ -437,6 +443,9 @@ message TransferIteration {
 
   // Number of objects transferred during this iteration.
   int64 objects_transferred_count = 6;
+
+  // Number of objects deleted from destination bucket during this iteration.
+  int64 objects_deleted_count = 7;
 
   // Total size of objects transferred during this iteration.
   int64 objects_transferred_size = 8;
