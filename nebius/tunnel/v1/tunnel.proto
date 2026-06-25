@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package nebius.tunnel.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/tunnel/v1";
+option java_multiple_files = true;
+option java_outer_classname = "TunnelProto";
+option java_package = "ai.nebius.pub.tunnel.v1";
+
+// Tunnel represents a secure tunnel connection for applications.
+// It enables connectivity between applications and external services within a parent.
+message Tunnel {
+  option (resource_behavior) = UNNAMED;
+
+  // Resource metadata containing identification and hierarchy information.
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
+
+  // Specification of the tunnel configuration.
+  TunnelSpec spec = 2 [(buf.validate.field).required = true];
+
+  // Current status of the tunnel.
+  TunnelStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+// TunnelSpec defines the configuration for the tunnel.
+message TunnelSpec {
+  // Human-readable display name for the tunnel.
+  string title = 1 [(buf.validate.field) = {
+    string: {max_len: 256}
+  }];
+
+  // Arbitrary description of the tunnel provided by the user.
+  string description = 2 [(buf.validate.field) = {
+    string: {max_len: 1024}
+  }];
+}
+
+// TunnelStatus represents the current state of the tunnel.
+message TunnelStatus {
+  // State represents the lifecycle state of the tunnel.
+  enum State {
+    // Default unspecified state.
+    UNSPECIFIED = 0;
+
+    // The tunnel has been created and is active.
+    CREATED = 1;
+
+    // The tunnel has been deleted.
+    DELETED = 2;
+  }
+
+  // Current lifecycle state of the tunnel.
+  State state = 1;
+}

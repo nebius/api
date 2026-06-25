@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package nebius.tunnel.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/tunnel/v1/tunnel.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/tunnel/v1";
+option java_multiple_files = true;
+option java_outer_classname = "TunnelServiceProto";
+option java_package = "ai.nebius.pub.tunnel.v1";
+
+// TunnelService provides methods for managing tunnels.
+// It supports CRUD operations for creating secure tunnel connections for applications.
+service TunnelService {
+  option (api_service_name) = "applicationtunnel.mkt";
+
+  // Retrieves a tunnel by its identifier.
+  rpc Get(GetTunnelRequest) returns (Tunnel);
+
+  // Lists all tunnels within a parent.
+  rpc List(ListTunnelRequest) returns (ListTunnelsResponse);
+
+  // Creates a new tunnel.
+  rpc Create(CreateTunnelRequest) returns (common.v1.Operation);
+
+  // Updates an existing tunnel.
+  rpc Update(UpdateTunnelRequest) returns (common.v1.Operation);
+
+  // Deletes a tunnel by its identifier.
+  rpc Delete(DeleteTunnelRequest) returns (common.v1.Operation);
+}
+
+// Request to get a tunnel by its identifier.
+message GetTunnelRequest {
+  // Unique identifier of the tunnel.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+// Request to list tunnels within a project.
+message ListTunnelRequest {
+  // Identifier of the parent project.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  // Maximum number of items to return per page.
+  int64 page_size = 2;
+
+  // Token for retrieving the next page of results.
+  string page_token = 3;
+
+  // Filter expression for narrowing results.
+  string filter = 4;
+}
+
+// Response containing a list of tunnels.
+message ListTunnelsResponse {
+  // List of tunnels matching the request.
+  repeated Tunnel items = 1;
+
+  // Token to retrieve the next page of results, empty if no more results.
+  string next_page_token = 2;
+}
+
+// Request to create a new tunnel.
+message CreateTunnelRequest {
+  // Metadata for the new tunnel.
+  common.v1.ResourceMetadata metadata = 1;
+
+  // Specification for the new tunnel.
+  TunnelSpec spec = 2;
+}
+
+// Request to update an existing tunnel.
+message UpdateTunnelRequest {
+  // Metadata identifying the tunnel to update. The `id` field is required;
+  // `resource_version`, when non-zero, enables optimistic concurrency control.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // New specification for the tunnel.
+  TunnelSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+// Request to delete a tunnel.
+message DeleteTunnelRequest {
+  // Unique identifier of the tunnel to delete.
+  string id = 1 [(buf.validate.field).required = true];
+}
