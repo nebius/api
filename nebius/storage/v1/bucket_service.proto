@@ -67,7 +67,7 @@ message CreateBucketRequest {
 message UpdateBucketRequest {
   common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
 
-  BucketSpec spec = 2 [(buf.validate.field).required = true];
+  BucketSpec spec = 2;
 }
 
 message DeleteBucketRequest {
