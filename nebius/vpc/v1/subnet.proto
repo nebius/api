@@ -129,14 +129,44 @@ message SubnetStatus {
   State state = 1;
 
   // CIDR blocks.
-  repeated string ipv4_private_cidrs = 2;
+  // Deprecated: Use `ipv4_private_pools.cidrs` instead.
+  repeated string ipv4_private_cidrs = 2 [
+    deprecated = true,
+    (field_deprecation_details) = {
+      effective_at: "2027-02-01"
+      description: "Use `ipv4_private_pools.cidrs` instead."
+    }
+  ];
 
   // CIDR blocks.
-  repeated string ipv4_public_cidrs = 3;
+  // Deprecated: Use `ipv4_public_pools.cidrs` instead.
+  repeated string ipv4_public_cidrs = 3 [
+    deprecated = true,
+    (field_deprecation_details) = {
+      effective_at: "2027-02-01"
+      description: "Use `ipv4_public_pools.cidrs` instead."
+    }
+  ];
 
   // Information about the route table associated with this subnet.
   // Can be either a custom route table or the network's default route table.
   SubnetAssociatedRouteTable route_table = 5;
+
+  // Private IPv4 pools available for allocations in this subnet.
+  repeated SubnetStatusPool ipv4_private_pools = 8;
+
+  // Public IPv4 pools available for allocations in this subnet.
+  repeated SubnetStatusPool ipv4_public_pools = 9;
+}
+
+message SubnetStatusPool {
+  // ID of the pool available for allocations in this subnet.
+  string pool_id = 1 [(nid) = {
+    resource: ["vpcpool"]
+  }];
+
+  // CIDR blocks sourced from this pool.
+  repeated string cidrs = 2;
 }
 
 message SubnetAssociatedRouteTable {
