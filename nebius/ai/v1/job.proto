@@ -17,7 +17,12 @@ option java_package = "ai.nebius.pub.ai.v1";
 
 // Represents a job with a specified workload.
 message Job {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   JobSpec spec = 2 [(buf.validate.field).required = true];
 
