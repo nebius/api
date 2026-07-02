@@ -49,13 +49,23 @@ message GetEndpointRequest {
 }
 
 message GetEndpointByNameRequest {
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListEndpointsRequest {
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   int64 page_size = 2;
 
@@ -63,7 +73,12 @@ message ListEndpointsRequest {
 }
 
 message CreateEndpointRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   EndpointSpec spec = 2 [(buf.validate.field).required = true];
 

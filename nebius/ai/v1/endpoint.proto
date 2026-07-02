@@ -15,7 +15,12 @@ option java_package = "ai.nebius.pub.ai.v1";
 
 // Represents an endpoint with a specified workload.
 message Endpoint {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   EndpointSpec spec = 2 [(buf.validate.field).required = true];
 
