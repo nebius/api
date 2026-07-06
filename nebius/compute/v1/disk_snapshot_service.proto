@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package nebius.compute.v1;
+
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/compute/v1/disk_snapshot.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
+option java_multiple_files = true;
+option java_outer_classname = "DiskSnapshotServiceProto";
+option java_package = "ai.nebius.pub.compute.v1";
+
+// Disk snapshot service specification
+service DiskSnapshotService {
+  option (api_service_name) = "compute";
+
+  // Retrieves detailed information about a specific snapshot by its ID.
+  rpc Get(GetDiskSnapshotRequest) returns (DiskSnapshot);
+
+  // Retrieves information about a snapshot by its parent and name.
+  rpc GetByName(common.v1.GetByNameRequest) returns (DiskSnapshot);
+
+  // Lists all snapshots in a specific parent resource.
+  rpc List(ListDiskSnapshotsRequest) returns (ListDiskSnapshotsResponse);
+
+  // Lists all snapshots with a specific source disk.
+  rpc ListByDisk(ListDiskSnapshotsByDiskRequest) returns (ListDiskSnapshotsByDiskResponse);
+
+  // Creates a new snapshot resource of a disk.
+  rpc Create(CreateDiskSnapshotRequest) returns (common.v1.Operation);
+
+  // Updates an existing snapshot with new configuration parameters.
+  rpc Update(UpdateDiskSnapshotRequest) returns (common.v1.Operation);
+
+  // Deletes snapshot.
+  rpc Delete(DeleteDiskSnapshotRequest) returns (common.v1.Operation);
+}
+
+message GetDiskSnapshotRequest {
+  string id = 1;
+}
+
+message ListDiskSnapshotsRequest {
+  string parent_id = 1;
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
+message ListDiskSnapshotsResponse {
+  repeated DiskSnapshot items = 1;
+
+  string next_page_token = 2;
+}
+
+message ListDiskSnapshotsByDiskRequest {
+  // ID of computedisk resource
+  string disk_id = 1 [(nid) = {
+    resource: ["computedisk"]
+  }];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
+message ListDiskSnapshotsByDiskResponse {
+  repeated DiskSnapshot items = 1;
+
+  string next_page_token = 2;
+}
+
+message CreateDiskSnapshotRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  DiskSnapshotSpec spec = 2;
+}
+
+message UpdateDiskSnapshotRequest {
+  common.v1.ResourceMetadata metadata = 1;
+
+  DiskSnapshotSpec spec = 2;
+}
+
+message DeleteDiskSnapshotRequest {
+  string id = 1;
+}

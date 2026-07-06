@@ -139,6 +139,10 @@ message DiskStatus {
     // Disk is locked for deletion and for read-write operations while image is being created.
     // Here is the list of these images.
     repeated string images = 1;
+
+    // Disk is locked only for deletion while snapshot is being created.
+    // Here is the list of these snapshots.
+    repeated string snapshots = 2;
   }
 
   // Indicates resources that prevent the disk from being attached as read-write.
