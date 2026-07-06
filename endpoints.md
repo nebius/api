@@ -25,6 +25,7 @@
 * compute.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.compute.v1.DiskService](nebius/compute/v1/disk_service.proto)
+  * [nebius.compute.v1.DiskSnapshotService](nebius/compute/v1/disk_snapshot_service.proto)
   * [nebius.compute.v1.FilesystemService](nebius/compute/v1/filesystem_service.proto)
   * [nebius.compute.v1.GpuClusterService](nebius/compute/v1/gpu_cluster_service.proto)
   * [nebius.compute.v1.ImageService](nebius/compute/v1/image_service.proto)

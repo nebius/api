@@ -34,6 +34,8 @@ message ServiceError {
 
     OperationAborted operation_aborted = 131;
 
+    OperationConflict operation_conflict = 132;
+
     TooManyRequests too_many_requests = 140;
 
     QuotaFailure quota_failure = 141;
@@ -114,6 +116,16 @@ message OperationAborted {
 
   // Resource ID corresponding to both of the operations.
   string resource_id = 3;
+}
+
+// Operation cannot be started because a conflicting operation is already running on the same resource.
+// Wait until the conflicting operation finishes, then you can retry starting your operation.
+message OperationConflict {
+  // ID of the conflicting operation (the one that's running).
+  string conflicting_operation_id = 1;
+
+  // Resource ID corresponding to the conflicting operation.
+  string resource_id = 2;
 }
 
 // Indicates that element with requested parameters is exceeding the particular range.

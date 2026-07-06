@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package nebius.compute.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/compute/v1";
+option java_multiple_files = true;
+option java_outer_classname = "DiskSnapshotProto";
+option java_package = "ai.nebius.pub.compute.v1";
+
+// DiskSnapshot resource
+message DiskSnapshot {
+  common.v1.ResourceMetadata metadata = 1;
+
+  DiskSnapshotSpec spec = 2;
+
+  DiskSnapshotStatus status = 3;
+}
+
+message DiskSnapshotSpec {
+  // Identifier of the source disk. May become stale if the disk is deleted.
+  string source_disk_id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
+
+  // Arbitrary information about this snapshot provided by user.
+  string description = 2 [(buf.validate.field) = {
+    string: {max_len: 1024}
+  }];
+}
+
+message DiskSnapshotStatus {
+  // All possible states for DiskSnapshot resource
+  enum State {
+    UNSPECIFIED = 0;
+
+    CREATING = 1;
+
+    READY = 2;
+
+    DELETING = 3;
+
+    ERROR = 4;
+  }
+
+  State state = 1;
+
+  // Logical size of the snapshot content.
+  // This is the size of a disk that would be created from this snapshot.
+  int64 content_size_bytes = 2;
+
+  // Physical storage used by this snapshot in the snapshot backend.
+  // This value is used for billing and quota and may change over time as the snapshot chain evolves
+  // (e.g., when earlier snapshots are deleted and data gets re-attributed).
+  // Currently is equal to content_size_bytes, as incremental snapshots are not supported yet.
+  int64 storage_size_bytes = 3;
+
+  message LockState {
+    // The snapshot is locked for deletion while disk is being created from this snapshot.
+    // Here is the list of these disks.
+    repeated string disks = 1;
+  }
+
+  // Indicates which resources prevent the disk snapshot from being deleted.
+  LockState lock_state = 4;
+
+  // Right now UNDEFINED is an alias for AMD64, but that might change in the future
+  enum CPUArchitecture {
+    UNDEFINED = 0;
+
+    AMD64 = 1;
+
+    ARM64 = 2;
+  }
+
+  // CPU architecture associated with the source disk.
+  // Not set if the architecture is unknown.
+  CPUArchitecture source_cpu_architecture = 5;
+}
