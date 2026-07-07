@@ -127,7 +127,10 @@ message EndpointSpec {
     };
 
     // The name of the environment variable.
-    string name = 1 [(buf.validate.field).required = true];
+    string name = 1 [(buf.validate.field) = {
+      string: {pattern: "^[a-zA-Z_][a-zA-Z0-9_]*$"}
+      required: true
+    }];
 
     // Environment variable value.
     // Mutually exclusive with `mysterybox_secret`.
