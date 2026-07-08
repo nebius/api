@@ -38,26 +38,46 @@ service NodeGroupService {
 }
 
 message CreateNodeGroupRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["mk8scluster"]
+    }
+  ];
 
   NodeGroupSpec spec = 2 [(buf.validate.field).required = true];
 }
 
 message GetNodeGroupRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["mk8snodegroup"]
+    }
+  ];
 
   string resource_version = 2;
 }
 
 message GetNodeGroupByNameRequest {
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["mk8scluster"]
+    }
+  ];
 
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListNodeGroupsRequest {
   // ID of the parent Cluster.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["mk8scluster"]
+    }
+  ];
 
   // Specifies the maximum number of items to return in the response.
   int64 page_size = 2;
@@ -73,17 +93,32 @@ message ListNodeGroupsResponse {
 }
 
 message UpdateNodeGroupRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["mk8scluster"]
+    }
+  ];
 
   NodeGroupSpec spec = 2;
 }
 
 message DeleteNodeGroupRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["mk8snodegroup"]
+    }
+  ];
 }
 
 message UpgradeNodeGroupRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["mk8snodegroup"]
+    }
+  ];
 
   oneof upgrade_type {
     option (buf.validate.oneof).required = true;
