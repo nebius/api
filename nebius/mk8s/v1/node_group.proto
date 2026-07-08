@@ -18,15 +18,20 @@ option java_package = "ai.nebius.pub.mk8s.v1";
 // A Node is a Nebius Compute Instance created in Cluster.metadata.parent_id container, running kubelet
 // that registers in Kubernetes API and a Node object created.
 message NodeGroup {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field) = {
-    cel: [
-      {
-        id: "metadata_name"
-        message: "'name' must be 1 to 63 characters long and use only letters, digits, '-', or '_', starting and ending with a letter or digit"
-        expression: "size(this.name) >= 1 && size(this.name) <= 63 && this.name.matches('^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$')"
-      }
-    ]
-  }];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field) = {
+      cel: [
+        {
+          id: "metadata_name"
+          message: "'name' must be 1 to 63 characters long and use only letters, digits, '-', or '_', starting and ending with a letter or digit"
+          expression: "size(this.name) >= 1 && size(this.name) <= 63 && this.name.matches('^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$')"
+        }
+      ]
+    },
+    (nid) = {
+      parent_resource: ["mk8scluster"]
+    }
+  ];
 
   NodeGroupSpec spec = 2;
 
@@ -141,7 +146,9 @@ message NodeTemplate {
   // This service account is also used to make requests to container registry.
   //
   // `resource.serviceaccount.issueAccessToken` permission is required to use this field.
-  string service_account_id = 10;
+  string service_account_id = 10 [(nid) = {
+    resource: ["serviceaccount"]
+  }];
 
   // Configures whether the nodes in the group are preemptible.
   // Set to empty value to enable preemptible nodes.
@@ -175,7 +182,12 @@ message NVLinkSpec {
     option (buf.validate.oneof).required = true;
 
     // Existing NVLInstanceGroup ID to use.
-    string nvl_instance_group_id = 2 [(field_behavior) = IMMUTABLE];
+    string nvl_instance_group_id = 2 [
+      (field_behavior) = IMMUTABLE,
+      (nid) = {
+        resource: ["computenvlinstancegroup"]
+      }
+    ];
   }
 }
 
@@ -211,7 +223,9 @@ message GpuSettings {
 }
 
 message GpuClusterSpec {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computegpucluster"]
+  }];
 }
 
 message NetworkInterfaceTemplate {
@@ -222,7 +236,12 @@ message NetworkInterfaceTemplate {
   // Nebius VPC Subnet ID that will be attached to a node cloud instance network interface.
   // By default Cluster control plane subnet_id used.
   // Subnet should be located in the same network with control plane.
-  string subnet_id = 3 [(field_behavior) = NON_EMPTY_DEFAULT];
+  string subnet_id = 3 [
+    (field_behavior) = NON_EMPTY_DEFAULT,
+    (nid) = {
+      resource: ["vpcsubnet"]
+    }
+  ];
 
   // User provided VPC Security Groups which will be assigned to all nodes of this NodeGroup.
   repeated SecurityGroup security_groups = 7;
@@ -232,7 +251,9 @@ message NetworkInterfaceTemplate {
 message PublicIPAddress {}
 
 message SecurityGroup {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["vpcsecuritygroup"]
+  }];
 }
 
 message AttachedFilesystemSpec {
@@ -257,7 +278,12 @@ message AttachedFilesystemSpec {
 }
 
 message ExistingFilesystem {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["computefilesystem"]
+    }
+  ];
 }
 
 message NodeGroupAutoscalingSpec {
@@ -442,7 +468,9 @@ message ReservationPolicy {
   Policy policy = 1;
 
   // Capacity block groups, order matters
-  repeated string reservation_ids = 2;
+  repeated string reservation_ids = 2 [(nid) = {
+    resource: ["computereservation"]
+  }];
 }
 
 message LocalDisksSpec {

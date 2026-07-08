@@ -51,6 +51,8 @@ message ImageSpec {
     string source_disk_id = 4 [(field_behavior) = IMMUTABLE];
 
     SourceStorage source_storage = 11 [(field_behavior) = IMMUTABLE];
+
+    string source_disk_snapshot_id = 12 [(field_behavior) = IMMUTABLE];
   }
 
   // CPU architecture supported by the image

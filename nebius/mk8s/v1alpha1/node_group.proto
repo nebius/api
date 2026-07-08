@@ -18,7 +18,9 @@ option (file_deprecation_details) = {description: "migrate to v1"};
 
 // NodeGroup represents Kubernetes node pool
 message NodeGroup {
-  common.v1.ResourceMetadata metadata = 1; // the parent_id is an ID of Cluster
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["mk8scluster"]
+  }]; // the parent_id is an ID of Cluster
 
   NodeGroupSpec spec = 2;
 
@@ -110,7 +112,9 @@ message NodeTemplate {
   // make requests to container registry.
   //
   // `resource.serviceaccount.issueAccessToken` permission is required to use this field.
-  string service_account_id = 10;
+  string service_account_id = 10 [(nid) = {
+    resource: ["serviceaccount"]
+  }];
 
   // Configures whether the nodes in the group are preemptible.
   // Set to empty value to enable preemptible nodes.
@@ -139,7 +143,9 @@ message GpuSettings {
 }
 
 message GpuClusterSpec {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computegpucluster"]
+  }];
 }
 
 message NetworkInterfaceTemplate {
@@ -149,7 +155,12 @@ message NetworkInterfaceTemplate {
   // Subnet ID that will be attached to a node cloud instance network interface.
   // By default control plane subnet_id used.
   // Subnet should be located in the same network with control plane and have same parent ID as cluster.
-  string subnet_id = 3 [(field_behavior) = NON_EMPTY_DEFAULT];
+  string subnet_id = 3 [
+    (field_behavior) = NON_EMPTY_DEFAULT,
+    (nid) = {
+      resource: ["vpcsubnet"]
+    }
+  ];
 }
 
 // Describes a public IP address.
@@ -176,7 +187,12 @@ message AttachedFilesystemSpec {
 }
 
 message ExistingFilesystem {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["computefilesystem"]
+    }
+  ];
 }
 
 message NodeGroupAutoscalingSpec {
