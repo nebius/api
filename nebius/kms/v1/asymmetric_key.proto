@@ -29,7 +29,9 @@ enum AsymmetricAlgorithm {
 
 // An asymmetric KMS key that may contain several versions of the cryptographic material.
 message AsymmetricKey {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // The specifications of the asymmetric key.
   AsymmetricKeySpec spec = 2;

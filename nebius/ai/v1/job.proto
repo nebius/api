@@ -387,6 +387,9 @@ message JobStatus {
 
     // The job encountered an internal error.
     ERROR = 9;
+
+    // The job is pulling an image (STARTING -> IMAGE_PULLING -> RUNNING).
+    IMAGE_PULLING = 10;
   }
 }
 
@@ -451,5 +454,8 @@ message JobInstanceStatus {
 
     // The job encountered an internal error.
     ERROR = 10;
+
+    // The job is pulling an image (STARTING -> IMAGE_PULLING -> RUNNING).
+    IMAGE_PULLING = 11;
   }
 }

@@ -20,7 +20,9 @@ message ResourceMetadata {
   string parent_id = 2 [(buf.validate.field).required = true];
 
   // Human readable name for the resource.
-  string name = 3;
+  string name = 3 [(buf.validate.field) = {
+    string: {max_bytes: 1024}
+  }];
 
   // Version of the resource for safe concurrent modifications and consistent reads.
   // Positive and monotonically increases on each resource spec change (but *not* on each change of the
@@ -45,5 +47,8 @@ message ResourceMetadata {
 message GetByNameRequest {
   string parent_id = 1 [(buf.validate.field).required = true];
 
-  string name = 2 [(buf.validate.field).required = true];
+  string name = 2 [(buf.validate.field) = {
+    string: {max_bytes: 1024}
+    required: true
+  }];
 }

@@ -388,6 +388,9 @@ message EndpointStatus {
 
     // The endpoint encountered an error.
     ERROR = 8;
+
+    // The endpoint is pulling an image (STARTING -> IMAGE_PULLING -> RUNNING).
+    IMAGE_PULLING = 9;
   }
 }
 
@@ -446,5 +449,8 @@ message EndpointInstanceStatus {
 
     // The endpoint encountered an error.
     ERROR = 8;
+
+    // The endpoint is pulling an image (STARTING -> IMAGE_PULLING -> RUNNING).
+    IMAGE_PULLING = 9;
   }
 }
