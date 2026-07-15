@@ -49,14 +49,24 @@ service SymmetricKeyService {
 }
 
 message CreateSymmetricKeyRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   SymmetricKeySpec spec = 2 [(buf.validate.field).required = true];
 }
 
 message UpdateSymmetricKeyRequest {
   // The metadata for the resource.
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   // The specifications for updating a symmetric key.
   SymmetricKeySpec spec = 2;
@@ -65,7 +75,12 @@ message UpdateSymmetricKeyRequest {
 message GetSymmetricKeyRequest {
   // ID of the symmetric KMS key to return.
   // To get the ID of a symmetric KMS key use a [SymmetricKeyService.List] request.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["kmssymkey"]
+    }
+  ];
 
   // By default, Get doesn't return resource if it is scheduled for deletion.
   // If show_scheduled_for_deletion = true, the Get operation returns the resource even if it is scheduled for deletion.
@@ -76,13 +91,23 @@ message GetSymmetricKeyRequest {
 message GetSymmetricKeyByNameRequest {
   // ParentId and name of the symmetric KMS key to return.
   // To get the name of a symmetric KMS key use a [SymmetricKeyService.List] request.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListSymmetricKeysRequest {
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   // The maximum number of results per page to return. If the number of available
   // results is larger than [page_size], the service returns a [ListSymmetricKeysResponse.next_page_token]
@@ -113,18 +138,33 @@ message ListSymmetricKeysResponse {
 
 message RotateSymmetricKeyRequest {
   // ID of the key to be rotated.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["kmssymkey"]
+    }
+  ];
 }
 
 message DeleteSymmetricKeyRequest {
   // ID of the symmetric KMS key to schedule for deletion.
   // To get the ID of a symmetric KMS key use a [SymmetricKeyService.List] request.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["kmssymkey"]
+    }
+  ];
 }
 
 message UpdateSymmetricKeyDeletionDelayRequest {
   // ID of the symmetric KMS key scheduled for deletion.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["kmssymkey"]
+    }
+  ];
 
   // Deletion delay applied from the update timestamp.
   // Example: "86400s" (1 day). Valid range: 86400s (1 day) to 2592000s (30 days).
@@ -139,7 +179,12 @@ message UpdateSymmetricKeyDeletionDelayRequest {
 
 message UndeleteSymmetricKeyRequest {
   // ID of the symmetric KMS key to restore.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["kmssymkey"]
+    }
+  ];
 
   // A new name in case the current one is already in use.
   string name = 2;
