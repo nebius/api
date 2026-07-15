@@ -43,7 +43,7 @@ message InstanceSpec {
   }];
 
   // Specified boot disk attached to the instance.
-  AttachedDiskSpec boot_disk = 5;
+  AttachedDiskSpec boot_disk = 5 [(buf.validate.field).required = true];
 
   // List of additional data disks attached to the instance beyond the boot disk.
   repeated AttachedDiskSpec secondary_disks = 6;

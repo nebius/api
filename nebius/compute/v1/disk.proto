@@ -68,6 +68,8 @@ message DiskSpec {
     string source_image_id = 8 [(field_behavior) = IMMUTABLE];
 
     SourceImageFamily source_image_family = 10 [(field_behavior) = IMMUTABLE];
+
+    string source_snapshot_id = 13 [(field_behavior) = IMMUTABLE];
   }
 
   // Defines how data on the disk is encrypted. By default, no encryption is applied.

@@ -46,7 +46,12 @@ service AsymmetricKeyService {
 
 message CreateAsymmetricKeyRequest {
   // The metadata for the resource.
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   // The specifications for creating an asymmetric key.
   AsymmetricKeySpec spec = 2 [(buf.validate.field).required = true];
@@ -54,7 +59,12 @@ message CreateAsymmetricKeyRequest {
 
 message UpdateAsymmetricKeyRequest {
   // The metadata for the resource.
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   // The specifications for updating an asymmetric key.
   AsymmetricKeySpec spec = 2;
@@ -63,7 +73,12 @@ message UpdateAsymmetricKeyRequest {
 message GetAsymmetricKeyRequest {
   // ID of the asymmetric KMS key to return.
   // To get the ID of an asymmetric KMS key use an [AsymmetricKeyService.List] request.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["kmsasymkey"]
+    }
+  ];
 
   // By default, Get doesn't return resource if it is scheduled for deletion.
   // If show_scheduled_for_deletion = true, the Get operation returns the resource even if it is scheduled for deletion.
@@ -74,14 +89,24 @@ message GetAsymmetricKeyRequest {
 message GetAsymmetricKeyByNameRequest {
   // Parent Id and name of the asymmetric KMS key to return.
   // To get the name of an asymmetric KMS key use an [AsymmetricKeyService.List] request.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListAsymmetricKeysRequest {
   // ID of the container to list asymmetric KMS keys in.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   // The maximum number of results per page to return. If the number of available
   // results is larger than [page_size], the service returns a [ListAsymmetricKeysResponse.next_page_token]
@@ -113,12 +138,22 @@ message ListAsymmetricKeysResponse {
 message DeleteAsymmetricKeyRequest {
   // ID of the asymmetric KMS key to schedule for deletion.
   // To get the ID of an asymmetric KMS key use an [AsymmetricKeyService.List] request.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["kmsasymkey"]
+    }
+  ];
 }
 
 message UpdateAsymmetricKeyDeletionDelayRequest {
   // ID of the asymmetric KMS key scheduled for deletion.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["kmsasymkey"]
+    }
+  ];
 
   // Deletion delay applied from the update timestamp.
   // Example: "86400s" (1 day). Valid range: 86400s (1 day) to 2592000s (30 days).
@@ -133,7 +168,12 @@ message UpdateAsymmetricKeyDeletionDelayRequest {
 
 message UndeleteAsymmetricKeyRequest {
   // ID of the asymmetric KMS key to restore.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["kmsasymkey"]
+    }
+  ];
 
   // A new name in case the current one is already in use.
   string name = 2;
