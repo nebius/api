@@ -20,8 +20,10 @@
 * capacity-advisor.billing-cpl.api.nebius.cloud:443
   * [nebius.capacity.v1.ResourceAdviceService](nebius/capacity/v1/resource_advice_service.proto)
 * capacity-blocks.billing-cpl.api.nebius.cloud:443
+  * [nebius.capacity.v1.CapacityAllowanceService](nebius/capacity/v1/capacity_allowance_service.proto)
   * [nebius.capacity.v1.CapacityBlockGroupService](nebius/capacity/v1/capacity_block_group_service.proto)
   * [nebius.capacity.v1.CapacityIntervalService](nebius/capacity/v1/capacity_interval_service.proto)
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
 * compute.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.compute.v1.DiskService](nebius/compute/v1/disk_service.proto)
