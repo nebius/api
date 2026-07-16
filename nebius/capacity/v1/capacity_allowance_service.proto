@@ -1,0 +1,141 @@
+syntax = "proto3";
+
+package nebius.capacity.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/capacity/v1/capacity_allowance.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/capacity/v1";
+option java_multiple_files = true;
+option java_outer_classname = "CapacityAllowanceServiceProto";
+option java_package = "ai.nebius.pub.capacity.v1";
+
+// Capacity Allowance service manages project limits for Capacity Block Groups.
+service CapacityAllowanceService {
+  option (api_service_name) = "capacity-blocks.billing-cpl";
+
+  // Lists project limits.
+  // Lists non-created Capacity Allowances as well for clarity, showing the default limit.
+  rpc List(ListCapacityAllowancesRequest) returns (ListCapacityAllowancesResponse);
+
+  // Lists project limits for a Capacity Block Group.
+  rpc ListByCapacityBlockGroup(ListCapacityAllowancesByCapacityBlockGroupRequest) returns (ListCapacityAllowancesResponse);
+
+  // Gets a Capacity Allowance by its ID.
+  rpc Get(GetCapacityAllowanceRequest) returns (CapacityAllowance);
+
+  // Gets a Capacity Allowance by a project and a Capacity Block Group NID.
+  // Returns non-created Capacity Allowances as well for clarity, showing the default limit.
+  rpc GetByParentAndCapacityBlockGroup(GetCapacityAllowanceByParentAndCapacityBlockGroupRequest) returns (CapacityAllowance);
+
+  // Creates a Capacity Allowance by project ID and Capacity Block Group NID.
+  rpc Create(CreateCapacityAllowanceRequest) returns (common.v1.Operation);
+
+  // Updates a Capacity Allowance by project ID and Capacity Block Group NID.
+  rpc Update(UpdateCapacityAllowanceRequest) returns (common.v1.Operation);
+
+  // Resets Capacity Allowance limit to the default value.
+  rpc Delete(DeleteCapacityAllowanceRequest) returns (common.v1.Operation);
+}
+
+message ListCapacityAllowancesRequest {
+  // ID of the Project to list capacity allowances for.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  // Page size. Must be between [1...1000].
+  // Optional; if not specified, a reasonable default will be chosen by the service.
+  int64 page_size = 2;
+
+  // Listing continuation token. Pass an empty string to start listing from the first page.
+  string page_token = 3;
+}
+
+message ListCapacityAllowancesResponse {
+  // List of Capacity Allowances on this result page.
+  repeated CapacityAllowance items = 1;
+
+  // Listing continuation token for the next page of results.
+  string next_page_token = 2;
+}
+
+message ListCapacityAllowancesByCapacityBlockGroupRequest {
+  // ID of a Capacity Block Group to list capacity allowances for.
+  string capacity_block_group_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["capacityblockgroup"]
+    }
+  ];
+
+  // Page size. Must be between [1...1000].
+  // Optional; if not specified, a reasonable default will be chosen by the service.
+  int64 page_size = 2;
+
+  // Listing continuation token. Pass an empty string to start listing from the first page.
+  string page_token = 3;
+}
+
+message GetCapacityAllowanceRequest {
+  // ID of the Capacity Allowance.
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IDENTIFIER,
+    (nid) = {
+      resource: ["capacityallowance"]
+    }
+  ];
+}
+
+message GetCapacityAllowanceByParentAndCapacityBlockGroupRequest {
+  // ID of the Project to get capacity allowance for.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  // ID of a Capacity Block Group to get capacity allowance for.
+  string capacity_block_group_id = 2 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["capacityblockgroup"]
+    }
+  ];
+}
+
+message CreateCapacityAllowanceRequest {
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
+
+  CapacityAllowanceSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message UpdateCapacityAllowanceRequest {
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  CapacityAllowanceSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message DeleteCapacityAllowanceRequest {
+  // ID of the Capacity Allowance.
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IDENTIFIER,
+    (nid) = {
+      resource: ["capacityallowance"]
+    }
+  ];
+}

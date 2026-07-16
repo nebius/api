@@ -97,6 +97,7 @@ message CapacityBlockGroupStatus {
   ResourceAffinity resource_affinity = 2;
 
   // Service for which the Capacity Block Group is allocated.
+  // Derived from the resource_affinity variant (compute_v1 -> "compute", tokenfactory_v1 -> "tokenfactory").
   string service = 3;
 
   // Capacity Block Group state with respect to quota allocation.

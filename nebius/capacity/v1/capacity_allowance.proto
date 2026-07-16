@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package nebius.capacity.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/capacity/v1";
+option java_multiple_files = true;
+option java_outer_classname = "CapacityAllowanceProto";
+option java_package = "ai.nebius.pub.capacity.v1";
+
+// Resource that restricts Capacity Block Group quota by project.
+message CapacityAllowance {
+  option (resource_behavior) = UNNAMED;
+
+  // Standard metadata. parent_id is the User's Project NID.
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
+
+  // Identifiers for the limit and technical configuration.
+  CapacityAllowanceSpec spec = 2 [(buf.validate.field).required = true];
+
+  // Current status of the Capacity Allowance.
+  CapacityAllowanceStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+// Capacity Allowance specification.
+message CapacityAllowanceSpec {
+  // Capacity Block Group NID.
+  string capacity_block_group_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["capacityblockgroup"]
+    }
+  ];
+
+  // Total amount of resources allocated.
+  // Optional is used to define an unlimited Capacity Allowance.
+  optional uint64 limit = 2;
+}
+
+// Capacity Allowance status.
+message CapacityAllowanceStatus {
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    // Capacity Allowance is being allocated; the process can take up to several minutes.
+    STATE_PROVISIONING = 1;
+
+    // Capacity Allowance is allocated and can be used.
+    STATE_ACTIVE = 2;
+
+    // The container of the Capacity Allowance is deleted. Capacity Allowance cannot be changed.
+    STATE_CONTAINER_DELETED = 100;
+  }
+
+  // Current state of the capacity allowance.
+  State state = 1;
+
+  // Current capacity allowance usage.
+  uint64 usage = 2;
+
+  // Capacity allowance usage percentage.
+  string usage_percentage = 3;
+
+  enum UsageState {
+    USAGE_STATE_UNSPECIFIED = 0;
+
+    // Capacity allowance is actively in use.
+    USAGE_STATE_USED = 1;
+
+    // Capacity allowance is not currently in use.
+    USAGE_STATE_NOT_USED = 2;
+
+    // Capacity allowance region is unreachable, the current usage is therefore unknown.
+    // Please, retry the request later.
+    USAGE_STATE_UNKNOWN = 3;
+  }
+
+  // Current state of the capacity allowance usage.
+  UsageState usage_state = 4;
+
+  // Capacity Allowance unit.
+  // Example: "GPU".
+  string unit = 5;
+
+  // Shows that changes are in flight.
+  bool reconciling = 100;
+}
