@@ -32,6 +32,9 @@ service InstanceService {
   // Lists all VM instances within a specified parent.
   rpc List(ListInstancesRequest) returns (ListInstancesResponse);
 
+  // Lists all VM instances that belong to the specified NVL instance group.
+  rpc ListInstancesByNVLInstanceGroup(ListInstancesByNVLInstanceGroupRequest) returns (ListInstancesResponse);
+
   // Creates a new VM instance based on the provided specification.
   // For details, see https://docs.nebius.com/compute/virtual-machines/manage
   rpc Create(CreateInstanceRequest) returns (common.v1.Operation);
@@ -93,6 +96,17 @@ message StartInstanceRequest {
 
 message StopInstanceRequest {
   string id = 1;
+}
+
+message ListInstancesByNVLInstanceGroupRequest {
+  // ID of the NVL instance group whose instances will be listed.
+  string nvl_instance_group_id = 1 [(buf.validate.field).required = true];
+
+  // Maximum number of instances to return in a single page.
+  int64 page_size = 2;
+
+  // Page token returned by a previous call, used to fetch the next page.
+  string page_token = 3;
 }
 
 message BatchGetRequest {
