@@ -40,9 +40,9 @@ message GetTunnelRequest {
   string id = 1 [(buf.validate.field).required = true];
 }
 
-// Request to list tunnels within a project.
+// Request to list tunnels within a parent resource.
 message ListTunnelRequest {
-  // Identifier of the parent project.
+  // Identifier of the parent resource.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -72,7 +72,9 @@ message ListTunnelsResponse {
 // Request to create a new tunnel.
 message CreateTunnelRequest {
   // Metadata for the new tunnel.
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   // Specification for the new tunnel.
   TunnelSpec spec = 2;

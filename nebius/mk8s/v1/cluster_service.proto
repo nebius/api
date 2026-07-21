@@ -136,4 +136,8 @@ message ClusterControlPlaneVersion {
 
   // EndOfLife determines when the version will be forced out of use.
   google.protobuf.Timestamp end_of_life = 3;
+
+  // Deprecated marks version to be soon deleted from API.
+  // Creation of clusters with this version is forbidden.
+  bool deprecated = 4;
 }
