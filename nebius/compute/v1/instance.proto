@@ -69,6 +69,8 @@ message InstanceSpec {
   // be restarted and billed accordingly. Stop instance via API or UI to stop it to avoid recovering.
   // - If set to RECOVER, instance will be restarted, if possible. It could be restarted on the same host or on another host.
   // - If set to FAIL, instance will be stopped and not restarted.
+  // - If set to ALWAYS, keep retrying recovery indefinitely until the instance is recovered. Available only for instances in
+  //   nvlinstancegroup
   InstanceRecoveryPolicy recovery_policy = 15 [(field_behavior) = IMMUTABLE];
 
   // Include these parameters to create a Preemptible VM and omit them to create a Regular VM
@@ -332,6 +334,8 @@ enum InstanceRecoveryPolicy {
   RECOVER = 0;
 
   FAIL = 1;
+
+  ALWAYS = 2;
 }
 
 message InstanceStatusInfinibandTopologyPath {
