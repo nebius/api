@@ -49,7 +49,7 @@ message NodeGroupSpec {
   oneof size {
     option (buf.validate.oneof).required = true;
 
-    // Number of nodes in the group. Can be changed manually at any time.
+    // Number of nodes in the group. Can be changed manually at any time, except for a node group with NVLink.
     int64 fixed_node_count = 2 [(buf.validate.field) = {
       int64: {
         lte: 100
@@ -61,6 +61,16 @@ message NodeGroupSpec {
     // for that NodeGroup, and defines autoscaling parameters.
     NodeGroupAutoscalingSpec autoscaling = 5;
   }
+
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "node_group_spec.nvlink_autoscaling"
+        message: "autoscaling cannot be used for a node group with NVLink"
+        expression: "!(has(this.template.nvlink) && has(this.autoscaling))"
+      }
+    ]
+  };
 
   // Parameters for Kubernetes Node object and Nebius Compute Instance
   // If not written opposite a NodeTemplate field update will cause NodeGroup roll-out according NodeGroupDeploymentStrategy.

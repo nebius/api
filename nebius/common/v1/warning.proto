@@ -84,5 +84,11 @@ message Warning {
 
     // Not-recommended value was used in the request.
     CODE_NOT_RECOMMENDED_SPEC_VALUE_REQUEST = 7;
+
+    // Nebius ID in the request has an invalid resource type.
+    CODE_INVALID_NEBIUS_ID_REQUEST = 8;
+
+    // Nebius ID in the request has an invalid format.
+    CODE_INVALID_NEBIUS_ID_FORMAT_REQUEST = 9;
   }
 }
