@@ -138,7 +138,10 @@ message CapacityBlockGroup {
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field).required = true,
     (nid) = {
-      parent_resource: ["tenant"]
+      parent_resource: [
+        "tenant",
+        "aitenant"
+      ]
     }
   ];
 

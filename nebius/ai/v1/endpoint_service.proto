@@ -35,6 +35,9 @@ service EndpointService {
   // Starts an endpoint.
   rpc Start(StartEndpointRequest) returns (common.v1.Operation);
 
+  // Restarts an endpoint.
+  rpc Restart(RestartEndpointRequest) returns (common.v1.Operation);
+
   // Stops an endpoint.
   rpc Stop(StopEndpointRequest) returns (common.v1.Operation);
 }
@@ -96,6 +99,15 @@ message DeleteEndpointRequest {
 }
 
 message StartEndpointRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["aiendpoint"]
+    }
+  ];
+}
+
+message RestartEndpointRequest {
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
