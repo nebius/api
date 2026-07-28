@@ -6,6 +6,7 @@ import "buf/validate/validate.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/error.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/compute/v1/disk.proto";
 import "nebius/compute/v1/instance.proto";
@@ -400,6 +401,11 @@ message JobStateDetails {
 
   // Detailed human-readable description.
   string message = 2;
+
+  // Structured error details for the failure, if available.
+  // For quota-related failures, `service_error.details.quota_failure`
+  // is populated with the quota violations.
+  common.v1.ServiceError service_error = 3;
 }
 
 // JobInstanceStatus represents the status of a job instance.

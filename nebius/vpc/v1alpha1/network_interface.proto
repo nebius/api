@@ -14,7 +14,6 @@ option java_package = "ai.nebius.pub.vpc.v1alpha1";
 message NetworkInterfaceSpec {
   // Subnet ID
   string subnet_id = 1 [
-    (buf.validate.field).required = true,
     (field_behavior) = IMMUTABLE,
     (nid) = {
       resource: ["vpcsubnet"]
@@ -97,6 +96,12 @@ message NetworkInterfaceStatus {
 
   // MAC address
   string mac_address = 7;
+
+  // Subnet ID actually used by the network interface.
+  // Equals spec.subnet_id when it is provided; otherwise contains the resolved default subnet ID.
+  string subnet_id = 10 [(nid) = {
+    resource: ["vpcsubnet"]
+  }];
 }
 
 message IPAddressStatus {

@@ -4,6 +4,7 @@ package nebius.ai.v1;
 
 import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
+import "nebius/common/v1/error.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/compute/v1/disk.proto";
 import "nebius/compute/v1/instance.proto";
@@ -401,6 +402,11 @@ message EndpointStateDetails {
 
   // Detailed human-readable description.
   string message = 2;
+
+  // Structured error details for the failure, if available.
+  // For quota-related failures, `service_error.details.quota_failure`
+  // is populated with the quota violations.
+  common.v1.ServiceError service_error = 3;
 }
 
 // EndpointInstanceStatus represents the status of a endpoint instance.

@@ -47,7 +47,10 @@ message GetCapacityBlockGroupByResourceAffinityRequest {
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
-      resource: ["tenant"]
+      resource: [
+        "tenant",
+        "aitenant"
+      ]
     }
   ];
 
@@ -65,7 +68,10 @@ message ListCapacityBlockGroupsRequest {
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
-      resource: ["tenant"]
+      resource: [
+        "tenant",
+        "aitenant"
+      ]
     }
   ];
 

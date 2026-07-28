@@ -34,7 +34,10 @@ message CapacityIntervalStatus {
 
   // Tenant ID for which the Capacity Interval is created.
   string container_id = 1 [(nid) = {
-    resource: ["tenant"]
+    resource: [
+      "tenant",
+      "aitenant"
+    ]
   }];
 
   // Name of the region where the Capacity Interval is created.

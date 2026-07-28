@@ -68,6 +68,11 @@ message NodeGroupSpec {
         id: "node_group_spec.nvlink_autoscaling"
         message: "autoscaling cannot be used for a node group with NVLink"
         expression: "!(has(this.template.nvlink) && has(this.autoscaling))"
+      },
+      {
+        id: "node_group_spec.nvlink_max_surge"
+        message: "max_surge must be 0 for a node group with NVLink"
+        expression: "!has(this.template.nvlink) || !has(this.strategy.max_surge) || (has(this.strategy.max_surge.count) && this.strategy.max_surge.count == 0) || (has(this.strategy.max_surge.percent) && this.strategy.max_surge.percent == 0)"
       }
     ]
   };

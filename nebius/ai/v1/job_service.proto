@@ -34,6 +34,9 @@ service JobService {
 
   // Cancels a job.
   rpc Cancel(CancelJobRequest) returns (common.v1.Operation);
+
+  // Restarts a job.
+  rpc Restart(RestartJobRequest) returns (common.v1.Operation);
 }
 
 message GetJobRequest {
@@ -93,6 +96,15 @@ message DeleteJobRequest {
 }
 
 message CancelJobRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["aijob"]
+    }
+  ];
+}
+
+message RestartJobRequest {
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
