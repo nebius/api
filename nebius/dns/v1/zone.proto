@@ -14,13 +14,15 @@ option java_package = "ai.nebius.pub.dns.v1";
 // API Resource: *DNS zone*, a container for DNS data
 //
 // Each DNS zone starts at a particular domain within the hierarchical DNS namespace tree,
-// e.g., `example.com.`, and can also include its subdomains,
-// e.g., `sales.example.com.` DNS Zones contain *Resource Records* (RRs), which are individual information entries about the domain(s),
-// e.g., a domain's IP address
+// e.g., `example.com.`, and is also responsible for its subdomains (e.g., `sales.example.com.`)
+// unless there are explicit DNS zones defined for them.
+//
+// DNS zones contain *Resource Records* (RRs), which are individual information entries about the domain(s),
+// e.g., a domain's IP address.
+// Each Resource Record is represented in this API by the `Record` API Resource which is managed by the `RecordService`.
+//
 // See the [graphical explanation of DNS zones and Resource Records on
 // Wikipedia](https://en.wikipedia.org/wiki/Domain_Name_System#/media/File:Domain_name_space.svg)
-//
-// A Resource Record is represented in this API by the `Record` API Resource which is managed by the `RecordService`
 message Zone {
   // DNS zone metadata
   // `metadata.parent_id` must be an IAM Container ID

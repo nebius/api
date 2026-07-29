@@ -28,11 +28,21 @@ service K8sReleaseService {
 }
 
 message GetK8sReleaseRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["applicationrelease"]
+    }
+  ];
 }
 
 message ListK8sReleasesRequest {
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   int64 page_size = 2;
 
@@ -40,23 +50,37 @@ message ListK8sReleasesRequest {
 
   string filter = 4;
 
-  string cluster_id = 5 [(buf.validate.field).required = true];
+  string cluster_id = 5 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["mk8scluster"]
+    }
+  ];
 }
 
 message CreateK8sReleaseRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   K8sReleaseSpec spec = 2;
 }
 
 message UpdateK8sReleaseRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   K8sReleaseSpec spec = 2;
 }
 
 message DeleteK8sReleaseRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["applicationrelease"]
+    }
+  ];
 }
 
 message ListK8sReleasesResponse {
