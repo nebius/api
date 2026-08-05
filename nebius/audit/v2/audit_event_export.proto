@@ -101,6 +101,12 @@ message AuditEventExportStatus {
 
   // Error message in case of export failure.
   string message = 3;
+
+  // Timestamp indicating when the export was started.
+  google.protobuf.Timestamp started_at = 4;
+
+  // Timestamp indicating when the export was finished.
+  google.protobuf.Timestamp finished_at = 5;
 }
 
 enum AuditEventExportState {
