@@ -66,6 +66,17 @@ message ImageSpec {
 
   // list of platforms where this image is not supported with explanation
   map<string, string> unsupported_platforms = 9;
+
+  message UnsupportedPreset {
+    string platform = 1;
+
+    string preset = 2;
+
+    string reason = 3;
+  }
+
+  // Platform presets that cannot use this image. Each item includes the reason.
+  repeated UnsupportedPreset unsupported_presets = 13;
 }
 
 message ImageStatus {
