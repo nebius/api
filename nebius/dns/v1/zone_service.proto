@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package nebius.dns.v1;
 
+import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
@@ -25,6 +26,11 @@ service ZoneService {
   // Lists DNS zones in the specified parent IAM container
   rpc List(ListZonesRequest) returns (ListZonesResponse);
 
+  // Lists DNS zones in the specified virtual network
+  rpc ListByNetwork(ListZonesByNetworkRequest) returns (ListZonesResponse) {
+    option (method_behavior) = METHOD_PAGINATED;
+  }
+
   // Creates a DNS zone
   rpc Create(CreateZoneRequest) returns (common.v1.Operation);
 
@@ -33,4 +39,24 @@ service ZoneService {
 
   // Deletes the DNS zone with the specified ID
   rpc Delete(DeleteZoneRequest) returns (common.v1.Operation);
+}
+
+// Request to list DNS zones in the specified virtual network
+message ListZonesByNetworkRequest {
+  // Network ID
+  string network_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcnetwork"]
+    }
+  ];
+
+  // Page size
+  // If not specified or set to `0`, a default page size of `100` will be used
+  int64 page_size = 2;
+
+  // An opaque listing continuation token
+  // - If not specified or empty, the first page of results will be returned
+  // - If specified, the next page of results (as identified by the token) will be returned
+  string page_token = 3;
 }
