@@ -10,6 +10,7 @@ import "nebius/storage/v1/base.proto";
 import "nebius/storage/v1/bucket_counters.proto";
 import "nebius/storage/v1/bucket_policy.proto";
 import "nebius/storage/v1/cors.proto";
+import "nebius/storage/v1/insecure_endpoint.proto";
 import "nebius/storage/v1/lifecycle.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
@@ -126,4 +127,8 @@ message BucketStatus {
   // Indicator flag showing whether the bucket has any BucketPolicy rule
   // that grants anonymous access to any object, prefix, or the entire bucket.
   bool anonymous_access_enabled = 9;
+
+  // Insecure endpoint mode shows whether plain HTTP (without TLS) is forbidden, allowed for traffic from the
+  // same region or allowed from everywhere.
+  InsecureEndpoint insecure_endpoint = 10;
 }
