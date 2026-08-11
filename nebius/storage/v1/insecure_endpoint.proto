@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package nebius.storage.v1;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
+option java_multiple_files = true;
+option java_outer_classname = "InsecureEndpointProto";
+option java_package = "ai.nebius.pub.storage.v1";
+
+message InsecureEndpoint {
+  // Defines where the plain HTTP endpoint is available.
+  enum Mode {
+    MODE_UNSPECIFIED = 0;
+
+    // Plain HTTP access is disabled.
+    DISABLED = 1;
+
+    // Plain HTTP access is available only from the same region.
+    REGION_LOCAL = 2;
+
+    // Plain HTTP access is available from any network.
+    ALL = 3;
+  }
+
+  // Determines where the plain HTTP endpoint is available.
+  Mode mode = 1;
+}
