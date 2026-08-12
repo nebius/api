@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.registry.v1;
 
 import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/registry/v1";
 option java_multiple_files = true;
@@ -34,7 +35,9 @@ message Artifact {
     GZIPPED_PACKAGE_INDEX = 6;
   }
 
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["artifact"]
+  }];
 
   string name = 2;
 
