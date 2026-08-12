@@ -23,11 +23,18 @@ service ArtifactService {
 }
 
 message GetArtifactRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["artifact"]
+    }
+  ];
 }
 
 message ListArtifactsRequest {
-  string parent_id = 1;
+  string parent_id = 1 [(nid) = {
+    resource: ["registry"]
+  }];
 
   int64 page_size = 2;
 
@@ -43,5 +50,10 @@ message ListArtifactsResponse {
 }
 
 message DeleteArtifactRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["artifact"]
+    }
+  ];
 }

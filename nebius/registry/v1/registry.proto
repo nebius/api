@@ -14,7 +14,12 @@ option java_package = "ai.nebius.pub.registry.v1";
 message Registry {
   // This is metadata about the resource, such as its id, name, labels, etc.
   // This contains fields that may be updated both by the end user and the system.
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   // This is defined by the user and describes the desired state of system.
   // Fill this in when creating or updating an object.

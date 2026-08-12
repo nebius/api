@@ -28,11 +28,18 @@ service RegistryService {
 }
 
 message GetRegistryRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["registry"]
+    }
+  ];
 }
 
 message ListRegistriesRequest {
-  string parent_id = 1;
+  string parent_id = 1 [(nid) = {
+    resource: ["project"]
+  }];
 
   int64 page_size = 2;
 
@@ -48,17 +55,26 @@ message ListRegistriesResponse {
 }
 
 message CreateRegistryRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   RegistrySpec spec = 2;
 }
 
 message UpdateRegistryRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   RegistrySpec spec = 2;
 }
 
 message DeleteRegistryRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["registry"]
+    }
+  ];
 }
