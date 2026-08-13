@@ -73,6 +73,10 @@ message BadRequest {
 
     // Description why the value is invalid, in English.
     string message = 2;
+
+    // Other fields whose values contribute to this violation.
+    // Does not include the primary field.
+    repeated string related_fields = 3;
   }
 }
 
