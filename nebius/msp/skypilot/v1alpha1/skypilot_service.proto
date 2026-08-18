@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package nebius.msp.skypilot.v1alpha1;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/msp/skypilot/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "SkypilotServiceProto";
+option java_package = "ai.nebius.pub.msp.skypilot.v1alpha1";
+
+message MigrateSkypilotRequest {
+  // ID of the entity to migrate.
+  string id = 1 [(buf.validate.field).required = true];
+}
