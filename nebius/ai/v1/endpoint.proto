@@ -112,8 +112,9 @@ message EndpointSpec {
   MysteryBoxSecretRef auth_token_mysterybox_secret = 31;
 
   // Small config files injected into the container before the user process
-  // starts. Intended for configs, not datasets.
-  repeated FileInjection injected_files = 32 [(field_behavior) = INPUT_ONLY];
+  // starts. Intended for configs, not datasets. Read methods return target
+  // paths. File content is returned only by Get with view SECRET.
+  repeated FileInjection injected_files = 32 [(field_behavior) = IMMUTABLE];
 
   // EnvironmentVariable defines an environment variable for the endpoint's container.
   message EnvironmentVariable {
@@ -315,18 +316,18 @@ message EndpointSpec {
       required: true
     }];
 
-    // File content. Between 1 byte and 64 KiB (one mystery box secret payload).
-    //
-    // Not returned by read methods.
+    // File content. On create, must contain between 1 byte and 64 KiB
+    // (one mystery box secret payload).
+    // Returned only by Get with view SECRET.
     bytes content = 2 [
       (buf.validate.field) = {
         bytes: {
           min_len: 1
           max_len: 65536
         }
+        ignore: IGNORE_IF_ZERO_VALUE
       },
-      (sensitive) = true,
-      (field_behavior) = INPUT_ONLY
+      (sensitive) = true
     ];
   }
 

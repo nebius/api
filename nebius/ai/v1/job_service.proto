@@ -40,12 +40,25 @@ service JobService {
 }
 
 message GetJobRequest {
+  // Controls whether sensitive injected-file content is included.
+  enum View {
+    VIEW_UNSPECIFIED = 0;
+
+    SECRET = 1;
+  }
+
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
       resource: ["aijob"]
     }
   ];
+
+  // SECRET includes injected file content and requires
+  // resource.aijob.getSensitiveData.
+  View view = 101 [(buf.validate.field) = {
+    enum: {defined_only: true}
+  }];
 }
 
 message GetJobByNameRequest {
