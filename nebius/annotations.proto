@@ -207,6 +207,9 @@ enum FieldBehavior {
   // Compound values (messages, lists and maps) may result in unpredictable
   // updates (see examples in guidelines).
   NON_EMPTY_DEFAULT = 7;
+
+  // The same as `OUTPUT_ONLY`
+  PUBLIC_OUTPUT_ONLY = 8;
 }
 
 message DeprecationDetails {
