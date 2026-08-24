@@ -38,15 +38,26 @@ service DiskService {
   rpc Delete(DeleteDiskRequest) returns (common.v1.Operation);
 
   // Lists all operations that were performed within a specific parent resource.
-  rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse);
+  rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse) {
+    option (request_fields) = {
+      field_path: "parent_id"
+      nid: {
+        resource: ["project"]
+      }
+    };
+  }
 }
 
 message GetDiskRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computedisk"]
+  }];
 }
 
 message ListDisksRequest {
-  string parent_id = 1;
+  string parent_id = 1 [(nid) = {
+    resource: ["project"]
+  }];
 
   int64 page_size = 2;
 
@@ -62,19 +73,25 @@ message ListDisksRequest {
 }
 
 message CreateDiskRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   DiskSpec spec = 2;
 }
 
 message UpdateDiskRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   DiskSpec spec = 2;
 }
 
 message DeleteDiskRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computedisk"]
+  }];
 }
 
 message ListDisksResponse {

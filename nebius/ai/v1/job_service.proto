@@ -40,7 +40,7 @@ service JobService {
 }
 
 message GetJobRequest {
-  // Controls whether sensitive injected-file content is included.
+  // Controls whether injected-file content and unmasked inline S3 credential values are included.
   enum View {
     VIEW_UNSPECIFIED = 0;
 
@@ -54,7 +54,7 @@ message GetJobRequest {
     }
   ];
 
-  // SECRET includes injected file content and requires
+  // SECRET includes injected-file content and unmasked inline S3 credentials and requires
   // resource.aijob.getSensitiveData.
   View view = 101 [(buf.validate.field) = {
     enum: {defined_only: true}
