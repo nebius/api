@@ -246,6 +246,7 @@ message EndpointSpec {
       // Authentication method.
       oneof auth {
         // Inline S3 credentials.
+        // Unmasked values are returned only by Get with view SECRET.
         S3Credentials credentials = 4;
 
         // Reference to a MysteryBox secret containing S3 credentials.

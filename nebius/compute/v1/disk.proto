@@ -12,7 +12,9 @@ option java_outer_classname = "DiskProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 message Disk {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   DiskSpec spec = 2;
 
@@ -65,11 +67,21 @@ message DiskSpec {
   // Boot disk must be created from an image https://docs.nebius.com/compute/storage/manage#boot
   // Additional disks can be created as an empty volume https://docs.nebius.com/compute/storage/manage#additional
   oneof source {
-    string source_image_id = 8 [(field_behavior) = IMMUTABLE];
+    string source_image_id = 8 [
+      (field_behavior) = IMMUTABLE,
+      (nid) = {
+        resource: ["computeimage"]
+      }
+    ];
 
     SourceImageFamily source_image_family = 10 [(field_behavior) = IMMUTABLE];
 
-    string source_snapshot_id = 13 [(field_behavior) = IMMUTABLE];
+    string source_snapshot_id = 13 [
+      (field_behavior) = IMMUTABLE,
+      (nid) = {
+        resource: ["computedisksnapshot"]
+      }
+    ];
   }
 
   // Defines how data on the disk is encrypted. By default, no encryption is applied.
@@ -82,7 +94,9 @@ message DiskSpec {
 message SourceImageFamily {
   string image_family = 1 [(buf.validate.field).required = true];
 
-  string parent_id = 2;
+  string parent_id = 2 [(nid) = {
+    resource: ["project"]
+  }];
 }
 
 message DiskStatus {
@@ -122,11 +136,17 @@ message DiskStatus {
   // Reassigned on disk detach, instance deletion, or ownership transfer.
   // Ownership transfer occurs when this disk is explicitly attached to another instance
   // or when a VM with this disk attached starts while the current owner is stopped.
-  string read_write_attachment = 3;
+  string read_write_attachment = 3 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 
-  repeated string read_only_attachments = 4;
+  repeated string read_only_attachments = 4 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 
-  string source_image_id = 5;
+  string source_image_id = 5 [(nid) = {
+    resource: ["computeimage"]
+  }];
 
   int64 size_bytes = 6;
 
@@ -140,11 +160,15 @@ message DiskStatus {
   message LockState {
     // Disk is locked for deletion and for read-write operations while image is being created.
     // Here is the list of these images.
-    repeated string images = 1;
+    repeated string images = 1 [(nid) = {
+      resource: ["computeimage"]
+    }];
 
     // Disk is locked only for deletion while snapshot is being created.
     // Here is the list of these snapshots.
-    repeated string snapshots = 2;
+    repeated string snapshots = 2 [(nid) = {
+      resource: ["computedisksnapshot"]
+    }];
   }
 
   // Indicates resources that prevent the disk from being attached as read-write.
@@ -154,7 +178,9 @@ message DiskStatus {
   // Set only for disks declared in the instance spec.
   // If set, the value is the instance ID that manages this disk's lifecycle (the disk is deleted when that instance is deleted).
   // To change this value, update the instance specification (see AttachedDiskSpec.type).
-  string managed_by = 12;
+  string managed_by = 12 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 }
 
 message DiskEncryption {
