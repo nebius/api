@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package nebius.storage.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+import "nebius/storage/v1/inventory.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
+option java_multiple_files = true;
+option java_outer_classname = "InventoryServiceProto";
+option java_package = "ai.nebius.pub.storage.v1";
+
+// InventoryService manages bucket inventory configurations.
+service InventoryService {
+  option (api_service_name) = "cpl.storage";
+
+  rpc Get(GetInventoryRequest) returns (Inventory);
+
+  rpc GetByName(common.v1.GetByNameRequest) returns (Inventory);
+
+  rpc List(ListInventoriesRequest) returns (ListInventoriesResponse);
+
+  rpc Create(CreateInventoryRequest) returns (common.v1.Operation);
+
+  rpc Update(UpdateInventoryRequest) returns (common.v1.Operation);
+
+  rpc Delete(DeleteInventoryRequest) returns (common.v1.Operation);
+}
+
+message GetInventoryRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagebucketinventory"]
+    }
+  ];
+}
+
+message ListInventoriesRequest {
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagebucket"]
+    }
+  ];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
+message ListInventoriesResponse {
+  repeated Inventory items = 1;
+
+  string next_page_token = 2;
+}
+
+message CreateInventoryRequest {
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["storagebucket"]
+    }
+  ];
+
+  InventorySpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message UpdateInventoryRequest {
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["storagebucket"]
+    }
+  ];
+
+  InventorySpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message DeleteInventoryRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagebucketinventory"]
+    }
+  ];
+}

@@ -69,6 +69,7 @@
 * cpl.storage.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.storage.v1.BucketService](nebius/storage/v1/bucket_service.proto)
+  * [nebius.storage.v1.InventoryService](nebius/storage/v1/inventory_service.proto)
 * cpl.teplo.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.logging.v1.LogExportService](nebius/logging/v1/log_export_service.proto)
