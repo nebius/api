@@ -60,4 +60,22 @@ message TunnelStatus {
 
   // Current lifecycle state of the tunnel.
   State state = 1;
+
+  // Services reachable through the tunnel. A service is listed while at least
+  // one agent announces it, and follows the agents within about 30 seconds.
+  repeated ServiceStatus services = 2;
+}
+
+// ServiceStatus is a service reachable through the tunnel.
+message ServiceStatus {
+  // Name of the service, as the agent announced it. 1-20 characters, lowercase
+  // letters and digits only: the hostname joins the name to the tunnel id with
+  // a dash, so a name may not contain one. For example, "app".
+  string name = 1;
+
+  // Where to reach the service, as host:port. The tunnel terminates TLS, so a
+  // client connects over TLS and sends the host as SNI. What travels inside is
+  // whatever the service speaks, which the tunnel does not interpret.
+  // For example, "app-hy3wnb3wstpk7dz.tunnel.example.com:443".
+  string endpoint = 2;
 }

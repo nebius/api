@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package nebius.common.v1;
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1";
+option java_multiple_files = true;
+option java_outer_classname = "PreflightCheckProto";
+option java_package = "ai.nebius.pub.common.v1";
+
+// Context supplied by a caller when requesting a server-side preflight check.
+message PreflightCheckContext {
+  // Operation evaluated by the preflight check.
+  enum Action {
+    // Infer UPDATE when the request metadata contains a resource ID; otherwise infer CREATE.
+    UNSPECIFIED = 0;
+
+    // Evaluate resource creation.
+    CREATE = 1;
+
+    // Evaluate a resource update.
+    UPDATE = 2;
+
+    // Evaluate resource deletion. Reserved until delete preflight requests are supported.
+    DELETE = 3;
+
+    // Evaluate resource recreation. This is the same as CREATE, but assumes that the resource
+    // with the requested ID is deleted immediately before it is created.
+    RECREATE = 4;
+  }
+
+  // Operation evaluated by the preflight check.
+  Action action = 1;
+
+  // Lower-case name of the calling tool, such as "terraform", "cli", or "console".
+  // Empty means that no tool-specific behavior is requested.
+  string tool = 2;
+
+  // Nebius mask identifying values in the proposed request that are unknown.
+  // An unknown value is not available to the caller when it sends the preflight request.
+  // The caller expects the actual value to be available when the create or update operation runs.
+  // The mask is rooted at the request's metadata and spec fields. Empty means all supplied values are known;
+  // "*" means the complete proposed request is unknown.
+  string unknown_paths = 3;
+
+  // Additive Nebius mask of fields that require resource recreation when changed.
+  // For RECREATE, the calling tool fills this mask with the paths that caused it to recreate the resource.
+  // If a field at one of these paths changes, the calling tool must delete the existing resource
+  // and create a new resource with the requested values.
+  // Empty means that the caller has not identified any such fields.
+  string paths_require_recreate = 4;
+}
+
+// A user-facing diagnostic produced by a preflight check.
+message PreflightCheckDiagnostic {
+  // Effect of the diagnostic on the proposed operation.
+  enum Severity {
+    // Invalid for a returned diagnostic.
+    UNSPECIFIED = 0;
+
+    // The proposed operation cannot proceed.
+    ERROR = 1;
+
+    // The proposed operation can proceed, subject to requires_user_approval.
+    WARNING = 2;
+  }
+
+  // Effect of the diagnostic on the proposed operation. Must not be UNSPECIFIED.
+  Severity severity = 1;
+
+  // Required single-line, plain-text user-facing explanation.
+  string summary = 2;
+
+  // Optional plain-text consequence and remediation details.
+  string details = 3;
+
+  // Optional Nebius field path rooted at metadata or spec.
+  // Empty means that the diagnostic applies to the resource or operation as a whole.
+  string path = 4;
+}
+
+// Common preflight result for services that do not expose additional machine-readable impact fields.
+// Service-defined result messages implement the same structural interface by declaring these three fields
+// with the same names and types, and may add service-specific fields.
+message PreflightCheckResult {
+  // Diagnostics produced while evaluating the proposed operation.
+  repeated PreflightCheckDiagnostic diagnostics = 1;
+
+  // Additive Nebius mask of fields that the service identifies as requiring resource recreation when changed.
+  // For UPDATE, the service may set these paths to notify the caller to use RECREATE instead of failing because
+  // the resource cannot be updated. Empty means that the service has not identified any such fields; "*" means
+  // that the resource must be recreated without an attributable field.
+  string paths_require_recreate = 2;
+
+  // Whether the caller must display the diagnostics and obtain explicit user approval before proceeding.
+  bool requires_user_approval = 3;
+}

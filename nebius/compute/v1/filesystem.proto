@@ -12,7 +12,9 @@ option java_outer_classname = "FilesystemProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 message Filesystem {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   FilesystemSpec spec = 2;
 
@@ -83,9 +85,13 @@ message FilesystemStatus {
 
   string state_description = 2;
 
-  repeated string read_write_attachments = 3;
+  repeated string read_write_attachments = 3 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 
-  repeated string read_only_attachments = 4;
+  repeated string read_only_attachments = 4 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 
   int64 size_bytes = 5;
 

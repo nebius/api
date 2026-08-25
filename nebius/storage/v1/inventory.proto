@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package nebius.storage.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/storage/v1";
+option java_multiple_files = true;
+option java_outer_classname = "InventoryProto";
+option java_package = "ai.nebius.pub.storage.v1";
+
+// Inventory configures periodic generation of an object listing for a bucket.
+message Inventory {
+  option (resource_behavior) = IMMUTABLE_NAME;
+
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["storagebucket"]
+    }
+  ];
+
+  InventorySpec spec = 2 [(buf.validate.field).required = true];
+
+  InventoryStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+// Desired configuration of an inventory.
+message InventorySpec {
+  enum OutputFormat {
+    OUTPUT_FORMAT_UNSPECIFIED = 0;
+
+    // CSV compressed with GZIP.
+    CSV_GZIP = 1;
+
+    // Parquet compressed with Snappy.
+    PARQUET_SNAPPY = 2;
+  }
+
+  enum OptionalField {
+    OPTIONAL_FIELD_UNSPECIFIED = 0;
+
+    // Timestamp of the last access.
+    LAST_ACCESS = 1;
+
+    // Checksum algorithms used.
+    CHECKSUM_ALGORITHMS = 2;
+
+    // Current intelligent tier (for Intelligent Storage Class).
+    INTELLIGENT_TIER = 3;
+
+    // True for multipart uploads, false for simple objects.
+    IS_MULTIPART_UPLOAD = 4;
+
+    // Timestamp of lifecycle expiration.
+    LIFECYCLE_EXPIRATION = 5;
+
+    // Object tags.
+    TAGS = 6;
+  }
+
+  enum Schedule {
+    SCHEDULE_UNSPECIFIED = 0;
+
+    // Run once a day.
+    DAILY = 1;
+
+    // Run once a week.
+    WEEKLY = 2;
+  }
+
+  // Enable or disable inventory generation.
+  bool enabled = 1;
+
+  // Prefix to filter objects in the source bucket.
+  string source_prefix = 2;
+
+  // ID of the destination bucket.
+  string destination_bucket_id = 3 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagebucket"]
+    }
+  ];
+
+  // Prefix under which bucket inventory will be stored in the destination bucket.
+  string destination_prefix = 4 [(buf.validate.field) = {
+    string: {max_len: 256}
+  }];
+
+  // Inventory format.
+  OutputFormat output_format = 5 [(buf.validate.field).required = true];
+
+  // Include noncurrent versions in inventory if set to true.
+  bool noncurrent_versions = 6;
+
+  // Optional fields to include in inventory.
+  repeated OptionalField optional_fields = 7;
+
+  // How often to generate the inventory.
+  Schedule schedule = 8 [(buf.validate.field).required = true];
+}
+
+message InventoryStatus {}
