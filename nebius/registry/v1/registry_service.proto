@@ -18,6 +18,9 @@ service RegistryService {
 
   rpc Get(GetRegistryRequest) returns (Registry);
 
+  // Gets the Registry resource by its parent IAM container `parent_id` and `name`
+  rpc GetByName(common.v1.GetByNameRequest) returns (Registry);
+
   rpc List(ListRegistriesRequest) returns (ListRegistriesResponse);
 
   rpc Create(CreateRegistryRequest) returns (common.v1.Operation);

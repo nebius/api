@@ -39,11 +39,19 @@ service DiskSnapshotService {
 }
 
 message GetDiskSnapshotRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computedisksnapshot"]
+  }];
 }
 
 message ListDiskSnapshotsRequest {
-  string parent_id = 1;
+  // Identifier of the parent resource
+  string parent_id = 1 [(nid) = {
+    resource: [
+      "tenant",
+      "project"
+    ]
+  }];
 
   int64 page_size = 2;
 
@@ -74,17 +82,29 @@ message ListDiskSnapshotsByDiskResponse {
 }
 
 message CreateDiskSnapshotRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: [
+      "tenant",
+      "project"
+    ]
+  }];
 
   DiskSnapshotSpec spec = 2;
 }
 
 message UpdateDiskSnapshotRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: [
+      "tenant",
+      "project"
+    ]
+  }];
 
   DiskSnapshotSpec spec = 2;
 }
 
 message DeleteDiskSnapshotRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computedisksnapshot"]
+  }];
 }

@@ -21,7 +21,12 @@ option java_package = "ai.nebius.pub.storage.v1";
 message Bucket {
   option (resource_behavior) = IMMUTABLE_NAME;
 
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   BucketSpec spec = 2 [(buf.validate.field).required = true];
 

@@ -51,7 +51,9 @@ message GetBucketRequest {
 }
 
 message GetBucketByNameRequest {
-  string parent_id = 1;
+  string parent_id = 1 [(nid) = {
+    resource: ["project"]
+  }];
 
   string name = 2 [(buf.validate.field).required = true];
 
@@ -59,19 +61,34 @@ message GetBucketByNameRequest {
 }
 
 message CreateBucketRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   BucketSpec spec = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
 }
 
 message UpdateBucketRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   BucketSpec spec = 2;
 }
 
 message DeleteBucketRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagebucket"]
+    }
+  ];
 
   reserved 2;
 
@@ -106,7 +123,12 @@ message UndeleteBucketRequest {
 
 message ListBucketsRequest {
   // Represents the container ID.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   // Specifies the maximum number of items to return in the response.
   int64 page_size = 2;

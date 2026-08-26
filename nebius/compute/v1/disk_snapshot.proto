@@ -13,7 +13,12 @@ option java_package = "ai.nebius.pub.compute.v1";
 
 // DiskSnapshot resource
 message DiskSnapshot {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: [
+      "tenant",
+      "project"
+    ]
+  }];
 
   DiskSnapshotSpec spec = 2;
 
@@ -24,7 +29,10 @@ message DiskSnapshotSpec {
   // Identifier of the source disk. May become stale if the disk is deleted.
   string source_disk_id = 1 [
     (buf.validate.field).required = true,
-    (field_behavior) = IMMUTABLE
+    (field_behavior) = IMMUTABLE,
+    (nid) = {
+      resource: ["computedisk"]
+    }
   ];
 
   // Arbitrary information about this snapshot provided by user.
@@ -62,7 +70,9 @@ message DiskSnapshotStatus {
   message LockState {
     // The snapshot is locked for deletion while disk is being created from this snapshot.
     // Here is the list of these disks.
-    repeated string disks = 1;
+    repeated string disks = 1 [(nid) = {
+      resource: ["computedisk"]
+    }];
   }
 
   // Indicates which resources prevent the disk snapshot from being deleted.
