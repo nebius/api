@@ -48,11 +48,22 @@ message ImageSpec {
     option (buf.validate.oneof).required = true;
 
     // ID of the disk to create the image from
-    string source_disk_id = 4 [(field_behavior) = IMMUTABLE];
+    string source_disk_id = 4 [
+      (field_behavior) = IMMUTABLE,
+      (nid) = {
+        resource: ["computedisk"]
+      }
+    ];
 
     SourceStorage source_storage = 11 [(field_behavior) = IMMUTABLE];
 
-    string source_disk_snapshot_id = 12 [(field_behavior) = IMMUTABLE];
+    // Identifier of the disk snapshot to create the image from.
+    string source_disk_snapshot_id = 12 [
+      (field_behavior) = IMMUTABLE,
+      (nid) = {
+        resource: ["computedisksnapshot"]
+      }
+    ];
   }
 
   // CPU architecture supported by the image
