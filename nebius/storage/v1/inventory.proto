@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.storage.v1;
 
 import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 
@@ -103,4 +104,27 @@ message InventorySpec {
   Schedule schedule = 8 [(buf.validate.field).required = true];
 }
 
-message InventoryStatus {}
+message InventoryStatus {
+  enum Error {
+    // No error.
+    NO_ERROR = 0;
+
+    // Destination bucket not found.
+    DESTINATION_BUCKET_NOT_FOUND = 1;
+
+    // Permission denied: you don't have permission to the destination bucket.
+    PERMISSION_DENIED = 2;
+
+    // Intent is invalid, does not exist or expired.
+    INVALID_INTENT = 3;
+
+    // Quota exceeded in destination.
+    QUOTA_EXCEEDED = 4;
+  }
+
+  // Timestamp of the last successful run.
+  google.protobuf.Timestamp last_success = 1;
+
+  // Error code, if the last run was not successful, otherwise NO_ERROR.
+  Error error_code = 2;
+}

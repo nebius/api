@@ -90,5 +90,8 @@ message Warning {
 
     // Nebius ID in the request has an invalid format.
     CODE_INVALID_NEBIUS_ID_FORMAT_REQUEST = 9;
+
+    // ListAggregated returned incomplete results because one or more regions could not be queried.
+    CODE_LIST_AGGREGATED_PARTIAL = 10;
   }
 }
