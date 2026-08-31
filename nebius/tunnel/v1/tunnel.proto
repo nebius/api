@@ -64,6 +64,23 @@ message TunnelStatus {
   // Services reachable through the tunnel. A service is listed while at least
   // one agent announces it, and follows the agents within about 30 seconds.
   repeated ServiceStatus services = 2;
+
+  // Whether any agent is connected to the tunnel now.
+  ConnectionState connection_state = 3;
+}
+
+// ConnectionState reports whether the tunnel has an agent behind it. Values are
+// prefixed because a top-level enum puts them in the package scope.
+enum ConnectionState {
+  // Proto3 zero value. A read of the tunnel never returns it; a mutation
+  // records it, because it reports the tunnel that was written.
+  CONNECTION_STATE_UNSPECIFIED = 0;
+
+  // No agent is connected. Nothing the tunnel exposes is reachable.
+  CONNECTION_STATE_DISCONNECTED = 1;
+
+  // At least one agent is connected.
+  CONNECTION_STATE_CONNECTED = 2;
 }
 
 // ServiceStatus is a service reachable through the tunnel.
