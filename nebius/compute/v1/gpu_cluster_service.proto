@@ -37,15 +37,26 @@ service GpuClusterService {
   rpc Delete(DeleteGpuClusterRequest) returns (common.v1.Operation);
 
   // Lists all operations that were performed within a specific parent resource.
-  rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse);
+  rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse) {
+    option (request_fields) = {
+      field_path: "parent_id"
+      nid: {
+        resource: ["project"]
+      }
+    };
+  }
 }
 
 message GetGpuClusterRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computegpucluster"]
+  }];
 }
 
 message ListGpuClustersRequest {
-  string parent_id = 1;
+  string parent_id = 1 [(nid) = {
+    resource: ["project"]
+  }];
 
   int64 page_size = 2;
 
@@ -61,19 +72,25 @@ message ListGpuClustersRequest {
 }
 
 message CreateGpuClusterRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   GpuClusterSpec spec = 2;
 }
 
 message UpdateGpuClusterRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   GpuClusterSpec spec = 2;
 }
 
 message DeleteGpuClusterRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computegpucluster"]
+  }];
 }
 
 message ListGpuClustersResponse {

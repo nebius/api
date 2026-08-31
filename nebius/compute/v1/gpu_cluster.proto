@@ -12,7 +12,9 @@ option java_outer_classname = "GpuClusterProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 message GpuCluster {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   GpuClusterSpec spec = 2;
 
@@ -29,7 +31,10 @@ message GpuClusterSpec {
 }
 
 message GpuClusterStatus {
-  repeated string instances = 1;
+  // IDs of Compute instances that belong to this GPU cluster.
+  repeated string instances = 1 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 
   // Indicates whether there is an ongoing operation
   bool reconciling = 2;
@@ -44,7 +49,9 @@ message GpuClusterStatusInfinibandTopologyPath {
 }
 
 message GpuClusterStatusInfinibandTopologyPathInstance {
-  string instance_id = 1;
+  string instance_id = 1 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 
   repeated string path = 2;
 }
