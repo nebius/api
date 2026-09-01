@@ -41,7 +41,14 @@ service ImageService {
   rpc Delete(DeleteImageRequest) returns (common.v1.Operation);
 
   // Lists all operations that were performed within a specific parent resource.
-  rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse);
+  rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse) {
+    option (request_fields) = {
+      field_path: "parent_id"
+      nid: {
+        resource: ["project"]
+      }
+    };
+  }
 
   // Lists all public images available in a specific region. Regions doc https://docs.nebius.com/overview/regions
   // Public images can contain specific labels in metadata like:
@@ -51,17 +58,24 @@ service ImageService {
 }
 
 message GetImageRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computeimage"]
+  }];
 }
 
 message GetImageLatestByFamilyRequest {
   string image_family = 1;
 
-  string parent_id = 2; // default 'project-{region}public-images'
+  // default 'project-{region}public-images'
+  string parent_id = 2 [(nid) = {
+    resource: ["project"]
+  }];
 }
 
 message ListImagesRequest {
-  string parent_id = 1;
+  string parent_id = 1 [(nid) = {
+    resource: ["project"]
+  }];
 
   int64 page_size = 2;
 
@@ -77,19 +91,25 @@ message ListImagesRequest {
 }
 
 message CreateImageRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   ImageSpec spec = 2;
 }
 
 message UpdateImageRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   ImageSpec spec = 2;
 }
 
 message DeleteImageRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computeimage"]
+  }];
 }
 
 message ListImagesResponse {

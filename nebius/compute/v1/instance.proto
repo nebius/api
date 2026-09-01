@@ -73,9 +73,11 @@ message InstanceSpec {
   //   nvlinstancegroup
   InstanceRecoveryPolicy recovery_policy = 15 [(field_behavior) = IMMUTABLE];
 
-  // Include these parameters to create a Preemptible VM and omit them to create a Regular VM
+  // Set this field to create a preemptible VM, or omit it to create a regular VM.
   // For details, see https://docs.nebius.com/compute/virtual-machines/preemptible
-  PreemptibleSpec preemptible = 19 [(field_behavior) = IMMUTABLE];
+  // A preemptible VM cannot be converted to a regular VM or vice versa. Once set, this field cannot be removed; if the
+  // VM was created without it, the field cannot be added later.
+  PreemptibleSpec preemptible = 19;
 
   // Instance's hostname. Used to generate default DNS record in format `<hostname>.<network_id>.compute.internal.`
   // or `<instance_id>.<network_id>.compute.internal.` if hostname is not specified.
