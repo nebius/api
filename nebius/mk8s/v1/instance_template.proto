@@ -46,6 +46,18 @@ message DiskSpec {
   int64 block_size_bytes = 5;
 
   DiskType type = 6 [(field_behavior) = NON_EMPTY_DEFAULT];
+
+  DiskEncryption disk_encryption = 11;
+}
+
+message DiskEncryption {
+  enum DiskEncryptionType {
+    DISK_ENCRYPTION_UNSPECIFIED = 0;
+
+    DISK_ENCRYPTION_MANAGED = 1;
+  }
+
+  DiskEncryptionType type = 1;
 }
 
 message ResourcesSpec {
