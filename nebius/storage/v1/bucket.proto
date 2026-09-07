@@ -80,6 +80,68 @@ message BucketSpec {
 
   // Bucket policy specifies granular permissions for a bucket.
   BucketPolicy bucket_policy = 13;
+
+  // Bucket type allows to create non-regular object storage buckets.
+  oneof bucket_type {
+    option (oneof_behavior) = IMMUTABLE;
+
+    // Bucket that uses the existing client's compute filesystem.
+    FilesystemBucketType filesystem_bucket = 30;
+  }
+
+  message FilesystemBucketType {
+    // Identifier of filesystem to be exposed via Object Storage API.
+    string filesystem_id = 1 [
+      (nid) = {
+        resource: ["computefilesystem"]
+      },
+      (field_behavior) = IMMUTABLE,
+      (buf.validate.field).required = true
+    ];
+
+    // Directory within the filesystem that will be used as a root for the bucket.
+    // If not empty, it must be an absolute normalized path (no ., .., or doubled /).
+    // Empty value means that the bucket will be mounted at the filesystem root (/).
+    string directory = 2 [(field_behavior) = IMMUTABLE];
+
+    // UID that will be used for write operations to the filesystem.
+    // By default, root user (UID=0, GID=0) is used.
+    uint32 uid = 3 [(buf.validate.field) = {
+      uint32: {lte: 65535}
+    }];
+
+    // GID that will be used for write operations to the filesystem.
+    // By default, root user (UID=0, GID=0) is used.
+    uint32 gid = 4 [(buf.validate.field) = {
+      uint32: {lte: 65535}
+    }];
+
+    // Linux permissions that will be applied for uploaded files.
+    // Permissions are specified in octal format (one to four octal numbers), e.g. "644" or "755".
+    // The default value is 644 (rw-r--r--).
+    string file_mode = 5 [(buf.validate.field) = {
+      cel: [
+        {
+          id: "file_permissions"
+          message: "must be valid file permissions"
+          expression: "this == '' || this.matches('^[0-7]{1,4}$')"
+        }
+      ]
+    }];
+
+    // Linux permissions that will be applied for uploaded directories.
+    // Permissions are specified in octal format (one to four octal numbers), e.g. "644" or "755".
+    // The default value is 755 (rwxr-xr-x).
+    string directory_mode = 6 [(buf.validate.field) = {
+      cel: [
+        {
+          id: "file_permissions"
+          message: "must be valid file permissions"
+          expression: "this == '' || this.matches('^[0-7]{1,4}$')"
+        }
+      ]
+    }];
+  }
 }
 
 message BucketStatus {
@@ -136,4 +198,17 @@ message BucketStatus {
   // Insecure endpoint mode shows whether plain HTTP (without TLS) is forbidden, allowed for traffic from the
   // same region or allowed from everywhere.
   InsecureEndpoint insecure_endpoint = 10;
+
+  // BucketType is a type of the bucket.
+  enum BucketType {
+    BUCKET_TYPE_UNSPECIFIED = 0;
+
+    // Regular object storage bucket.
+    REGULAR = 1;
+
+    // Object storage bucket that is mounted to an existing compute filesystem.
+    FILESYSTEM = 2;
+  }
+
+  BucketType bucket_type = 11;
 }

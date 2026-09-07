@@ -24,6 +24,9 @@ service BucketService {
 
   rpc List(ListBucketsRequest) returns (ListBucketsResponse);
 
+  // ListWithFilter lists only buckets with specified filters (e.g. bucket_type and filesystem_id).
+  rpc ListWithFilter(ListBucketsWithFilterRequest) returns (ListBucketsWithFilterResponse);
+
   rpc Create(CreateBucketRequest) returns (common.v1.Operation);
 
   rpc Update(UpdateBucketRequest) returns (common.v1.Operation);
@@ -143,6 +146,43 @@ message ListBucketsRequest {
 }
 
 message ListBucketsResponse {
+  // List of buckets returned in the response. The field should be named as `items` for consistency.
+  repeated Bucket items = 1;
+
+  // Token for pagination, indicating the next set of results can be retrieved using this token.
+  string next_page_token = 2;
+}
+
+message ListBucketsWithFilterRequest {
+  message Filters {
+    // If set, only buckets of the specified type will be returned. If not set, all bucket types will be returned.
+    BucketStatus.BucketType bucket_type = 1;
+
+    // If not empty, only buckets mounted to the specified filesystem will be returned.
+    string filesystem_id = 2 [(nid) = {
+      resource: ["computefilesystem"]
+    }];
+  }
+
+  // Represents the container ID.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  // Specifies the maximum number of items to return in the response.
+  int64 page_size = 2;
+
+  // Token for pagination, allowing the retrieval of the next set of results.
+  string page_token = 3;
+
+  // Additional filters for buckets.
+  Filters filters = 4;
+}
+
+message ListBucketsWithFilterResponse {
   // List of buckets returned in the response. The field should be named as `items` for consistency.
   repeated Bucket items = 1;
 
