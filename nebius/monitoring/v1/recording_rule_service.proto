@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package nebius.monitoring.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1alpha1/operation.proto";
+import "nebius/monitoring/v1/recording_rule.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/monitoring/v1";
+option java_multiple_files = true;
+option java_outer_classname = "RecordingRuleServiceProto";
+option java_package = "ai.nebius.pub.monitoring.v1";
+
+// Service for managing recording rules.
+service RecordingRuleService {
+  option (api_service_name) = "monitoring";
+
+  // Returns the specified recording rule.
+  rpc Get(GetRecordingRuleRequest) returns (RecordingRule);
+
+  // Returns recording rules under the specified parent.
+  rpc List(ListRecordingRulesRequest) returns (ListRecordingRulesResponse);
+
+  // Creates a recording rule.
+  rpc Create(CreateRecordingRuleRequest) returns (common.v1alpha1.Operation);
+
+  // Updates a recording rule.
+  rpc Update(UpdateRecordingRuleRequest) returns (common.v1alpha1.Operation);
+
+  // Deletes a recording rule.
+  rpc Delete(DeleteRecordingRuleRequest) returns (common.v1alpha1.Operation);
+}
+
+// Request to get a recording rule.
+message GetRecordingRuleRequest {
+  // ID of the recording rule.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+// Request to list recording rules.
+message ListRecordingRulesRequest {
+  // ID of the parent workspace.
+  string parent_id = 1 [(buf.validate.field).required = true];
+
+  // Maximum number of recording rules to return.
+  int64 page_size = 2;
+
+  // Token that identifies the page of results to return.
+  string page_token = 3;
+}
+
+// Response containing recording rules under the specified parent.
+message ListRecordingRulesResponse {
+  // Recording rules returned in the response.
+  repeated RecordingRule items = 1;
+
+  // Token that identifies the next page of results.
+  string next_page_token = 2;
+}
+
+// Request to create a recording rule.
+message CreateRecordingRuleRequest {
+  // Metadata for the recording rule to create.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // Specification of the recording rule to create.
+  RecordingRuleSpec spec = 2 [(buf.validate.field).required = true];
+}
+
+// Request to update a recording rule.
+message UpdateRecordingRuleRequest {
+  // Metadata for the recording rule to update.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // Updated specification of the recording rule.
+  RecordingRuleSpec spec = 2;
+}
+
+// Request to delete a recording rule.
+message DeleteRecordingRuleRequest {
+  // ID of the recording rule to delete.
+  string id = 1 [(buf.validate.field).required = true];
+}

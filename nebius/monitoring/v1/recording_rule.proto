@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package nebius.monitoring.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/monitoring/v1";
+option java_multiple_files = true;
+option java_outer_classname = "RecordingRuleProto";
+option java_package = "ai.nebius.pub.monitoring.v1";
+
+// A recording rule that writes the result of a MetricsQL expression evaluation.
+message RecordingRule {
+  option (resource_behavior) = UNNAMED;
+
+  // Metadata associated with the recording rule.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // Specification of the recording rule.
+  RecordingRuleSpec spec = 2;
+
+  // Current status of the recording rule.
+  RecordingRuleStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+// Specification of a recording rule.
+message RecordingRuleSpec {
+  // Bucket where the rule writes its resulting time series.
+  string bucket = 1 [(buf.validate.field).required = true];
+
+  // Name of the resulting time series.
+  string record = 2 [(buf.validate.field).required = true];
+
+  // MetricsQL expression evaluated by the rule.
+  string expr = 3 [(buf.validate.field).required = true];
+
+  // Labels added to the resulting time series.
+  map<string, string> record_labels = 4;
+}
+
+// Current status of a recording rule.
+message RecordingRuleStatus {}

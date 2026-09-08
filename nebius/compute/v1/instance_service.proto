@@ -53,15 +53,26 @@ service InstanceService {
   rpc Stop(StopInstanceRequest) returns (common.v1.Operation);
 
   // Lists all operations that were performed within a specific parent resource.
-  rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse);
+  rpc ListOperationsByParent(ListOperationsByParentRequest) returns (common.v1.ListOperationsResponse) {
+    option (request_fields) = {
+      field_path: "parent_id"
+      nid: {
+        resource: ["project"]
+      }
+    };
+  }
 }
 
 message GetInstanceRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 }
 
 message ListInstancesRequest {
-  string parent_id = 1;
+  string parent_id = 1 [(nid) = {
+    resource: ["project"]
+  }];
 
   int64 page_size = 2;
 
@@ -69,19 +80,25 @@ message ListInstancesRequest {
 }
 
 message CreateInstanceRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   InstanceSpec spec = 2;
 }
 
 message UpdateInstanceRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   InstanceSpec spec = 2;
 }
 
 message DeleteInstanceRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 }
 
 message ListInstancesResponse {
@@ -91,16 +108,25 @@ message ListInstancesResponse {
 }
 
 message StartInstanceRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 }
 
 message StopInstanceRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 }
 
 message ListInstancesByNVLInstanceGroupRequest {
   // ID of the NVL instance group whose instances will be listed.
-  string nvl_instance_group_id = 1 [(buf.validate.field).required = true];
+  string nvl_instance_group_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["computenvlinstancegroup"]
+    }
+  ];
 
   // Maximum number of instances to return in a single page.
   int64 page_size = 2;
@@ -111,10 +137,15 @@ message ListInstancesByNVLInstanceGroupRequest {
 
 message BatchGetRequest {
   // List of instances to fetch.
-  repeated string instance_ids = 1 [(buf.validate.field) = {
-    repeated: {max_items: 1000}
-    required: true
-  }];
+  repeated string instance_ids = 1 [
+    (buf.validate.field) = {
+      repeated: {max_items: 1000}
+      required: true
+    },
+    (nid) = {
+      resource: ["computeinstance"]
+    }
+  ];
 }
 
 message BatchGetResponse {
