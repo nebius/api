@@ -14,7 +14,9 @@ option java_outer_classname = "InstanceProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 message Instance {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   InstanceSpec spec = 2;
 
@@ -24,7 +26,12 @@ message Instance {
 message InstanceSpec {
   // Unique identifier of the service account associated with this instance.
   // For details, see https://docs.nebius.com/iam/service-accounts/manage
-  string service_account_id = 1 [(field_behavior) = IMMUTABLE];
+  string service_account_id = 1 [
+    (field_behavior) = IMMUTABLE,
+    (nid) = {
+      resource: ["serviceaccount"]
+    }
+  ];
 
   // Specification of compute resources allocated to the instance.
   // For details, see https://docs.nebius.com/compute/virtual-machines/types
@@ -92,7 +99,9 @@ message InstanceSpec {
   }];
 
   // NVLink Instance Group ID associated with the VM
-  string nvl_instance_group_id = 21;
+  string nvl_instance_group_id = 21 [(nid) = {
+    resource: ["computenvlinstancegroup"]
+  }];
 
   ReservationPolicy reservation_policy = 23;
 
@@ -227,7 +236,12 @@ message AttachedDiskSpec {
 }
 
 message ExistingDisk {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["computedisk"]
+    }
+  ];
 }
 
 message ManagedDisk {
@@ -244,7 +258,12 @@ message ManagedDisk {
 }
 
 message ExistingFilesystem {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["computefilesystem"]
+    }
+  ];
 }
 
 message AttachedFilesystemSpec {
@@ -301,7 +320,10 @@ message InstanceStatus {
   // Indicates whether there is an ongoing operation
   bool reconciling = 5;
 
-  string maintenance_event_id = 7;
+  // Identifier of the maintenance event associated with the instance, if any.
+  string maintenance_event_id = 7 [(nid) = {
+    resource: ["computemaintenance"]
+  }];
 
   oneof gpu_cluster_topology {
     InstanceStatusInfinibandTopologyPath infiniband_topology_path = 10;
@@ -317,7 +339,9 @@ message DiskAttachmentStatus {
   // Disk ID.
   // - For ExistingDisk, this is the referenced disk ID.
   // - For ManagedDisk, may be empty while the attachment intent is still pending.
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computedisk"]
+  }];
 
   // Disk name used to match this status entry with the desired attachment
   // from the instance specification.

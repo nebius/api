@@ -15,7 +15,10 @@ message NetworkInterfaceSpec {
   // Subnet ID
   string subnet_id = 1 [
     (buf.validate.field).required = true,
-    (field_behavior) = IMMUTABLE
+    (field_behavior) = IMMUTABLE,
+    (nid) = {
+      resource: ["vpcsubnet"]
+    }
   ];
 
   // Interface name
@@ -55,7 +58,9 @@ message NetworkInterfaceSpec {
 // Describes an IPv4 address.
 message IPAddress {
   // Allocation identifier if it was created before.
-  string allocation_id = 1;
+  string allocation_id = 1 [(nid) = {
+    resource: ["vpcallocation"]
+  }];
 }
 
 // Describes a public IP address.
@@ -63,7 +68,9 @@ message PublicIPAddress {
   // Describes different methods of public IP address allocation.
   oneof allocation {
     // Allocation identifier if it was created before.
-    string allocation_id = 1;
+    string allocation_id = 1 [(nid) = {
+      resource: ["vpcallocation"]
+    }];
   }
 
   // If false - Allocation will be created/deleted during NetworkInterface.Allocate/NetworkInterface.Deallocate
@@ -74,7 +81,12 @@ message PublicIPAddress {
 
 message IPAlias {
   // ID of allocation
-  string allocation_id = 1 [(buf.validate.field).required = true];
+  string allocation_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["vpcallocation"]
+    }
+  ];
 }
 
 // Describes the status of a network interface.
@@ -110,7 +122,9 @@ message IPAddressStatus {
   string address = 1;
 
   // Allocation identifier.
-  string allocation_id = 2;
+  string allocation_id = 2 [(nid) = {
+    resource: ["vpcallocation"]
+  }];
 }
 
 message PublicIPAddressStatus {
@@ -118,7 +132,9 @@ message PublicIPAddressStatus {
   string address = 1;
 
   // Allocation identifier.
-  string allocation_id = 2;
+  string allocation_id = 2 [(nid) = {
+    resource: ["vpcallocation"]
+  }];
 
   // If false - Allocation will be created/deleted during NetworkInterface.Allocate/NetworkInterface.Deallocate
   // If true  - Allocation will be created/deleted during NetworkInterface.Create/NetworkInterface.Delete
@@ -132,10 +148,14 @@ message IPAliasesStatus {
 
 message SecurityGroup {
   // Security group identifier
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["vpcsecuritygroup"]
+  }];
 }
 
 message SecurityGroupStatus {
   // Security group identifier
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["vpcsecuritygroup"]
+  }];
 }
