@@ -13,25 +13,34 @@ option java_multiple_files = true;
 option java_outer_classname = "SubnetServiceProto";
 option java_package = "ai.nebius.pub.vpc.v1";
 
+// SubnetService provides operations for managing subnets.
 service SubnetService {
   option (api_service_name) = "vpc";
 
+  // Retrieves a subnet by its ID.
   rpc Get(GetSubnetRequest) returns (Subnet);
 
+  // Retrieves a subnet by its name within a specified parent.
   rpc GetByName(GetSubnetByNameRequest) returns (Subnet);
 
+  // Lists subnets within a specified parent.
   rpc List(ListSubnetsRequest) returns (ListSubnetsResponse);
 
+  // Lists subnets that belong to a specified network.
   rpc ListByNetwork(ListSubnetsByNetworkRequest) returns (ListSubnetsResponse);
 
+  // Creates a new subnet with the specified configuration.
   rpc Create(CreateSubnetRequest) returns (common.v1.Operation);
 
+  // Updates an existing subnet with new configuration parameters.
   rpc Update(UpdateSubnetRequest) returns (common.v1.Operation);
 
+  // Deletes a subnet by its ID.
   rpc Delete(DeleteSubnetRequest) returns (common.v1.Operation);
 }
 
 message GetSubnetRequest {
+  // ID of the subnet.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -41,7 +50,7 @@ message GetSubnetRequest {
 }
 
 message GetSubnetByNameRequest {
-  // ID of the project.
+  // ID of the parent project.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -49,6 +58,7 @@ message GetSubnetByNameRequest {
     }
   ];
 
+  // Name of the subnet.
   string name = 2 [(buf.validate.field).required = true];
 }
 
@@ -61,12 +71,15 @@ message ListSubnetsRequest {
     }
   ];
 
+  // Maximum number of subnets to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of subnets.
   string page_token = 3;
 }
 
 message ListSubnetsByNetworkRequest {
+  // ID of the network.
   string network_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -74,8 +87,10 @@ message ListSubnetsByNetworkRequest {
     }
   ];
 
+  // Maximum number of subnets to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of subnets.
   string page_token = 3;
 }
 
@@ -86,6 +101,7 @@ message ListSubnetsResponse {
 }
 
 message CreateSubnetRequest {
+  // Metadata of the subnet.
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field) = {
       cel: [
@@ -102,10 +118,12 @@ message CreateSubnetRequest {
     }
   ];
 
+  // Specification of the subnet.
   SubnetSpec spec = 2 [(buf.validate.field).required = true];
 }
 
 message UpdateSubnetRequest {
+  // Updated metadata of the subnet.
   common.v1.ResourceMetadata metadata = 1 [
     (nid) = {
       parent_resource: ["project"]
@@ -121,10 +139,12 @@ message UpdateSubnetRequest {
     }
   ];
 
+  // Updated specification of the subnet.
   SubnetSpec spec = 2;
 }
 
 message DeleteSubnetRequest {
+  // ID of the subnet.
   string id = 1 [(nid) = {
     resource: ["vpcsubnet"]
   }];

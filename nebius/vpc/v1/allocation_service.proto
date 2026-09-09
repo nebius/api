@@ -13,27 +13,37 @@ option java_multiple_files = true;
 option java_outer_classname = "AllocationServiceProto";
 option java_package = "ai.nebius.pub.vpc.v1";
 
+// AllocationService provides operations for managing allocations.
 service AllocationService {
   option (api_service_name) = "vpc";
 
+  // Retrieves an allocation by its ID.
   rpc Get(GetAllocationRequest) returns (Allocation);
 
+  // Retrieves an allocation by its name within a specified parent.
   rpc GetByName(GetAllocationByNameRequest) returns (Allocation);
 
+  // Lists allocations within a specified parent.
   rpc List(ListAllocationsRequest) returns (ListAllocationsResponse);
 
+  // Lists allocations from a specified pool.
   rpc ListByPool(ListAllocationsByPoolRequest) returns (ListAllocationsResponse);
 
+  // Lists allocations available to a specified subnet, including unassigned allocations from compatible pools.
   rpc ListBySubnet(ListAllocationsBySubnetRequest) returns (ListAllocationsResponse);
 
+  // Creates a new allocation with the specified configuration.
   rpc Create(CreateAllocationRequest) returns (common.v1.Operation);
 
+  // Updates an existing allocation with new configuration parameters.
   rpc Update(UpdateAllocationRequest) returns (common.v1.Operation);
 
+  // Deletes an allocation by its ID.
   rpc Delete(DeleteAllocationRequest) returns (common.v1.Operation);
 }
 
 message GetAllocationRequest {
+  // ID of the allocation.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -43,7 +53,7 @@ message GetAllocationRequest {
 }
 
 message GetAllocationByNameRequest {
-  // ID of the project.
+  // ID of the parent project.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -51,11 +61,12 @@ message GetAllocationByNameRequest {
     }
   ];
 
+  // Name of the allocation.
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListAllocationsRequest {
-  // ID of the project.
+  // ID of the parent project.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -63,12 +74,15 @@ message ListAllocationsRequest {
     }
   ];
 
+  // Maximum number of allocations to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of allocations.
   string page_token = 3;
 }
 
 message ListAllocationsByPoolRequest {
+  // ID of the source pool.
   string pool_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -76,12 +90,15 @@ message ListAllocationsByPoolRequest {
     }
   ];
 
+  // Maximum number of allocations to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of allocations.
   string page_token = 3;
 }
 
 message ListAllocationsBySubnetRequest {
+  // ID of the subnet.
   string subnet_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -89,8 +106,10 @@ message ListAllocationsBySubnetRequest {
     }
   ];
 
+  // Maximum number of allocations to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of allocations.
   string page_token = 3;
 }
 
@@ -101,6 +120,7 @@ message ListAllocationsResponse {
 }
 
 message CreateAllocationRequest {
+  // Metadata of the allocation.
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field) = {
       cel: [
@@ -117,10 +137,12 @@ message CreateAllocationRequest {
     }
   ];
 
+  // Specification of the allocation.
   AllocationSpec spec = 2 [(buf.validate.field).required = true];
 }
 
 message UpdateAllocationRequest {
+  // Updated metadata of the allocation.
   common.v1.ResourceMetadata metadata = 1 [
     (nid) = {
       parent_resource: ["project"]
@@ -136,10 +158,12 @@ message UpdateAllocationRequest {
     }
   ];
 
+  // Updated specification of the allocation.
   AllocationSpec spec = 2;
 }
 
 message DeleteAllocationRequest {
+  // ID of the allocation.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {

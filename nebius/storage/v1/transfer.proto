@@ -21,7 +21,12 @@ option java_package = "ai.nebius.pub.storage.v1";
 // After an iteration completes, the transfer will stop if its stop condition is met. Otherwise,
 // it will wait for the defined inter-iteration interval before starting the next iteration.
 message Transfer {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   TransferSpec spec = 2 [(buf.validate.field).required = true];
 

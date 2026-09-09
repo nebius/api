@@ -13,23 +13,31 @@ option java_multiple_files = true;
 option java_outer_classname = "RouteServiceProto";
 option java_package = "ai.nebius.pub.vpc.v1";
 
+// RouteService provides operations for managing routes.
 service RouteService {
   option (api_service_name) = "vpc";
 
+  // Retrieves a route by its ID.
   rpc Get(GetRouteRequest) returns (Route);
 
+  // Retrieves a route by its name within a specified route table.
   rpc GetByName(GetRouteByNameRequest) returns (Route);
 
+  // Lists routes in a specified route table.
   rpc List(ListRoutesRequest) returns (ListRoutesResponse);
 
+  // Creates a new route with the specified configuration.
   rpc Create(CreateRouteRequest) returns (common.v1.Operation);
 
+  // Updates an existing route with new configuration parameters.
   rpc Update(UpdateRouteRequest) returns (common.v1.Operation);
 
+  // Deletes a route by its ID.
   rpc Delete(DeleteRouteRequest) returns (common.v1.Operation);
 }
 
 message GetRouteRequest {
+  // ID of the route.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -39,7 +47,7 @@ message GetRouteRequest {
 }
 
 message GetRouteByNameRequest {
-  // ID of the RouteTable.
+  // ID of the parent route table.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -47,11 +55,12 @@ message GetRouteByNameRequest {
     }
   ];
 
+  // Name of the route.
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListRoutesRequest {
-  // ID of the RouteTable.
+  // ID of the parent route table.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -59,8 +68,10 @@ message ListRoutesRequest {
     }
   ];
 
+  // Maximum number of routes to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of routes.
   string page_token = 3;
 }
 
@@ -71,6 +82,7 @@ message ListRoutesResponse {
 }
 
 message CreateRouteRequest {
+  // Metadata of the route.
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field) = {
       cel: [
@@ -87,10 +99,12 @@ message CreateRouteRequest {
     }
   ];
 
+  // Specification of the route.
   RouteSpec spec = 2 [(buf.validate.field).required = true];
 }
 
 message UpdateRouteRequest {
+  // Updated metadata of the route.
   common.v1.ResourceMetadata metadata = 1 [
     (nid) = {
       parent_resource: ["vpcroutetable"]
@@ -106,10 +120,12 @@ message UpdateRouteRequest {
     }
   ];
 
+  // Updated specification of the route.
   RouteSpec spec = 2;
 }
 
 message DeleteRouteRequest {
+  // ID of the route.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {

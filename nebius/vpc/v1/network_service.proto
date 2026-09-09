@@ -13,25 +13,35 @@ option java_multiple_files = true;
 option java_outer_classname = "NetworkServiceProto";
 option java_package = "ai.nebius.pub.vpc.v1";
 
+// NetworkService provides operations for managing networks.
 service NetworkService {
   option (api_service_name) = "vpc";
 
+  // Retrieves a network by its ID.
   rpc Get(GetNetworkRequest) returns (Network);
 
+  // Retrieves a network by its name within a specified parent.
   rpc GetByName(GetNetworkByNameRequest) returns (Network);
 
+  // Lists networks within a specified parent.
   rpc List(ListNetworksRequest) returns (ListNetworksResponse);
 
+  // Creates a new network with the specified configuration.
   rpc Create(CreateNetworkRequest) returns (common.v1.Operation);
 
+  // Creates a default network, subnet, pools, and route table for a specified project.
+  // Creates a default security group when that feature is enabled for the project.
   rpc CreateDefault(CreateDefaultNetworkRequest) returns (common.v1.Operation);
 
+  // Updates an existing network with new configuration parameters.
   rpc Update(UpdateNetworkRequest) returns (common.v1.Operation);
 
+  // Deletes a network by its ID.
   rpc Delete(DeleteNetworkRequest) returns (common.v1.Operation);
 }
 
 message GetNetworkRequest {
+  // ID of the network.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -41,7 +51,7 @@ message GetNetworkRequest {
 }
 
 message GetNetworkByNameRequest {
-  // ID of the project.
+  // ID of the parent project.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -49,11 +59,12 @@ message GetNetworkByNameRequest {
     }
   ];
 
+  // Name of the network.
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListNetworksRequest {
-  // ID of the project.
+  // ID of the parent project.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -61,8 +72,10 @@ message ListNetworksRequest {
     }
   ];
 
+  // Maximum number of networks to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of networks.
   string page_token = 3;
 }
 
@@ -73,6 +86,7 @@ message ListNetworksResponse {
 }
 
 message CreateNetworkRequest {
+  // Metadata of the network.
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field) = {
       cel: [
@@ -89,10 +103,12 @@ message CreateNetworkRequest {
     }
   ];
 
+  // Specification of the network.
   NetworkSpec spec = 2;
 }
 
 message CreateDefaultNetworkRequest {
+  // Metadata of the default network.
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field) = {
       cel: [
@@ -111,6 +127,7 @@ message CreateDefaultNetworkRequest {
 }
 
 message UpdateNetworkRequest {
+  // Updated metadata of the network.
   common.v1.ResourceMetadata metadata = 1 [
     (nid) = {
       parent_resource: ["project"]
@@ -126,10 +143,12 @@ message UpdateNetworkRequest {
     }
   ];
 
+  // Updated specification of the network.
   NetworkSpec spec = 2;
 }
 
 message DeleteNetworkRequest {
+  // ID of the network.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {

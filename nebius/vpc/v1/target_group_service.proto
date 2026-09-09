@@ -13,15 +13,19 @@ option java_multiple_files = true;
 option java_outer_classname = "TargetGroupServiceProto";
 option java_package = "ai.nebius.pub.vpc.v1";
 
+// TargetGroupService provides operations for managing target groups.
 service TargetGroupService {
   option (api_service_name) = "vpc";
 
+  // Retrieves a target group by its ID.
   rpc Get(GetTargetGroupRequest) returns (TargetGroup);
 
+  // Updates an existing target group with new configuration parameters.
   rpc Update(UpdateTargetGroupRequest) returns (common.v1.Operation);
 }
 
 message GetTargetGroupRequest {
+  // ID of the target group.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -31,6 +35,7 @@ message GetTargetGroupRequest {
 }
 
 message UpdateTargetGroupRequest {
+  // Updated metadata of the target group.
   common.v1.ResourceMetadata metadata = 1 [
     (nid) = {
       parent_resource: ["project"]
@@ -46,5 +51,6 @@ message UpdateTargetGroupRequest {
     }
   ];
 
+  // Updated specification of the target group.
   TargetGroupSpec spec = 2;
 }

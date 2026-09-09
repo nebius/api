@@ -55,7 +55,12 @@ message GetTransferRequest {
 
 message ListTransfersRequest {
   // Represents the container ID.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   // Specifies the maximum number of items to return in the response. Default: 10.
   int64 page_size = 2;
@@ -73,7 +78,12 @@ message ListTransfersResponse {
 }
 
 message CreateTransferRequest {
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   TransferSpec spec = 2 [(buf.validate.field).required = true];
 }
