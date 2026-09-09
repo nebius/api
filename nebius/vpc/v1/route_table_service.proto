@@ -13,25 +13,34 @@ option java_multiple_files = true;
 option java_outer_classname = "RouteTableServiceProto";
 option java_package = "ai.nebius.pub.vpc.v1";
 
+// RouteTableService provides operations for managing route tables.
 service RouteTableService {
   option (api_service_name) = "vpc";
 
+  // Retrieves a route table by its ID.
   rpc Get(GetRouteTableRequest) returns (RouteTable);
 
+  // Retrieves a route table by its name within a specified parent.
   rpc GetByName(GetRouteTableByNameRequest) returns (RouteTable);
 
+  // Lists route tables within a specified parent.
   rpc List(ListRouteTablesRequest) returns (ListRouteTablesResponse);
 
+  // Lists route tables that belong to a specified network.
   rpc ListByNetwork(ListRouteTablesByNetworkRequest) returns (ListRouteTablesResponse);
 
+  // Creates a new route table with the specified configuration.
   rpc Create(CreateRouteTableRequest) returns (common.v1.Operation);
 
+  // Updates an existing route table with new configuration parameters.
   rpc Update(UpdateRouteTableRequest) returns (common.v1.Operation);
 
+  // Deletes a route table by its ID.
   rpc Delete(DeleteRouteTableRequest) returns (common.v1.Operation);
 }
 
 message GetRouteTableRequest {
+  // ID of the route table.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -41,7 +50,7 @@ message GetRouteTableRequest {
 }
 
 message GetRouteTableByNameRequest {
-  // ID of the Project.
+  // ID of the parent project.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -49,11 +58,12 @@ message GetRouteTableByNameRequest {
     }
   ];
 
+  // Name of the route table.
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListRouteTablesRequest {
-  // ID of the Project.
+  // ID of the parent project.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -61,12 +71,15 @@ message ListRouteTablesRequest {
     }
   ];
 
+  // Maximum number of route tables to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of route tables.
   string page_token = 3;
 }
 
 message ListRouteTablesByNetworkRequest {
+  // ID of the network.
   string network_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -74,8 +87,10 @@ message ListRouteTablesByNetworkRequest {
     }
   ];
 
+  // Maximum number of route tables to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of route tables.
   string page_token = 3;
 }
 
@@ -86,6 +101,7 @@ message ListRouteTablesResponse {
 }
 
 message CreateRouteTableRequest {
+  // Metadata of the route table.
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field) = {
       cel: [
@@ -102,10 +118,12 @@ message CreateRouteTableRequest {
     }
   ];
 
+  // Specification of the route table.
   RouteTableSpec spec = 2 [(buf.validate.field).required = true];
 }
 
 message UpdateRouteTableRequest {
+  // Updated metadata of the route table.
   common.v1.ResourceMetadata metadata = 1 [
     (nid) = {
       parent_resource: ["project"]
@@ -121,10 +139,12 @@ message UpdateRouteTableRequest {
     }
   ];
 
+  // Updated specification of the route table.
   RouteTableSpec spec = 2;
 }
 
 message DeleteRouteTableRequest {
+  // ID of the route table.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {

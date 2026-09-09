@@ -17,20 +17,27 @@ option java_package = "ai.nebius.pub.vpc.v1";
 service SecurityRuleService {
   option (api_service_name) = "vpc";
 
+  // Retrieves a security rule by its ID.
   rpc Get(GetSecurityRuleRequest) returns (SecurityRule);
 
+  // Retrieves a security rule by its name within a specified security group.
   rpc GetByName(GetSecurityRuleByNameRequest) returns (SecurityRule);
 
+  // Lists security rules in a specified security group.
   rpc List(ListSecurityRulesRequest) returns (ListSecurityRulesResponse);
 
+  // Creates a new security rule with the specified configuration.
   rpc Create(CreateSecurityRuleRequest) returns (common.v1.Operation);
 
+  // Updates an existing security rule with new configuration parameters.
   rpc Update(UpdateSecurityRuleRequest) returns (common.v1.Operation);
 
+  // Deletes a security rule by its ID.
   rpc Delete(DeleteSecurityRuleRequest) returns (common.v1.Operation);
 }
 
 message GetSecurityRuleRequest {
+  // ID of the security rule.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -40,7 +47,7 @@ message GetSecurityRuleRequest {
 }
 
 message GetSecurityRuleByNameRequest {
-  // ID of the Security Group.
+  // ID of the parent security group.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -48,11 +55,12 @@ message GetSecurityRuleByNameRequest {
     }
   ];
 
+  // Name of the security rule.
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListSecurityRulesRequest {
-  // ID of the Security Group.
+  // ID of the parent security group.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -60,8 +68,10 @@ message ListSecurityRulesRequest {
     }
   ];
 
+  // Maximum number of security rules to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of security rules.
   string page_token = 3;
 }
 
@@ -72,6 +82,7 @@ message ListSecurityRulesResponse {
 }
 
 message CreateSecurityRuleRequest {
+  // Metadata of the security rule.
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field) = {
       cel: [
@@ -88,10 +99,12 @@ message CreateSecurityRuleRequest {
     }
   ];
 
+  // Specification of the security rule.
   SecurityRuleSpec spec = 2 [(buf.validate.field).required = true];
 }
 
 message UpdateSecurityRuleRequest {
+  // Updated metadata of the security rule.
   common.v1.ResourceMetadata metadata = 1 [
     (nid) = {
       parent_resource: ["vpcsecuritygroup"]
@@ -107,10 +120,12 @@ message UpdateSecurityRuleRequest {
     }
   ];
 
+  // Updated specification of the security rule.
   SecurityRuleSpec spec = 2;
 }
 
 message DeleteSecurityRuleRequest {
+  // ID of the security rule.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {

@@ -13,25 +13,34 @@ option java_multiple_files = true;
 option java_outer_classname = "PoolServiceProto";
 option java_package = "ai.nebius.pub.vpc.v1";
 
+// PoolService provides operations for managing pools.
 service PoolService {
   option (api_service_name) = "vpc";
 
+  // Retrieves a pool by its ID.
   rpc Get(GetPoolRequest) returns (Pool);
 
+  // Retrieves a pool by its name within a specified parent.
   rpc GetByName(GetPoolByNameRequest) returns (Pool);
 
+  // Lists pools within a specified parent.
   rpc List(ListPoolsRequest) returns (ListPoolsResponse);
 
+  // Lists pools that use a specified pool as their source.
   rpc ListBySourcePool(ListPoolsBySourcePoolRequest) returns (ListPoolsResponse);
 
+  // Creates a new pool with the specified configuration.
   rpc Create(CreatePoolRequest) returns (common.v1.Operation);
 
+  // Updates an existing pool with new configuration parameters.
   rpc Update(UpdatePoolRequest) returns (common.v1.Operation);
 
+  // Deletes a pool by its ID.
   rpc Delete(DeletePoolRequest) returns (common.v1.Operation);
 }
 
 message GetPoolRequest {
+  // ID of the pool.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -41,7 +50,7 @@ message GetPoolRequest {
 }
 
 message GetPoolByNameRequest {
-  // ID of the project.
+  // ID of the parent project.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -49,11 +58,12 @@ message GetPoolByNameRequest {
     }
   ];
 
+  // Name of the pool.
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListPoolsRequest {
-  // ID of the project.
+  // ID of the parent project.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -61,12 +71,15 @@ message ListPoolsRequest {
     }
   ];
 
+  // Maximum number of pools to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of pools.
   string page_token = 3;
 }
 
 message ListPoolsBySourcePoolRequest {
+  // ID of the source pool.
   string pool_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -74,8 +87,10 @@ message ListPoolsBySourcePoolRequest {
     }
   ];
 
+  // Maximum number of pools to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of pools.
   string page_token = 3;
 }
 
@@ -86,6 +101,7 @@ message ListPoolsResponse {
 }
 
 message CreatePoolRequest {
+  // Metadata of the pool.
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field) = {
       cel: [
@@ -102,10 +118,12 @@ message CreatePoolRequest {
     }
   ];
 
+  // Specification of the pool.
   PoolSpec spec = 2 [(buf.validate.field).required = true];
 }
 
 message UpdatePoolRequest {
+  // Updated metadata of the pool.
   common.v1.ResourceMetadata metadata = 1 [
     (nid) = {
       parent_resource: ["project"]
@@ -121,10 +139,12 @@ message UpdatePoolRequest {
     }
   ];
 
+  // Updated specification of the pool.
   PoolSpec spec = 2;
 }
 
 message DeletePoolRequest {
+  // ID of the pool.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {

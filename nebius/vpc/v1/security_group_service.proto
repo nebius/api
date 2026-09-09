@@ -17,23 +17,30 @@ option java_package = "ai.nebius.pub.vpc.v1";
 service SecurityGroupService {
   option (api_service_name) = "vpc";
 
+  // Retrieves a security group by its ID.
   rpc Get(GetSecurityGroupRequest) returns (SecurityGroup);
 
+  // Retrieves a security group by its name within a specified parent.
   rpc GetByName(GetSecurityGroupByNameRequest) returns (SecurityGroup);
 
+  // Lists security groups within a specified parent.
   rpc List(ListSecurityGroupsRequest) returns (ListSecurityGroupsResponse);
 
-  // Lists security groups in a specific network.
+  // Lists security groups in a specified network.
   rpc ListByNetwork(ListSecurityGroupsByNetworkRequest) returns (ListSecurityGroupsResponse);
 
+  // Creates a new security group with the specified configuration.
   rpc Create(CreateSecurityGroupRequest) returns (common.v1.Operation);
 
+  // Updates an existing security group with new configuration parameters.
   rpc Update(UpdateSecurityGroupRequest) returns (common.v1.Operation);
 
+  // Deletes a security group by its ID.
   rpc Delete(DeleteSecurityGroupRequest) returns (common.v1.Operation);
 }
 
 message GetSecurityGroupRequest {
+  // ID of the security group.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -43,7 +50,7 @@ message GetSecurityGroupRequest {
 }
 
 message GetSecurityGroupByNameRequest {
-  // ID of the Project.
+  // ID of the parent project.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -51,11 +58,12 @@ message GetSecurityGroupByNameRequest {
     }
   ];
 
+  // Name of the security group.
   string name = 2 [(buf.validate.field).required = true];
 }
 
 message ListSecurityGroupsRequest {
-  // ID of the Project.
+  // ID of the parent project.
   string parent_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -63,13 +71,15 @@ message ListSecurityGroupsRequest {
     }
   ];
 
+  // Maximum number of security groups to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of security groups.
   string page_token = 3;
 }
 
 message ListSecurityGroupsByNetworkRequest {
-  // ID of the Network.
+  // ID of the network.
   string network_id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
@@ -77,8 +87,10 @@ message ListSecurityGroupsByNetworkRequest {
     }
   ];
 
+  // Maximum number of security groups to return.
   int64 page_size = 2;
 
+  // Token to retrieve the next page of security groups.
   string page_token = 3;
 }
 
@@ -89,6 +101,7 @@ message ListSecurityGroupsResponse {
 }
 
 message CreateSecurityGroupRequest {
+  // Metadata of the security group.
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field) = {
       cel: [
@@ -105,10 +118,12 @@ message CreateSecurityGroupRequest {
     }
   ];
 
+  // Specification of the security group.
   SecurityGroupSpec spec = 2 [(buf.validate.field).required = true];
 }
 
 message UpdateSecurityGroupRequest {
+  // Updated metadata of the security group.
   common.v1.ResourceMetadata metadata = 1 [
     (nid) = {
       parent_resource: ["project"]
@@ -124,10 +139,12 @@ message UpdateSecurityGroupRequest {
     }
   ];
 
+  // Updated specification of the security group.
   SecurityGroupSpec spec = 2;
 }
 
 message DeleteSecurityGroupRequest {
+  // ID of the security group.
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {
