@@ -13,10 +13,13 @@ option java_package = "ai.nebius.pub.monitoring.v1";
 
 // A recording rule that writes the result of a MetricsQL expression evaluation.
 message RecordingRule {
-  option (resource_behavior) = UNNAMED;
-
   // Metadata associated with the recording rule.
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   // Specification of the recording rule.
   RecordingRuleSpec spec = 2;

@@ -20,6 +20,9 @@ service RecordingRuleService {
   // Returns the specified recording rule.
   rpc Get(GetRecordingRuleRequest) returns (RecordingRule);
 
+  // Returns a recording rule by its unique name within a parent.
+  rpc GetByName(GetRecordingRuleByNameRequest) returns (RecordingRule);
+
   // Returns recording rules under the specified parent.
   rpc List(ListRecordingRulesRequest) returns (ListRecordingRulesResponse);
 
@@ -41,14 +44,32 @@ message GetRecordingRuleRequest {
 
 // Request to list recording rules.
 message ListRecordingRulesRequest {
-  // ID of the parent workspace.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  // ID of the parent.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 
   // Maximum number of recording rules to return.
   int64 page_size = 2;
 
   // Token that identifies the page of results to return.
   string page_token = 3;
+}
+
+message GetRecordingRuleByNameRequest {
+  // ID of the parent.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  // Resource name, not the recorded metric name.
+  string name = 2 [(buf.validate.field).required = true];
 }
 
 // Response containing recording rules under the specified parent.
@@ -63,7 +84,12 @@ message ListRecordingRulesResponse {
 // Request to create a recording rule.
 message CreateRecordingRuleRequest {
   // Metadata for the recording rule to create.
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   // Specification of the recording rule to create.
   RecordingRuleSpec spec = 2 [(buf.validate.field).required = true];
@@ -72,7 +98,12 @@ message CreateRecordingRuleRequest {
 // Request to update a recording rule.
 message UpdateRecordingRuleRequest {
   // Metadata for the recording rule to update.
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   // Updated specification of the recording rule.
   RecordingRuleSpec spec = 2;
