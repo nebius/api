@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package nebius.ai.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/ai/v1/devlab.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/ai/v1";
+option java_multiple_files = true;
+option java_outer_classname = "DevlabServiceProto";
+option java_package = "ai.nebius.pub.ai.v1";
+
+// Service to create/manage Devlabs.
+service DevlabService {
+  option (api_service_name) = "apps.msp";
+
+  // Returns the specified Devlab.
+  rpc Get(GetDevlabRequest) returns (Devlab);
+
+  // Returns the specified Devlab by name.
+  rpc GetByName(common.v1.GetByNameRequest) returns (Devlab);
+
+  // Retrieves a list of Devlabs.
+  rpc List(ListDevlabsRequest) returns (ListDevlabsResponse);
+
+  // Creates a Devlab.
+  rpc Create(CreateDevlabRequest) returns (common.v1.Operation);
+
+  // Deletes a Devlab.
+  rpc Delete(DeleteDevlabRequest) returns (common.v1.Operation);
+
+  // Restarts a Devlab.
+  rpc Restart(RestartDevlabRequest) returns (common.v1.Operation);
+
+  // Stops a Devlab.
+  rpc Stop(StopDevlabRequest) returns (common.v1.Operation);
+}
+
+// A request to retrieve a Devlab by ID.
+message GetDevlabRequest {
+  // Controls which sensitive values the response includes.
+  enum View {
+    // Masks environment-variable values and omits injected-file content.
+    VIEW_UNSPECIFIED = 0;
+
+    // Includes unmasked environment-variable values and injected-file content.
+    // Requires the resource.devlab.getSensitiveData permission.
+    SECRET = 1;
+  }
+
+  // The ID of the Devlab to retrieve.
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["devlab"]
+    }
+  ];
+
+  // The response view. The default is VIEW_UNSPECIFIED.
+  View view = 101 [(buf.validate.field) = {
+    enum: {defined_only: true}
+  }];
+}
+
+// A request to list the Devlabs in a project.
+message ListDevlabsRequest {
+  // The ID of the project that contains the Devlabs.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  // The maximum number of Devlabs to return. The default and maximum are 100.
+  // Values outside the range 1 to 100 use the default.
+  int64 page_size = 2;
+
+  // The next_page_token from the previous response. Use an empty string for the first page.
+  // Keep parent_id unchanged when you request the next page.
+  string page_token = 3;
+}
+
+// A request to create a Devlab.
+message CreateDevlabRequest {
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "injected_file_content_required"
+        message: "injected file content must not be empty"
+        expression: "!has(this.spec) || this.spec.injected_files.all(f, f.content.size() > 0)"
+      }
+    ]
+  };
+
+  // The metadata for the new Devlab.
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
+
+  // The configuration for the new Devlab.
+  DevlabSpec spec = 2 [(buf.validate.field).required = true];
+
+  // Validates the request without creating the Devlab.
+  bool dry_run = 3;
+}
+
+// A request to delete a Devlab.
+message DeleteDevlabRequest {
+  // The ID of the Devlab to delete.
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["devlab"]
+    }
+  ];
+}
+
+// A request to restart a Devlab.
+message RestartDevlabRequest {
+  // The ID of the Devlab to restart.
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["devlab"]
+    }
+  ];
+}
+
+// A request to stop a Devlab.
+message StopDevlabRequest {
+  // The ID of the Devlab to stop.
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["devlab"]
+    }
+  ];
+}
+
+// A page of Devlabs from a project.
+message ListDevlabsResponse {
+  // The Devlabs in this page. The list can contain fewer items than page_size.
+  repeated Devlab items = 1;
+
+  // The token for the next page. An empty string indicates the end of the list.
+  string next_page_token = 2;
+}

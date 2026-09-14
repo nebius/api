@@ -11,7 +11,9 @@ option java_outer_classname = "MaintenanceEventProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 message MaintenanceEvent {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computemaintenance"]
+  }];
 
   MaintenanceEventSpec spec = 2;
 
@@ -23,7 +25,9 @@ message MaintenanceEventSpec {
 }
 
 message MaintenanceEventStatus {
-  string maintenance_id = 1;
+  string maintenance_id = 1 [(nid) = {
+    resource: ["computemaintenance"]
+  }];
 
   google.protobuf.Timestamp created_at = 5; // Time when the maintenance event is created
 

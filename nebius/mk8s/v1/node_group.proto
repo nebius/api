@@ -144,6 +144,9 @@ message NodeTemplate {
     resource: ["serviceaccount"]
   }];
 
+  // Metadata propagated to the Compute Instances in the NodeGroup.
+  InstanceMetadataTemplate instance_metadata = 12;
+
   // Configures whether the nodes in the group are preemptible.
   // Set to empty value to enable preemptible nodes.
   PreemptibleSpec preemptible = 15 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
@@ -210,6 +213,11 @@ message GpuSettings {
   // nebius mk8s node-group get-compatibility-matrix --cluster-kubernetes-version VERSION --platform PLATFORM
   // Leave empty for GPU nodes that do not have preinstalled drivers, including DRA-enabled node groups.
   string drivers_preset = 1;
+
+  // Enables Dynamic Resource Allocation for this GPU node group.
+  // For nodes whose image contains preinstalled NVIDIA drivers, disables the legacy NVIDIA device plugin.
+  // For GPU nodes attached to a Compute GPU cluster, advertises RDMA capability through the managed DRANet DaemonSet.
+  bool dra = 3 [(field_behavior) = NON_EMPTY_DEFAULT];
 }
 
 message GpuClusterSpec {
@@ -300,6 +308,12 @@ message NodeGroupAutoscalingSpec {
       }
     ]
   };
+}
+
+message InstanceMetadataTemplate {
+  // Labels propagated into Compute Instance metadata.
+  // Provider-managed labels take precedence over user-provided instance labels.
+  map<string, string> labels = 2;
 }
 
 // See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/

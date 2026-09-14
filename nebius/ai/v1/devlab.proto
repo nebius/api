@@ -1,0 +1,607 @@
+syntax = "proto3";
+
+package nebius.ai.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/struct.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/compute/v1/disk.proto";
+import "nebius/compute/v1/instance.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/ai/v1";
+option java_multiple_files = true;
+option java_outer_classname = "DevlabProto";
+option java_package = "ai.nebius.pub.ai.v1";
+
+// Represents an interactive development environment backed by Serverless infrastructure.
+message Devlab {
+  // The metadata of the Devlab.
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
+
+  // The configuration of the Devlab.
+  DevlabSpec spec = 2 [(buf.validate.field).required = true];
+
+  // The current status of the Devlab.
+  DevlabStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+// DevlabSpec defines an interactive workload that will be run.
+message DevlabSpec {
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "primary_route_matches_http_port"
+        message: "primary_route.container_port must reference an HTTP port from ports"
+        expression: "!has(this.primary_route) || this.ports.exists(p, p.container_port == this.primary_route.container_port && p.protocol == 1)"
+      },
+      {
+        id: "volume_paths_do_not_overlap_workspace"
+        message: "volume container_path must not overlap workspace.container_path"
+        expression: "this.workspace.container_path == '' || this.volumes.all(v, !(v.container_path == this.workspace.container_path || v.container_path.startsWith(this.workspace.container_path + '/') || this.workspace.container_path.startsWith(v.container_path + '/')))"
+      },
+      {
+        id: "image_required_without_template"
+        message: "image is required unless template is set"
+        expression: "has(this.template) || this.image != ''"
+      },
+      {
+        id: "template_declares_image"
+        message: "image is declared by the template and must not be set"
+        expression: "!has(this.template) || this.image == ''"
+      },
+      {
+        id: "primary_route_required_without_template"
+        message: "primary_route is required unless template is set"
+        expression: "has(this.template) || has(this.primary_route)"
+      },
+      {
+        id: "template_declares_primary_route"
+        message: "primary_route is declared by the template and must not be set"
+        expression: "!has(this.template) || !has(this.primary_route)"
+      },
+      {
+        id: "template_owns_container_shape"
+        message: "container_command, args and working_dir are declared by the template and must not be set"
+        expression: "!has(this.template) || (this.container_command == '' && this.args == '' && this.working_dir == '')"
+      },
+      {
+        id: "workspace_path_required_without_template"
+        message: "workspace.container_path is required unless template is set"
+        expression: "has(this.template) || this.workspace.container_path != ''"
+      },
+      {
+        id: "auth_token_mysterybox_secret_if_set"
+        message: "auth_token_mysterybox_secret must set secret_id or version_id"
+        expression: "!has(this.auth_token_mysterybox_secret) || this.auth_token_mysterybox_secret.secret_id != '' || this.auth_token_mysterybox_secret.version_id != ''"
+      }
+    ]
+  };
+
+  // The Docker image to use for the Devlab's container.
+  //
+  // Required unless `template` is set: the template declares the image.
+  string image = 1 [(field_behavior) = IMMUTABLE];
+
+  // Specifies the environment variables for the Devlab's container.
+  repeated EnvironmentVariable environment_variables = 2 [(field_behavior) = IMMUTABLE];
+
+  // Specifies the ports that the Devlab exposes.
+  repeated Port ports = 3 [(field_behavior) = IMMUTABLE];
+
+  // The entrypoint command for the Devlab's container.
+  string container_command = 4 [(field_behavior) = IMMUTABLE];
+
+  // The arguments to pass to the entrypoint command.
+  string args = 5 [(field_behavior) = IMMUTABLE];
+
+  // The working directory for the Devlab's container.
+  string working_dir = 6 [
+    (buf.validate.field) = {
+      string: {max_len: 128}
+    },
+    (field_behavior) = IMMUTABLE
+  ];
+
+  // Extra volumes to be mounted into the Devlab container.
+  repeated VolumeMount volumes = 7 [(field_behavior) = IMMUTABLE];
+
+  // Registry credentials for private Docker registry.
+  RegistryCredentials registry_credentials = 10 [(field_behavior) = IMMUTABLE];
+
+  // Compute platform that the Devlab will be run on.
+  string platform = 20 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
+
+  // Compute preset that the Devlab will be run on.
+  string preset = 21 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
+
+  // Shared memory size in bytes for the Devlab's container.
+  int64 shm_size_bytes = 22 [
+    (buf.validate.field) = {
+      int64: {gte: 0}
+    },
+    (field_behavior) = IMMUTABLE
+  ];
+
+  // Disk spec for the main disk of the Devlab runtime VM.
+  DiskSpec disk = 23 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
+
+  // Subnet ID where the Devlab will be deployed.
+  string subnet_id = 24 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE,
+    (nid) = {
+      resource: ["vpcsubnet"]
+    }
+  ];
+
+  // Whether to assign a public IP to the Devlab runtime VM.
+  bool public_ip = 25 [(field_behavior) = IMMUTABLE];
+
+  // Public keys to be authorized for SSH access to the Devlab.
+  repeated string ssh_authorized_keys = 26 [(field_behavior) = IMMUTABLE];
+
+  // Primary workspace storage for user state.
+  Workspace workspace = 30 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
+
+  // Primary web route exposed through the managed HTTPS endpoint.
+  //
+  // Required unless `template` is set: the template declares the primary
+  // web UI port.
+  PrimaryRoute primary_route = 31 [(field_behavior) = IMMUTABLE];
+
+  // Template that defines the Devlab's container.
+  //
+  // When set, the template declares the container shape: image, entrypoint
+  // command, arguments, working directory, ports, optional shared memory size,
+  // the primary web route, and the default workspace path. The spec must leave
+  // image, container command, arguments, working directory, and primary route
+  // empty. Environment variables and ports extend the template-declared ones,
+  // `workspace.container_path` may override the template default, and
+  // `shm_size_bytes` may be set only when the template leaves it unset.
+  //
+  // The template is consumed at creation time: read methods return the
+  // rendered container shape instead of the template reference.
+  Template template = 32 [
+    (field_behavior) = INPUT_ONLY,
+    (field_behavior) = IMMUTABLE
+  ];
+
+  // Small config files injected into the container before the user process
+  // starts. Intended for configs, not datasets. Read methods return target
+  // paths. File content is returned only by Get with view SECRET.
+  repeated FileInjection injected_files = 33 [(field_behavior) = IMMUTABLE];
+
+  // The MysteryBox secret that contains the authentication token under the `AUTH_TOKEN` payload key.
+  // This field enables an authentication proxy for the Devlab's HTTP ports.
+  // The proxy rejects requests without an `Authorization: Bearer <token>` header that contains the matching token.
+  // If absent, Serverless does not add this bearer-token check.
+  MysteryBoxSecretRef auth_token_mysterybox_secret = 34 [(field_behavior) = IMMUTABLE];
+
+  // EnvironmentVariable defines an environment variable for the Devlab's container.
+  message EnvironmentVariable {
+    option (buf.validate.message) = {
+      cel: [
+        {
+          id: "mysterybox_secret_if_set"
+          message: "mysterybox_secret must set secret_id or version_id"
+          expression: "!has(this.mysterybox_secret) || this.mysterybox_secret.secret_id != '' || this.mysterybox_secret.version_id != ''"
+        }
+      ]
+    };
+
+    // The name of the environment variable.
+    string name = 1 [(buf.validate.field) = {
+      string: {pattern: "^[a-zA-Z_][a-zA-Z0-9_]*$"}
+      required: true
+    }];
+
+    oneof value_source {
+      option (buf.validate.oneof).required = true;
+
+      // Environment variable value.
+      // The unmasked value is returned only by Get with view SECRET.
+      string value = 2 [(sensitive) = true];
+
+      // Secret storing the environment variable value.
+      // The value is read from the payload entry whose key matches the variable
+      // name, or the first entry when no such key exists.
+      MysteryBoxSecretRef mysterybox_secret = 3;
+    }
+  }
+
+  message Port {
+    // Container port.
+    int32 container_port = 1 [(buf.validate.field) = {
+      int32: {
+        lte: 65535
+        gte: 1
+      }
+    }];
+
+    // Host port.
+    //
+    // Set to 0 to use the same value as container_port.
+    int32 host_port = 2 [(buf.validate.field) = {
+      int32: {
+        lte: 65535
+        gte: 0
+      }
+    }];
+
+    // Port's protocol.
+    Protocol protocol = 3 [(buf.validate.field).required = true];
+
+    // Represents protocol of the Devlab's port which will be exposed.
+    enum Protocol {
+      // No protocol selected. Specify HTTP, TCP, or UDP.
+      PROTOCOL_UNSPECIFIED = 0;
+
+      // HTTP protocol.
+      HTTP = 1;
+
+      // TCP protocol.
+      TCP = 2;
+
+      // UDP protocol.
+      UDP = 3;
+    }
+  }
+
+  // VolumeMount represents an extra volume mount for the Devlab container.
+  message VolumeMount {
+    option (buf.validate.message) = {
+      cel: [
+        {
+          id: "container_path_has_no_dot_segments"
+          message: "container_path must not contain . or .. path segments"
+          expression: "this.container_path != '/.' && this.container_path != '/..' && !this.container_path.contains('/./') && !this.container_path.contains('/../') && !this.container_path.endsWith('/.') && !this.container_path.endsWith('/..')"
+        },
+        {
+          id: "s3_config_requires_s3_source_uri"
+          message: "source must be an S3 bucket URI (s3://bucket-name) when s3_config is set"
+          expression: "!has(this.s3_config) || this.source.matches('^s3://[^/]+$')"
+        }
+      ]
+    };
+
+    // Source of the volume mount.
+    //
+    // Can be a name or an ID of Nebius Storage bucket or filesystem,
+    // or an S3 URI (e.g. "s3://bucket-name") when using external S3 storage.
+    string source = 1 [(buf.validate.field).required = true];
+
+    // Path inside the source volume.
+    //
+    // Optional.
+    string source_path = 2;
+
+    // Path inside the Devlab container where the volume is mounted.
+    //
+    // Must be a clean absolute path: root, trailing slashes, empty path
+    // segments, "." and ".." are not allowed.
+    string container_path = 3 [(buf.validate.field) = {
+      string: {pattern: "^/[^/]+(/[^/]+)*$"}
+      required: true
+    }];
+
+    // Mount mode.
+    Mode mode = 4 [(buf.validate.field).required = true];
+
+    // Source Config
+    oneof source_config {
+      S3Config s3_config = 5;
+    }
+
+    // Mode that will be used to mount the volume.
+    enum Mode {
+      // No mount mode selected. Specify READ_WRITE or READ_ONLY.
+      MODE_UNSPECIFIED = 0;
+
+      // Read-write mode.
+      READ_WRITE = 1;
+
+      // Read-only mode.
+      READ_ONLY = 2;
+    }
+
+    // Config for accessing an external S3-compatible storage.
+    //
+    // The bucket name is specified in the `source` field as an S3 URI.
+    message S3Config {
+      option (buf.validate.message) = {
+        cel: [
+          {
+            id: "mysterybox_secret_if_set"
+            message: "mysterybox_secret must set secret_id or version_id"
+            expression: "!has(this.mysterybox_secret) || this.mysterybox_secret.secret_id != '' || this.mysterybox_secret.version_id != ''"
+          }
+        ]
+      };
+
+      // S3-compatible endpoint URL (e.g. "https://s3.amazonaws.com").
+      string endpoint = 1 [(buf.validate.field).required = true];
+
+      // S3 region.
+      string region = 2 [(buf.validate.field).required = true];
+
+      // Reference to a MysteryBox secret containing S3 credentials.
+      MysteryBoxSecretRef mysterybox_secret = 3 [(buf.validate.field).required = true];
+    }
+  }
+
+  message DiskSpec {
+    // Disk type.
+    nebius.compute.v1.DiskSpec.DiskType type = 1 [(buf.validate.field).required = true];
+
+    // Disk size in bytes.
+    int64 size_bytes = 2 [(buf.validate.field) = {
+      int64: {gt: 0}
+    }];
+  }
+
+  message RegistryCredentials {
+    // Secret version storing the registry credentials.
+    // Must have keys "REGISTRY_USERNAME" and "REGISTRY_PASSWORD".
+    string mysterybox_secret_version = 1 [
+      (buf.validate.field) = {
+        string: {min_len: 1}
+      },
+      (nid) = {
+        resource: ["mbsecver"]
+      }
+    ];
+  }
+
+  message Workspace {
+    reserved 2;
+
+    reserved "size_bytes";
+
+    option (buf.validate.message) = {
+      cel: [
+        {
+          id: "container_path_has_no_dot_segments"
+          message: "container_path must not contain . or .. path segments"
+          expression: "this.container_path != '/.' && this.container_path != '/..' && !this.container_path.contains('/./') && !this.container_path.contains('/../') && !this.container_path.endsWith('/.') && !this.container_path.endsWith('/..')"
+        }
+      ]
+    };
+
+    // Path inside the Devlab container where the workspace is mounted.
+    //
+    // Must be a clean absolute path: root, trailing slashes, empty path
+    // segments, "." and ".." are not allowed.
+    //
+    // Required unless the Devlab is created from a template: the template
+    // declares the default workspace path, and a non-empty value overrides it.
+    string container_path = 1 [
+      (buf.validate.field) = {
+        string: {pattern: "^/[^/]+(/[^/]+)*$"}
+        ignore: IGNORE_IF_ZERO_VALUE
+      },
+      (field_behavior) = IMMUTABLE
+    ];
+  }
+
+  message PrimaryRoute {
+    // Container port that serves the primary web UI.
+    int32 container_port = 1 [
+      (buf.validate.field) = {
+        int32: {
+          lte: 65535
+          gte: 1
+        }
+      },
+      (field_behavior) = IMMUTABLE
+    ];
+  }
+
+  // FileInjection materializes a small file inside the container at launch.
+  message FileInjection {
+    // Absolute path inside the container where the content is written.
+    //
+    // Must be a clean absolute path: root, trailing slashes, empty path
+    // segments, "." and ".." are not allowed.
+    string container_path = 1 [(buf.validate.field) = {
+      string: {pattern: "^/[^/]+(/[^/]+)*$"}
+      cel: [
+        {
+          id: "container_path_has_no_dot_segments"
+          message: "container_path must not contain . or .. path segments"
+          expression: "this != '/.' && this != '/..' && !this.contains('/./') && !this.contains('/../') && !this.endsWith('/.') && !this.endsWith('/..')"
+        }
+      ]
+      required: true
+    }];
+
+    // File content. On create, must contain between 1 byte and 64 KiB
+    // (one mystery box secret payload).
+    // Returned only by Get with view SECRET.
+    bytes content = 2 [
+      (buf.validate.field) = {
+        bytes: {
+          min_len: 1
+          max_len: 65536
+        }
+        ignore: IGNORE_IF_ZERO_VALUE
+      },
+      (sensitive) = true
+    ];
+  }
+
+  // Reference to a VM app template the Devlab's container is rendered from.
+  message Template {
+    // VM app template ID.
+    string id = 1 [
+      (buf.validate.field).required = true,
+      (nid) = {
+        resource: ["vmapptemplate"]
+      }
+    ];
+
+    // The values for the template's input fields, keyed by each TemplateInputField.id.
+    // VmAppTemplateService.Get and List return these field definitions in VmAppTemplate.status.input_fields.
+    // Each value must match its field's type:
+    // - STRING: string_value. The value must satisfy the template's pattern, options, or unit format.
+    // - INTEGER: number_value with an integer value within the template's bounds.
+    // - BOOLEAN: bool_value.
+    // - MYSTERYBOX_SECRET_VERSION: string_value with the secret version ID.
+    // null_value and absent entries both omit the input. Required inputs cannot be omitted.
+    // Optional inputs use the defaults from the template's input definition.
+    // Explicit false, 0, and empty strings are values, not omitted inputs. The template's validation still applies.
+    // Object and list values are not supported. Unknown field IDs have no effect.
+    // Read methods do not return this map.
+    map<string, google.protobuf.Value> input_field_values = 2 [
+      (sensitive) = true,
+      (field_behavior) = INPUT_ONLY
+    ];
+  }
+
+  // Reference to a MysteryBox secret.
+  message MysteryBoxSecretRef {
+    // MysteryBox secret ID.
+    string secret_id = 1 [(nid) = {
+      resource: ["mbsec"]
+    }];
+
+    // MysteryBox secret version ID.
+    string version_id = 2 [(nid) = {
+      resource: ["mbsecver"]
+    }];
+  }
+}
+
+// DevlabStatus represents the status of a Devlab.
+message DevlabStatus {
+  // Private endpoints to access the workload.
+  repeated string private_endpoints = 1;
+
+  // Managed HTTPS/TLS URLs the workload is reachable at, one per routable port.
+  //
+  // Populated only while the Devlab is RUNNING and its managed tunnel is ready;
+  // empty otherwise. The URLs are not bearer secrets — Tunna/IAM authorizes
+  // access on use — so they are returned to any caller that may read the Devlab.
+  repeated string public_endpoints = 2;
+
+  // Status of individual Devlab runtime instances.
+  repeated DevlabInstanceStatus instances = 10;
+
+  // State of the Devlab.
+  State state = 20;
+
+  // Details of the Devlab's state.
+  DevlabStateDetails state_details = 21;
+
+  // Devlab state.
+  enum State {
+    // The service did not report the Devlab's state.
+    STATE_UNSPECIFIED = 0;
+
+    // The Devlab is creating resources.
+    PROVISIONING = 1;
+
+    // The Devlab is being started.
+    STARTING = 2;
+
+    // The Devlab is running.
+    RUNNING = 3;
+
+    // The Devlab is being stopped.
+    STOPPING = 4;
+
+    // The Devlab is being deleted.
+    DELETING = 5;
+
+    // The Devlab has been stopped.
+    STOPPED = 6;
+
+    // The Devlab has failed.
+    FAILED = 7;
+
+    // The Devlab encountered an error.
+    ERROR = 8;
+
+    // The Devlab is pulling an image (STARTING -> IMAGE_PULLING -> RUNNING).
+    IMAGE_PULLING = 9;
+  }
+}
+
+// Devlab state details.
+message DevlabStateDetails {
+  // Short state description.
+  string code = 1 [(buf.validate.field).required = true];
+
+  // Detailed human-readable description.
+  string message = 2;
+}
+
+// DevlabInstanceStatus represents the status of a Devlab runtime instance.
+message DevlabInstanceStatus {
+  // The current state of the Devlab's workload.
+  State state = 1 [(buf.validate.field).required = true];
+
+  // ID of the compute instance running the Devlab.
+  string compute_instance_id = 10 [(nid) = {
+    resource: ["computeinstance"]
+  }];
+
+  // The current state of the compute instance.
+  nebius.compute.v1.InstanceStatus.InstanceState compute_instance_state = 11;
+
+  // Private IP address of the instance.
+  string private_ip = 12;
+
+  // Public IP address of the instance.
+  string public_ip = 13;
+
+  // Devlab instance state.
+  enum State {
+    // The service did not report the instance's state.
+    STATE_UNSPECIFIED = 0;
+
+    // The Devlab is creating resources.
+    PROVISIONING = 1;
+
+    // The Devlab is being started.
+    STARTING = 2;
+
+    // The Devlab is running.
+    RUNNING = 3;
+
+    // The Devlab is being stopped.
+    STOPPING = 4;
+
+    // The Devlab is being deleted.
+    DELETING = 5;
+
+    // The Devlab has been stopped.
+    STOPPED = 6;
+
+    // The Devlab has failed.
+    FAILED = 7;
+
+    // The Devlab encountered an error.
+    ERROR = 8;
+
+    // The Devlab is pulling an image (STARTING -> IMAGE_PULLING -> RUNNING).
+    IMAGE_PULLING = 9;
+  }
+}
