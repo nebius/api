@@ -1,0 +1,347 @@
+syntax = "proto3";
+
+package nebius.applications.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/applications/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "VmappProto";
+option java_package = "ai.nebius.pub.applications.v1alpha1";
+
+// ContainerDefinition defines a container that will be run on the VM.
+message ContainerDefinition {
+  // The name of the container. This name is should be unique within the VM app.
+  // If not specified, it will be generated based on the image name.
+  string name = 1 [(buf.validate.field) = {
+    string: {pattern: "^[a-zA-Z0-9._-]{1,60}$"}
+  }];
+
+  // The Docker image to use for the container.
+  string image = 2 [(buf.validate.field).required = true];
+
+  // Specifies the environment variables for the container.
+  repeated EnvironmentVariable environment_variables = 3;
+
+  // Specifies the ports that the container exposes.
+  repeated Port ports = 4;
+
+  // The volume to be mounted into the container.
+  repeated Volume volumes = 5;
+
+  // The command for the container in shell-string format.
+  // If not specified, the default entrypoint from the image will be used.
+  string command = 6;
+
+  // Shared memory size in bytes.
+  int64 shm_size_bytes = 7 [(buf.validate.field) = {
+    int64: {gte: 0}
+  }];
+
+  // The user to run the container as.
+  User runtime_user = 8 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+  // The working directory for the container.
+  string working_dir = 9 [(buf.validate.field) = {
+    string: {max_len: 128}
+  }];
+
+  // If true, the container will be run in privileged mode.
+  bool privileged = 10;
+
+  // The entrypoint for the container.
+  string entrypoint = 11;
+
+  // The restart policy for the container.
+  // If not specified, the default policy is "always".
+  RestartPolicy restart_policy = 12;
+
+  // The maximum number of restart attempts for the ON_FAILURE restart policy.
+  // If absent or zero, restarts have no limit. A positive value limits the number of restarts.
+  // Other restart policies ignore this field. Devlab templates must omit it.
+  optional int64 max_attempts = 13;
+
+  // Enables host IPC namespace sharing.
+  bool host_ipc = 20;
+
+  // Enables host network namespace sharing.
+  bool host_network = 21;
+
+  // Enables logs export to Nebius Observability.
+  bool export_logs = 22;
+
+  // GPU configuration for the container.
+  // If not specified, the container will not have access to GPUs.
+  // Ignored if the compute instance does not have GPUs.
+  oneof gpu {
+    // The number of GPUs to allocate to the container.
+    int64 gpu_count = 30;
+
+    // If true, all available GPUs will be allocated to the container.
+    bool all_gpus = 31;
+  }
+
+  // The docker registry username to configure for the container.
+  string registry_username = 40;
+
+  // The docker registry password to configure for the container.
+  string registry_password = 41 [(sensitive) = true];
+
+  // Small files materialized inside the container before it starts.
+  repeated InjectedFile injected_files = 42;
+
+  message User {
+    // The user ID to run the container as.
+    int64 uid = 1 [(buf.validate.field) = {
+      int64: {
+        lte: 4294967295
+        gte: 0
+      }
+    }];
+
+    // The group ID to run the container as.
+    int64 gid = 2 [(buf.validate.field) = {
+      int64: {
+        lte: 4294967295
+        gte: 0
+      }
+    }];
+  }
+
+  // Port defines a port that is exposed by the container.
+  message Port {
+    // The transport protocol for the exposed port.
+    enum Protocol {
+      // No protocol specified. Uses TCP.
+      PROTOCOL_UNSPECIFIED = 0;
+
+      // The Transmission Control Protocol.
+      TCP = 1;
+
+      // The User Datagram Protocol.
+      UDP = 2;
+    }
+
+    // The port number of the container that needs to be exposed.
+    int32 port = 1 [(buf.validate.field) = {
+      int32: {
+        lte: 65535
+        gte: 1
+      }
+      required: true
+    }];
+
+    // The port on the host that the container port will be mapped to.
+    // If not specified, the port will be mapped to the same port on the host.
+    int32 host_port = 2 [(buf.validate.field) = {
+      int32: {
+        lte: 65535
+        gte: 0
+      }
+    }];
+
+    // The protocol used by the exposed port, either TCP or UDP.
+    // If not specified, it defaults to TCP.
+    Protocol protocol = 3;
+
+    // The name of the endpoint for this port, which is used to identify the endpoint in the UI.
+    string endpoint_name = 4 [(buf.validate.field) = {
+      string: {max_len: 64}
+    }];
+  }
+
+  // Volume defines a volume that will be mounted into the container.
+  message Volume {
+    // The unique identifier of the volume.
+    // If not specified, an ID will be generated.
+    string id = 1 [(buf.validate.field) = {
+      string: {pattern: "^[a-zA-Z0-9._-]{1,64}$"}
+    }];
+
+    // The path in the container where the mounted volume will be available.
+    string mount_path = 2 [(buf.validate.field).required = true];
+
+    // The description of the volume.
+    string description = 3 [(buf.validate.field) = {
+      string: {max_len: 128}
+    }];
+
+    // The storage of the volume.
+    // If not specified, the volume will be mounted on the VM boot disk.
+    oneof storage {
+      // Virtual machine boot disk.
+      BootDisk boot_disk = 10;
+
+      // Nebius Compute Disk.
+      DiskMount disk = 11;
+
+      // Nebius Filesystem.
+      FilesystemMount filesystem = 12;
+
+      // Nebius Storage Bucket.
+      StorageBucketMount storage_bucket = 13;
+
+      // External S3-compatible bucket.
+      ExternalS3Mount external_s3 = 14;
+    }
+  }
+
+  enum RestartPolicy {
+    // No restart policy specified. Uses ALWAYS.
+    RESTART_POLICY_UNSPECIFIED = 0;
+
+    // Restart the container whenever it stops.
+    ALWAYS = 1;
+
+    // Restart the container only when it exits with a non-zero exit code.
+    ON_FAILURE = 2;
+
+    // Do not restart the container when it stops.
+    NEVER = 3;
+  }
+
+  // InjectedFile is a small file materialized inside the container at launch.
+  message InjectedFile {
+    // Stable identifier within the container, used as the materialized
+    // file's name under the agent state directory.
+    string id = 1;
+
+    // Absolute path inside the container where the content is written.
+    string container_path = 2;
+
+    // File content. Masked out of the stored definition by Sanitize(); the
+    // real bytes live only in the mystery box data secret.
+    bytes content = 3 [(sensitive) = true];
+  }
+}
+
+// EnvironmentVariable defines an environment variable for the container.
+message EnvironmentVariable {
+  // The key of the environment variable.
+  string key = 1 [(buf.validate.field) = {
+    string: {pattern: "^[a-zA-Z_][a-zA-Z0-9_]*$"}
+    required: true
+  }];
+
+  // The value of the environment variable.
+  oneof data {
+    option (buf.validate.oneof).required = true;
+
+    // Plain text value
+    string value = 10;
+
+    // Sensitive value
+    string sensitive_value = 11 [(sensitive) = true];
+  }
+}
+
+// BootDisk defines a boot disk path that will be mounted into the container.
+message BootDisk {}
+
+message DiskMount {
+  // ID of the compute disk to be mounted
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["computedisk"]
+    }
+  ];
+
+  // Mount mode.
+  Mode mode = 3 [(buf.validate.field).required = true];
+
+  // The access mode for the mounted disk.
+  enum Mode {
+    // No access mode specified. Specify READ_WRITE or READ_ONLY.
+    MODE_UNSPECIFIED = 0;
+
+    // Allow reads and writes.
+    READ_WRITE = 1;
+
+    // Allow reads only.
+    READ_ONLY = 2;
+  }
+}
+
+// FilesystemMount defines a filesystem that will be mounted into the container.
+message FilesystemMount {
+  // ID of the filesystem to be mounted
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["computefilesystem"]
+    }
+  ];
+
+  // Mount mode.
+  Mode mode = 3 [(buf.validate.field).required = true];
+
+  // The access mode for the mounted filesystem.
+  enum Mode {
+    // No access mode specified. Specify READ_WRITE or READ_ONLY.
+    MODE_UNSPECIFIED = 0;
+
+    // Allow reads and writes.
+    READ_WRITE = 1;
+
+    // Allow reads only.
+    READ_ONLY = 2;
+  }
+}
+
+// StorageBucketMount defines a storage bucket that will be mounted into the container.
+message StorageBucketMount {
+  // ID of the storage bucket to be mounted
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["storagebucket"]
+    }
+  ];
+
+  // Mount mode.
+  Mode mode = 3 [(buf.validate.field).required = true];
+
+  // The access mode for the mounted storage bucket.
+  enum Mode {
+    // No access mode specified. Specify READ_WRITE or READ_ONLY.
+    MODE_UNSPECIFIED = 0;
+
+    // Allow reads and writes.
+    READ_WRITE = 1;
+
+    // Allow reads only.
+    READ_ONLY = 2;
+  }
+}
+
+// ExternalS3Mount defines an external S3-compatible bucket that will be mounted into the container.
+message ExternalS3Mount {
+  // S3-compatible endpoint URL.
+  string endpoint = 1 [(buf.validate.field).required = true];
+
+  // Bucket name.
+  string bucket = 2 [(buf.validate.field).required = true];
+
+  // Access key ID.
+  string access_key_id = 3 [
+    (buf.validate.field).required = true,
+    (sensitive) = true
+  ];
+
+  // Secret access key.
+  string secret_access_key = 4 [
+    (buf.validate.field).required = true,
+    (sensitive) = true
+  ];
+
+  // Session token (optional, for temporary credentials).
+  string session_token = 5 [(sensitive) = true];
+
+  // Mount mode.
+  StorageBucketMount.Mode mode = 6 [(buf.validate.field).required = true];
+
+  // S3 region.
+  string region = 7;
+}

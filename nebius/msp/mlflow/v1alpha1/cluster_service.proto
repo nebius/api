@@ -30,6 +30,12 @@ service ClusterService {
 
   // Delete a cluster.
   rpc Delete(DeleteClusterRequest) returns (common.v1alpha1.Operation);
+
+  // Stops a cluster.
+  rpc Stop(StopClusterRequest) returns (common.v1alpha1.Operation);
+
+  // Starts a cluster.
+  rpc Start(StartClusterRequest) returns (common.v1alpha1.Operation);
 }
 
 message GetClusterRequest {
@@ -94,6 +100,24 @@ message CreateClusterRequest {
 
 message DeleteClusterRequest {
   // ID of the cluster to delete.
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["mlflow"]
+    }
+  ];
+}
+
+message StopClusterRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["mlflow"]
+    }
+  ];
+}
+
+message StartClusterRequest {
   string id = 1 [
     (buf.validate.field).required = true,
     (nid) = {

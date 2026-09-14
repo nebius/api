@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package nebius.applications.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/applications/v1alpha1/vmapp_template.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/applications/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "VmappTemplateServiceProto";
+option java_package = "ai.nebius.pub.applications.v1alpha1";
+
+// Provides access to the VM app template catalog.
+service VmAppTemplateService {
+  option (api_service_name) = "apps.msp";
+
+  // Returns the specified VM app template.
+  rpc Get(GetVmAppTemplateRequest) returns (VmAppTemplate);
+
+  // Retrieves a list of VM app templates.
+  rpc List(ListVmAppTemplatesRequest) returns (ListVmAppTemplatesResponse);
+}
+
+// A request to retrieve a VM app template by ID.
+message GetVmAppTemplateRequest {
+  // The ID of the template to retrieve.
+  string id = 1 [(buf.validate.field).required = true];
+}
+
+// A request to list VM app templates.
+message ListVmAppTemplatesRequest {
+  // The project ID. The response includes templates from this project and the global catalog.
+  // Required unless global_only is true.
+  string parent_id = 1;
+
+  // The requested page size. The service currently ignores this field and returns all matching templates.
+  // The default value is 0.
+  int64 page_size = 2;
+
+  // The pagination token. The service currently ignores this field. Leave it empty.
+  string page_token = 3;
+
+  // The text to find in template names and descriptions. The search is case-sensitive.
+  string search = 4 [(buf.validate.field) = {
+    string: {max_len: 256}
+  }];
+
+  // The categories to match. The response includes templates that match at least one category.
+  repeated string categories = 5 [(buf.validate.field) = {
+    repeated: {max_items: 5}
+  }];
+
+  // Returns only global templates when true. The service ignores parent_id in this mode.
+  // Global catalog reads require authentication but do not require a resource permission.
+  bool global_only = 7;
+
+  // The template kind: "covm" or "devlab". The default is "covm".
+  string kind = 1000;
+}
+
+// The templates that match the list request.
+message ListVmAppTemplatesResponse {
+  // All matching templates. The service currently returns the complete list without pagination.
+  repeated VmAppTemplate items = 1;
+
+  // The token for the next page. Currently always empty because the service returns all matching templates.
+  string next_page_token = 2;
+}

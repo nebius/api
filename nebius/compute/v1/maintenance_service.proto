@@ -21,11 +21,16 @@ service MaintenanceService {
 }
 
 message GetMaintenanceEventByInstanceRequest {
-  string instance_id = 1;
+  string instance_id = 1 [(nid) = {
+    resource: ["computeinstance"]
+  }];
 }
 
 message ListMaintenanceEventsRequest {
-  string parent_id = 1;
+  // Parent ID of maintenance events.
+  string parent_id = 1 [(nid) = {
+    resource: ["project"]
+  }];
 
   int64 page_size = 3;
 

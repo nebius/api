@@ -1,0 +1,473 @@
+syntax = "proto3";
+
+package nebius.applications.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/applications/v1alpha1/vmapp.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/applications/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "VmappTemplateProto";
+option java_package = "ai.nebius.pub.applications.v1alpha1";
+
+// Represents a reusable VM app template.
+message VmAppTemplate {
+  // The template metadata.
+  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+
+  // The template specification.
+  VmAppTemplateSpec spec = 2 [(buf.validate.field).required = true];
+
+  // The template status and available inputs.
+  VmAppTemplateStatus status = 3 [
+    (field_behavior) = OUTPUT_ONLY,
+    (buf.validate.field).required = true
+  ];
+}
+
+message VmAppTemplateSpec {
+  // The definition of the VM app template.
+  oneof definition {
+    // The container template definition.
+    ContainerTemplateDefinition container_template = 1;
+  }
+
+  // The template kind: "covm" or "devlab". The default is "covm".
+  string kind = 1000 [(field_behavior) = NON_EMPTY_DEFAULT];
+}
+
+// ContainerTemplateDefinition defines a template for a VM app that consists of one or more containers.
+message ContainerTemplateDefinition {
+  string description = 1;
+
+  // The URL of the template icon.
+  string icon_url = 2;
+
+  // The inputs that configure the template.
+  repeated TemplateInput inputs = 3;
+
+  // The container definitions for the VM app.
+  repeated ContainerDefinition containers = 4;
+
+  // The platforms that the VM app supports.
+  // An empty list allows all platforms.
+  repeated SupportedPlatform supported_platforms = 5;
+
+  // The substitutions to apply when their conditions match.
+  repeated Substitution substitutions = 6;
+
+  message Substitution {
+    // The name of the container to modify.
+    string container_name = 1 [(buf.validate.field).required = true];
+
+    // The conditions that permit this substitution. At least one condition must match.
+    // An empty list applies the substitution unconditionally.
+    repeated SubstitutionCondition conditions = 2;
+
+    // The actions to apply in the listed order.
+    repeated SubstitutionOperation operations = 3 [(buf.validate.field) = {
+      repeated: {min_items: 1}
+      required: true
+    }];
+  }
+
+  // All specified constraints must match. Without constraints, the condition matches unconditionally before applying not.
+  message SubstitutionCondition {
+    // Whether to negate the condition after evaluating all constraints.
+    bool not = 1;
+
+    // The compute platform name to match. An empty value adds no platform constraint.
+    string platform = 2;
+
+    // The compute preset name to match. An empty value adds no preset constraint.
+    string preset = 3;
+
+    // The input field ID that must exist. An empty value adds no input constraint.
+    // Set at most one input_field_value_* field to require a non-sensitive input value to match.
+    string input_field_id = 4;
+
+    // The string value to match for input_field_id. Requires input_field_id.
+    // If absent, this field adds no string value constraint. An empty string requires an empty input string.
+    optional string input_field_value_string = 5;
+
+    // The Boolean value to match for input_field_id. Requires input_field_id.
+    // If absent, this field adds no Boolean value constraint. If false, the input must equal false.
+    optional bool input_field_value_bool = 6;
+
+    // The integer value to match for input_field_id. Requires input_field_id.
+    // If absent, this field adds no integer value constraint. If zero, the input must equal zero.
+    optional int64 input_field_value_int64 = 7;
+
+    // The floating-point value to match for input_field_id. Requires input_field_id.
+    // If absent, this field adds no floating-point value constraint. If zero, the input must equal zero.
+    optional double input_field_value_double = 8;
+
+    // The environment variable key that must exist. An empty value adds no environment variable constraint.
+    string environment_variable_key = 9;
+
+    // The non-sensitive environment variable value to match. Requires environment_variable_key.
+    // If absent, only the key must exist. An empty string requires an empty variable value.
+    optional string environment_variable_value = 10;
+  }
+
+  message SubstitutionOperation {
+    // The action to perform on the selected container value.
+    oneof action {
+      option (buf.validate.oneof).required = true;
+
+      // Remove the target value.
+      bool remove = 1;
+
+      // The ID of the input field that supplies the value.
+      string set_from_input_field = 2;
+
+      // The string value to use.
+      string set_to_string_value = 3;
+
+      // The integer value to use.
+      int64 set_to_integer_value = 4;
+
+      // The user to run the container as.
+      ContainerDefinition.User set_user = 5;
+    }
+
+    // The container value to modify.
+    oneof value {
+      option (buf.validate.oneof).required = true;
+
+      // The environment variable to set in the container.
+      // Allowed values are: `set_from_input_field`, `set_to_string_value`, `set_to_integer_value`, `remove`.
+      string environment_variable = 10 [(buf.validate.field) = {
+        string: {pattern: "^[a-zA-Z_][a-zA-Z0-9_]*$"}
+      }];
+
+      // The sensitive environment variable to set in the container.
+      // Allowed actions are: `set_from_input_field`, `set_to_string_value`, `set_to_integer_value`, `remove`.
+      string sensitive_environment_variable = 11 [(buf.validate.field) = {
+        string: {pattern: "^[a-zA-Z_][a-zA-Z0-9_]*$"}
+      }];
+
+      // The image to use for the container.
+      // Allowed values are: `set_from_input_field`, `set_to_string_value`, `remove`.
+      bool image = 12;
+
+      // The shared memory size in bytes to set in the container.
+      // Allowed values are: `set_from_input_field`, `set_to_integer_value`, `remove`.
+      bool shm_size_bytes = 13;
+
+      // The command to run in the container.
+      // Allowed values are: `set_from_input_field`, `set_to_string_value`, `remove`.
+      bool container_command = 14;
+
+      // The user to run the container as.
+      // Allowed values are: `set_user`, `remove`.
+      bool container_user = 15;
+
+      // The image tag to use for the container. Replaces only the tag after the last colon.
+      // Allowed values are: `set_from_input_field`, `set_to_string_value`.
+      bool image_tag = 21;
+    }
+  }
+}
+
+message TemplateInput {
+  // The input ID. Template input values use this ID as their key.
+  string id = 1 [(buf.validate.field) = {
+    string: {pattern: "^[a-z0-9_.]{1,64}$"}
+    required: true
+  }];
+
+  // Whether the template requires a value for this input.
+  bool required = 2;
+
+  // The input type and its configuration.
+  oneof input {
+    option (buf.validate.oneof).required = true;
+
+    // A string input.
+    StringInput string_input = 10;
+
+    // A string input with predefined options.
+    EnumStringInput enum_string_input = 11;
+
+    // An integer input.
+    IntegerInput integer_input = 12;
+
+    // An integer input with a unit suffix.
+    IntegerUnitInput integer_unit_input = 13;
+
+    // A Boolean input.
+    BooleanInput boolean_input = 14;
+
+    // A read-only text element.
+    TextContentInput text_content_input = 15;
+
+    // An environment variable input.
+    EnvironmentVariablesInput environment_variables_input = 16;
+
+    // A Hugging Face token input.
+    HuggingFaceTokenInput hugging_face_token_input = 17;
+
+    // A Docker registry credential input.
+    DockerRegistryCredentialsInput docker_registry_credentials_input = 18;
+
+    // A service account selector.
+    ServiceAccountMirrorInput service_account_mirror_input = 19;
+  }
+
+  message StringInput {
+    string name = 1 [(buf.validate.field).required = true];
+
+    string description = 2;
+
+    // The placeholder text for the input.
+    string placeholder = 3;
+
+    // The regular expression that validates the input value.
+    string pattern = 4;
+
+    // The default input value.
+    string default_value = 5;
+
+    // Whether the input contains sensitive data.
+    bool sensitive = 6;
+
+    // Whether the form offers password generation for this sensitive input.
+    bool generate = 7;
+
+    // Whether the form displays a multiline text input.
+    bool multiline = 8;
+
+    // The tooltip text for the input.
+    string tooltip = 9;
+
+    // The prefix to display before the input.
+    string input_prefix = 10;
+  }
+
+  // EnumStringInput defines a string input with predefined options.
+  // Will be rendered as a dropdown in UI.
+  message EnumStringInput {
+    string name = 1 [(buf.validate.field).required = true];
+
+    string description = 2;
+
+    // The placeholder text for the input.
+    string placeholder = 3;
+
+    // The available input options.
+    repeated Option options = 4 [(buf.validate.field).required = true];
+
+    // The default option value.
+    string default_value = 5;
+
+    message Option {
+      // The value of the option, which is used in the value of the input.
+      string value = 1;
+
+      // The label for the option. An empty label uses the option value.
+      string label = 2;
+    }
+  }
+
+  // IntegerUnitInput defines an integer input with a unit, bounds, step, and default value.
+  // The form displays a slider with the unit suffix.
+  message IntegerUnitInput {
+    string name = 1 [(buf.validate.field).required = true];
+
+    string description = 2;
+
+    // The unit suffix for the input value.
+    string unit = 3;
+
+    // The minimum input value before multiplication.
+    int64 min_value = 4;
+
+    // The maximum input value before multiplication.
+    int64 max_value = 5;
+
+    // The increment between valid input values, starting at min_value.
+    int64 step = 6;
+
+    // The default input value before multiplication.
+    int64 default_value = 7;
+
+    // The multiplication factor. Values less than one use a factor of one.
+    int64 multiply_by = 8;
+  }
+
+  // IntegerInput defines a simple integer field.
+  // The form displays a text box.
+  message IntegerInput {
+    string name = 1 [(buf.validate.field).required = true];
+
+    string description = 2;
+
+    // The minimum input value before multiplication.
+    // If absent, no minimum applies. If zero, the input must be zero or greater.
+    optional int64 min_value = 3;
+
+    // The maximum input value before multiplication.
+    // If absent, no maximum applies. If zero, the input must be zero or less.
+    optional int64 max_value = 4;
+
+    // The default for an omitted, non-required input before multiplication.
+    // If absent, the input uses min_value, or zero when min_value is absent.
+    // If zero, the default is zero, regardless of min_value. The bounds still apply.
+    optional int64 default_value = 5;
+
+    // The multiplication factor. Zero uses a factor of one.
+    int64 multiply_by = 6;
+  }
+
+  // BooleanInput defines a Boolean field.
+  message BooleanInput {
+    string name = 1 [(buf.validate.field).required = true];
+
+    string description = 2;
+
+    // The default input value.
+    bool default_value = 3;
+
+    // The form control type for the input.
+    ViewType view_type = 4 [(buf.validate.field).required = true];
+
+    enum ViewType {
+      // No form control type specified. Specify CHECKBOX or SWITCH.
+      VIEW_TYPE_UNSPECIFIED = 0;
+
+      // Display the Boolean input as a checkbox.
+      CHECKBOX = 1;
+
+      // Display the Boolean input as a toggle switch.
+      SWITCH = 2;
+    }
+  }
+
+  // TextContentInput defines a read-only text content field.
+  // Will be rendered as a text block in UI.
+  // Cannot be optional.
+  message TextContentInput {
+    // The content to display.
+    string content = 1;
+
+    // If set to true, the field will be shown in the form.
+    bool show_in_form = 2;
+
+    // If set to true, the field will be shown in the overview page after the VM app is created.
+    bool show_in_overview = 3;
+  }
+
+  // Environment variables input
+  // Will be rendered as a list of key-value pairs in UI.
+  // Cannot be optional.
+  message EnvironmentVariablesInput {
+    string name = 1 [(buf.validate.field).required = true];
+
+    string description = 2;
+  }
+
+  // Hugging face token input
+  // Will be rendered as the form in UI.
+  message HuggingFaceTokenInput {
+    string name = 1;
+
+    string description = 2;
+
+    // If set to true, the field will be shown in the form.
+    bool show_in_form = 3;
+
+    // Whether the token contains sensitive data.
+    bool sensitive = 4;
+  }
+
+  // Docker Registry Credentials input
+  // Will be rendered as the form in UI.
+  message DockerRegistryCredentialsInput {
+    string name = 1;
+
+    string description = 2;
+
+    // If set to true, the field will be shown in the form.
+    bool show_in_form = 3;
+
+    // Whether the credentials contain sensitive data.
+    bool sensitive = 4;
+  }
+
+  // Service Account Mirror input
+  // Will be rendered as a service account selector in UI.
+  message ServiceAccountMirrorInput {
+    string description = 1;
+  }
+}
+
+message VmAppTemplateStatus {
+  string description = 1;
+
+  // The URL of the template icon.
+  string icon_url = 2;
+
+  // The fields that accept values for this template.
+  repeated TemplateInputField input_fields = 3;
+
+  // Supported platforms for the VM app template.
+  // If empty, the VM app template is supported on all platforms.
+  repeated SupportedPlatform supported_platforms = 4;
+
+  // Categories that the template belongs to.
+  repeated string categories = 5;
+}
+
+message TemplateInputField {
+  // The ID of the input field.
+  string id = 1 [(buf.validate.field).required = true];
+
+  // The type of value that the input field accepts.
+  Type type = 2 [(buf.validate.field).required = true];
+
+  string name = 3;
+
+  string description = 4;
+
+  // Whether the template requires a value for this input.
+  bool required = 5;
+
+  // Whether the input field contains sensitive data.
+  bool sensitive = 6;
+
+  // The types of template input values.
+  enum Type {
+    // No input type specified.
+    TYPE_UNSPECIFIED = 0;
+
+    // A string value. Unit-based integers include their unit suffix in the string.
+    STRING = 1;
+
+    // A numeric value with no fractional part.
+    INTEGER = 2;
+
+    // A Boolean value.
+    BOOLEAN = 3;
+
+    // A list value. Current templates do not support this type.
+    LIST = 4;
+
+    // An object value. Current templates do not support this type.
+    STRUCT = 5;
+
+    // A string that identifies a MysteryBox secret version.
+    MYSTERYBOX_SECRET_VERSION = 6;
+  }
+}
+
+message SupportedPlatform {
+  // The compute platform ID.
+  string id = 1 [(buf.validate.field).required = true];
+
+  // Presets of the platform that are supported by the VM app template.
+  // If empty, all presets are supported.
+  repeated string supported_presets = 10;
+}
