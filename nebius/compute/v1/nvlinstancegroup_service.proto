@@ -36,23 +36,32 @@ service NVLInstanceGroupService {
 }
 
 message CreateNVLInstanceGroupRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   NVLInstanceGroupSpec spec = 2;
 }
 
 message UpdateNVLInstanceGroupRequest {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   NVLInstanceGroupSpec spec = 2;
 }
 
 message GetNVLInstanceGroupRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computenvlinstancegroup"]
+  }];
 }
 
 message ListNVLInstanceGroupsRequest {
-  string parent_id = 1;
+  // Identifier of the parent project for the NVL InstanceGroup.
+  string parent_id = 1 [(nid) = {
+    resource: ["project"]
+  }];
 
   int64 page_size = 2;
 
@@ -66,5 +75,7 @@ message ListNVLInstanceGroupsResponse {
 }
 
 message DeleteNVLInstanceGroupRequest {
-  string id = 1;
+  string id = 1 [(nid) = {
+    resource: ["computenvlinstancegroup"]
+  }];
 }

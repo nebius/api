@@ -14,7 +14,9 @@ option java_package = "ai.nebius.pub.compute.v1";
 
 // Represents an NVLink InstanceGroup.
 message NVLInstanceGroup {
-  common.v1.ResourceMetadata metadata = 1;
+  common.v1.ResourceMetadata metadata = 1 [(nid) = {
+    parent_resource: ["project"]
+  }];
 
   NVLInstanceGroupSpec spec = 2;
 

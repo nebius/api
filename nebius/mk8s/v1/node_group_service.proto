@@ -7,6 +7,7 @@ import "google/protobuf/empty.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
+import "nebius/common/v1/preflight_check.proto";
 import "nebius/mk8s/v1/node_group.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/mk8s/v1";
@@ -30,6 +31,8 @@ service NodeGroupService {
   rpc Delete(DeleteNodeGroupRequest) returns (common.v1.Operation);
 
   rpc Upgrade(UpgradeNodeGroupRequest) returns (common.v1.Operation);
+
+  rpc PreflightCheck(PreflightCheckNodeGroupRequest) returns (PreflightCheckNodeGroupResponse);
 
   rpc GetCompatibilityMatrix(GetNodeGroupCompatibilityMatrixRequest) returns (NodeGroupCompatibilityMatrix);
 }
@@ -128,6 +131,22 @@ message UpdateNodeGroupRequest {
   ];
 
   NodeGroupSpec spec = 2;
+}
+
+message PreflightCheckNodeGroupRequest {
+  common.v1.PreflightCheckContext context = 1;
+
+  common.v1.ResourceMetadata metadata = 2;
+
+  NodeGroupSpec spec = 3;
+}
+
+message PreflightCheckNodeGroupResponse {
+  repeated common.v1.PreflightCheckDiagnostic diagnostics = 1;
+
+  string paths_require_recreate = 2;
+
+  bool requires_user_approval = 3;
 }
 
 message DeleteNodeGroupRequest {
