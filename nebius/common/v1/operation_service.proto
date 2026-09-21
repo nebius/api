@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.common.v1;
 
 import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/operation.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/common/v1";
@@ -20,12 +21,22 @@ service OperationService {
 }
 
 message GetOperationRequest {
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["*"]
+    }
+  ];
 }
 
 message ListOperationsRequest {
   // ID of the Resource to list operations for.
-  string resource_id = 1 [(buf.validate.field).required = true];
+  string resource_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["*"]
+    }
+  ];
 
   // Page size. [1...1000]. Optional, if not specified, a reasonable default will be chosen by the service.
   int64 page_size = 2;

@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.ai.v1;
 
 import "buf/validate/validate.proto";
+import "nebius/ai/v1/pricing.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/error.proto";
 import "nebius/common/v1/metadata.proto";
@@ -32,6 +33,11 @@ message Endpoint {
 message EndpointSpec {
   option (buf.validate.message) = {
     cel: [
+      {
+        id: "pricing_model_matches_preemptible"
+        message: "pricing_model.on_demand requires preemptible to be false; other pricing models require preemptible to be true"
+        expression: "!has(this.pricing_model) || (has(this.pricing_model.on_demand) ? !this.preemptible : this.preemptible)"
+      },
       {
         id: "auth_token_mysterybox_secret_if_set"
         message: "auth_token_mysterybox_secret must set secret_id or version_id"
@@ -97,6 +103,10 @@ message EndpointSpec {
   // Whether to use a preemptible VM for the endpoint.
   // Preemptible VMs are cheaper but can be stopped by the platform at any time.
   bool preemptible = 27;
+
+  // Pricing model for the VM. Must match the preemptible flag: on_demand for non-preemptible VMs,
+  // follows_spot_price or spot_pricing_policy for preemptible VMs.
+  PricingModelSpec pricing_model = 28 [(field_behavior) = IMMUTABLE];
 
   // Authentication token needed to access the endpoint.
   //

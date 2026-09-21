@@ -99,15 +99,15 @@
 * mlflow.msp.api.nebius.cloud:443
   * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)
   * [nebius.msp.mlflow.v1alpha1.ClusterService](nebius/msp/mlflow/v1alpha1/cluster_service.proto)
-* monitoring.api.nebius.cloud:443
-  * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)
-  * [nebius.monitoring.v1.RecordingRuleService](nebius/monitoring/v1/recording_rule_service.proto)
 * observability-agent-manager.api.nebius.cloud:443
   * [nebius.logging.agentmanager.v1.VersionService](nebius/logging/v1/agentmanager/version_service.proto)
 * postgresql.msp.api.nebius.cloud:443
   * [nebius.common.v1alpha1.OperationService](nebius/common/v1alpha1/operation_service.proto)
   * [nebius.msp.postgresql.v1alpha1.BackupService](nebius/msp/postgresql/v1alpha1/backup_service.proto)
   * [nebius.msp.postgresql.v1alpha1.ClusterService](nebius/msp/postgresql/v1alpha1/cluster_service.proto)
+* pricing-policies.billing-cpl.api.nebius.cloud:443
+  * [nebius.billing.v1.PricingPolicyService](nebius/billing/v1/pricing_policy_service.proto)
+  * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
 * quota-dispatcher.billing-cpl.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
   * [nebius.quotas.v1.QuotaAllowanceService](nebius/quotas/v1/quota_allowance_service.proto)

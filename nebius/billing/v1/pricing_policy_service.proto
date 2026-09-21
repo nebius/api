@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package nebius.billing.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/billing/v1/pricing_policy.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/common/v1/operation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/billing/v1";
+option java_multiple_files = true;
+option java_outer_classname = "PricingPolicyServiceProto";
+option java_package = "ai.nebius.pub.billing.v1";
+
+// Manages pricing policies for preemptible VMs.
+// Modifying methods return an Operation and support `X-Idempotency-Key`;
+// the common `common.v1.OperationService` is implemented as well.
+service PricingPolicyService {
+  option (api_service_name) = "pricing-policies.billing-cpl";
+
+  // Creates a pricing policy. A bid outside the allowed price range fails
+  // with OUT_OF_RANGE; below the current market price it is accepted but the
+  // policy starts SCHEDULING_STATE_BLOCKED. Policies per tenant are
+  // quota-limited (RESOURCE_EXHAUSTED past the limit).
+  // The Operation completes once the policy is ready to back VMs.
+  rpc Create(CreatePricingPolicyRequest) returns (common.v1.Operation);
+
+  rpc Get(GetPricingPolicyRequest) returns (PricingPolicy);
+
+  rpc GetByName(common.v1.GetByNameRequest) returns (PricingPolicy);
+
+  rpc List(ListPricingPoliciesRequest) returns (ListPricingPoliciesResponse);
+
+  // Updates a pricing policy. `metadata.name` may change any time; the bid in
+  // `spec.pricing.max_price_v1` only while `status.running_vm_count` is 0
+  // (FAILED_PRECONDITION otherwise). Other spec fields are immutable
+  // (INVALID_ARGUMENT).
+  rpc Update(UpdatePricingPolicyRequest) returns (common.v1.Operation);
+
+  // Deletes a pricing policy. Requires that no VM runs under the policy and
+  // nothing is being preempted (FAILED_PRECONDITION otherwise).
+  rpc Delete(DeletePricingPolicyRequest) returns (common.v1.Operation);
+}
+
+message CreatePricingPolicyRequest {
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
+
+  PricingPolicySpec spec = 2 [(buf.validate.field).required = true];
+}
+
+message GetPricingPolicyRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IDENTIFIER,
+    (nid) = {
+      resource: ["pricingpolicy"]
+    }
+  ];
+}
+
+message ListPricingPoliciesRequest {
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  int64 page_size = 2;
+
+  string page_token = 3;
+}
+
+message ListPricingPoliciesResponse {
+  repeated PricingPolicy items = 1;
+
+  string next_page_token = 2;
+}
+
+message UpdatePricingPolicyRequest {
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
+
+  PricingPolicySpec spec = 2;
+}
+
+message DeletePricingPolicyRequest {
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IDENTIFIER,
+    (nid) = {
+      resource: ["pricingpolicy"]
+    }
+  ];
+}

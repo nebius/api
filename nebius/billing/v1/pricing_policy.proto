@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package nebius.billing.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/billing/v1";
+option java_multiple_files = true;
+option java_outer_classname = "PricingPolicyProto";
+option java_package = "ai.nebius.pub.billing.v1";
+
+// How preemptible VMs are priced: a standing per-GPU bid for one (region, platform).
+// One policy backs any number of VMs, referenced by id from the preemptible spec.
+// A VM without a policy is a price-taker and pays the market price.
+message PricingPolicy {
+  // Parent is a project, immutable. Only VMs in that scope may
+  // reference the policy. Name is unique within the parent, renamable any time.
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
+
+  PricingPolicySpec spec = 2 [(buf.validate.field).required = true];
+
+  PricingPolicyStatus status = 3 [(field_behavior) = OUTPUT_ONLY];
+}
+
+message PricingPolicySpec {
+  // Preemptible compute instances the policy prices.
+  ComputeInstanceSpec compute_instance_spec = 1 [
+    (buf.validate.field).required = true,
+    (field_behavior) = IMMUTABLE
+  ];
+
+  // How the price is set.
+  PricingMethod pricing = 2 [(buf.validate.field).required = true];
+}
+
+// Preemptible compute instances a pricing policy applies to.
+message ComputeInstanceSpec {
+  oneof versions {
+    option (buf.validate.oneof).required = true;
+
+    // First version of the compute instance specification.
+    ComputeInstanceSpecV1 v1 = 1;
+  }
+}
+
+message ComputeInstanceSpecV1 {
+  // Compute platform. Example: "gpu-h100-sxm".
+  string platform = 1 [(buf.validate.field).required = true];
+}
+
+// How the price of a pricing policy is set.
+message PricingMethod {
+  oneof versions {
+    option (buf.validate.oneof).required = true;
+
+    // Auction bid: the per-GPU `max_price` ranks the policy's VMs for
+    // scheduling and preemption.
+    MaxPriceV1 max_price_v1 = 1;
+  }
+}
+
+// Auction-bid pricing.
+message MaxPriceV1 {
+  // Per-GPU hourly limit in USD, decimal string 3 digits precision. Example: "3.515".
+  // Must be within the allowed price range (OUT_OF_RANGE otherwise);
+  // a value below the current market price is accepted but blocks scheduling.
+  // Mutable only while `status.running_vm_count` is 0
+  // (FAILED_PRECONDITION otherwise); the policy reports STATE_UPDATING and
+  // blocks scheduling while the change is applied.
+  string max_price = 1 [(buf.validate.field).required = true];
+}
+
+// Observed state of a pricing policy.
+message PricingPolicyStatus {
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    // Not ready yet; a VM referencing the policy gets a retryable error.
+    STATE_CREATING = 1;
+
+    // Ready; whether VMs may start is `scheduling_state`.
+    STATE_ACTIVE = 2;
+
+    // Being deleted; does not accept new VMs.
+    STATE_DELETING = 3;
+
+    // The bid is being changed; scheduling is blocked until the change lands.
+    STATE_UPDATING = 4;
+  }
+
+  State state = 1;
+
+  // SKU resolved from the spec.
+  string sku_id = 2 [(nid) = {
+    resource: ["sku"]
+  }];
+
+  enum SchedulingState {
+    SCHEDULING_STATE_UNSPECIFIED = 0;
+
+    // New VMs may start.
+    SCHEDULING_STATE_ALLOWED = 1;
+
+    // The max_price limit is below the current market price; VM creation succeeds once
+    // the price falls to it.
+    SCHEDULING_STATE_BLOCKED = 2;
+  }
+
+  // Whether new VMs may currently start under this policy.
+  SchedulingState scheduling_state = 3;
+
+  // Number of VMs currently running under this policy. Nonzero blocks resource
+  // changes and deletion.
+  int64 running_vm_count = 4;
+
+  // ISO 4217 currency code of max_price, e.g. "USD".
+  string currency = 5;
+}
