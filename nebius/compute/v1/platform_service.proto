@@ -27,7 +27,13 @@ message ListPlatformsRequest {
 
   string page_token = 2;
 
-  string parent_id = 3 [(buf.validate.field).required = true];
+  // ID of the parent project for the platform request.
+  string parent_id = 3 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
 }
 
 message ListPlatformsResponse {

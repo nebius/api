@@ -112,6 +112,19 @@ message InstanceSpec {
   // Availability depends on the selected platform, preset and region.
   // Changing this field will result in disks change and content loss, but only after stop and start the instance.
   LocalDisksSpec local_disks = 24;
+
+  // Default is on_demand.
+  oneof pricing_model {
+    // A regular, non-preemptible VM.
+    OnDemandSpec on_demand = 25 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+    // The preemptible VM accepts the current spot price.
+    FollowsSpotPriceSpec follows_spot_price = 26 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+    // The preemptible VM accepts the current spot price unless it exceeds the maximum price specified by the selected
+    // pricing policy. When the spot price exceeds that maximum price, the VM is preempted.
+    SpotPricingPolicySpec spot_pricing_policy = 27;
+  }
 }
 
 message PreemptibleSpec {
@@ -412,4 +425,13 @@ message PassthroughGroupRequest {
   // but the exact number depends on the preset.
   // Enabled only when this field is explicitly set.
   bool requested = 1;
+}
+
+message OnDemandSpec {}
+
+message FollowsSpotPriceSpec {}
+
+message SpotPricingPolicySpec {
+  // PricingPolicy ID used as the maximum agreed price for the preemptible VM.
+  string id = 1 [(buf.validate.field).required = true];
 }

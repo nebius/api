@@ -57,7 +57,7 @@ service InstanceService {
     option (request_fields) = {
       field_path: "parent_id"
       nid: {
-        resource: ["project"]
+        resource: ["*"]
       }
     };
   }

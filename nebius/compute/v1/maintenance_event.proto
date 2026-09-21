@@ -25,6 +25,7 @@ message MaintenanceEventSpec {
 }
 
 message MaintenanceEventStatus {
+  // ID of the maintenance event.
   string maintenance_id = 1 [(nid) = {
     resource: ["computemaintenance"]
   }];
