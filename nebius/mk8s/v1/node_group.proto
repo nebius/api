@@ -172,6 +172,19 @@ message NodeTemplate {
     }
     ignore: IGNORE_IF_ZERO_VALUE
   }];
+
+  // Default is on_demand.
+  oneof pricing_model {
+    // A regular, non-preemptible VM.
+    OnDemandSpec on_demand = 21 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+    // The preemptible VM accepts the current spot price.
+    FollowsSpotPriceSpec follows_spot_price = 22 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+    // The preemptible VM accepts the current spot price unless it exceeds the maximum price specified by the selected
+    // pricing policy. When the spot price exceeds that maximum price, the VM is preempted.
+    SpotPricingPolicySpec spot_pricing_policy = 23;
+  }
 }
 
 message NVLinkSpec {
@@ -449,6 +462,20 @@ enum ConditionStatus {
 }
 
 message PreemptibleSpec {}
+
+message OnDemandSpec {}
+
+message FollowsSpotPriceSpec {}
+
+message SpotPricingPolicySpec {
+  // PricingPolicy ID used as the maximum agreed price for the preemptible VM.
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["pricingpolicy"]
+    }
+  ];
+}
 
 // ReservationPolicy is copied as-is from NebiusAPI `compute/v1/instance.proto`.
 message ReservationPolicy {
