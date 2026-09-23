@@ -30,14 +30,19 @@ service InvitationService {
   rpc Resend(ResendInvitationRequest) returns (common.v1.Operation);
 }
 
+// Request to create an invitation.
 message CreateInvitationRequest {
+  // Invitation metadata.
   common.v1.ResourceMetadata metadata = 1;
 
+  // Invitation specification.
   InvitationSpec spec = 2;
 
+  // If set, no immediate sending is attempted (it is assumed that a Resend method will be called later).
   bool no_send = 3; // if set, no sending is attempted (it's supposed that later a Resend method is called)
 
-  // How long the invitation remains valid after creation. If omitted, the service default is used.
+  // Duration for which the invitation remains valid after creation.
+  // If omitted, the service's default value is used.
   google.protobuf.Duration expires_in = 4;
 }
 

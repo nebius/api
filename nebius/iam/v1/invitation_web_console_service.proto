@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package nebius.iam.v1;
+
+import "google/protobuf/duration.proto";
+import "nebius/annotations.proto";
+import "nebius/common/v1/metadata.proto";
+import "nebius/iam/v1/invitation.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/iam/v1";
+option java_multiple_files = true;
+option java_outer_classname = "InvitationWebConsoleServiceProto";
+option java_package = "ai.nebius.pub.iam.v1";
+
+// Request to create an invitation to groups.
+message CreateInvitationToGroupsRequest {
+  // Invitation metadata.
+  common.v1.ResourceMetadata metadata = 1;
+
+  // Invitation specification.
+  InvitationSpec spec = 2;
+
+  // If set, no immediate sending is attempted (it is assumed that a Resend method will be called later).
+  bool no_send = 3;
+
+  // A set of group identifiers where a new provisional (invited) tenant user account must become a member.
+  repeated string group_ids = 4;
+
+  // Duration for which the invitation remains valid after creation.
+  // If omitted, the service's default value is used.
+  google.protobuf.Duration expires_in = 5;
+}
+
+// Request to accept an invitation.
+message AcceptInvitationRequest {
+  // Invitation secret code.
+  string code = 1 [(sensitive) = true];
+}
