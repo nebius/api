@@ -84,12 +84,10 @@ message JobSpec {
   DiskSpec disk = 23 [(buf.validate.field).required = true];
 
   // Subnet ID where the job will be deployed.
-  string subnet_id = 24 [
-    (buf.validate.field).required = true,
-    (nid) = {
-      resource: ["vpcsubnet"]
-    }
-  ];
+  // If omitted, the service uses the project's default subnet in the workload region.
+  string subnet_id = 24 [(nid) = {
+    resource: ["vpcsubnet"]
+  }];
 
   // Whether to assign a public IP to the job.
   bool public_ip = 25;
