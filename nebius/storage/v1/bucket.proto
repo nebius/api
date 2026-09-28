@@ -142,6 +142,8 @@ message BucketSpec {
       ]
     }];
   }
+
+  reserved 14;
 }
 
 message BucketStatus {
