@@ -80,4 +80,6 @@ message DeleteRegistryRequest {
       resource: ["registry"]
     }
   ];
+
+  bool force = 2;
 }
