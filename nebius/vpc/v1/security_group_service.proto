@@ -26,6 +26,9 @@ service SecurityGroupService {
   // Lists security groups within a specified parent.
   rpc List(ListSecurityGroupsRequest) returns (ListSecurityGroupsResponse);
 
+  // Lists security groups across regions for the specified parent.
+  rpc ListAggregated(ListAggregatedSecurityGroupsRequest) returns (ListSecurityGroupsResponse);
+
   // Lists security groups in a specified network.
   rpc ListByNetwork(ListSecurityGroupsByNetworkRequest) returns (ListSecurityGroupsResponse);
 
@@ -75,6 +78,19 @@ message ListSecurityGroupsRequest {
   int64 page_size = 2;
 
   // Token to retrieve the next page of security groups.
+  string page_token = 3;
+}
+
+message ListAggregatedSecurityGroupsRequest {
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  int64 page_size = 2;
+
   string page_token = 3;
 }
 

@@ -26,6 +26,9 @@ service NetworkService {
   // Lists networks within a specified parent.
   rpc List(ListNetworksRequest) returns (ListNetworksResponse);
 
+  // Lists networks across regions for the specified parent.
+  rpc ListAggregated(ListAggregatedNetworksRequest) returns (ListNetworksResponse);
+
   // Creates a new network with the specified configuration.
   rpc Create(CreateNetworkRequest) returns (common.v1.Operation);
 
@@ -76,6 +79,19 @@ message ListNetworksRequest {
   int64 page_size = 2;
 
   // Token to retrieve the next page of networks.
+  string page_token = 3;
+}
+
+message ListAggregatedNetworksRequest {
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  int64 page_size = 2;
+
   string page_token = 3;
 }
 

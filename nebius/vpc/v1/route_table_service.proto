@@ -26,6 +26,9 @@ service RouteTableService {
   // Lists route tables within a specified parent.
   rpc List(ListRouteTablesRequest) returns (ListRouteTablesResponse);
 
+  // Lists route tables across regions for the specified parent.
+  rpc ListAggregated(ListAggregatedRouteTablesRequest) returns (ListRouteTablesResponse);
+
   // Lists route tables that belong to a specified network.
   rpc ListByNetwork(ListRouteTablesByNetworkRequest) returns (ListRouteTablesResponse);
 
@@ -75,6 +78,19 @@ message ListRouteTablesRequest {
   int64 page_size = 2;
 
   // Token to retrieve the next page of route tables.
+  string page_token = 3;
+}
+
+message ListAggregatedRouteTablesRequest {
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  int64 page_size = 2;
+
   string page_token = 3;
 }
 

@@ -19,11 +19,11 @@ service TenantUserAccountWithAttributesService {
 }
 
 message GetTenantUserAccountWithAttributesRequest {
-  string id = 1; // tenant user account id like 'tenantuseraccount-{region}someuniquesuffix'
+  string id = 1; // Tenant user account ID, such as `tenantuseraccount-{region}someuniquesuffix`.
 }
 
 message ListTenantUserAccountsWithAttributesRequest {
-  // Represents the tenant ID like 'tenant-{region}someuniquesuffix'
+  // Represents the tenant ID, such as `tenant-{region}someuniquesuffix`.
   string parent_id = 1;
 
   // Specifies the maximum number of items to return in the response.

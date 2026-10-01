@@ -26,6 +26,9 @@ service PoolService {
   // Lists pools within a specified parent.
   rpc List(ListPoolsRequest) returns (ListPoolsResponse);
 
+  // Lists pools across regions for the specified parent.
+  rpc ListAggregated(ListAggregatedPoolsRequest) returns (ListPoolsResponse);
+
   // Lists pools that use a specified pool as their source.
   rpc ListBySourcePool(ListPoolsBySourcePoolRequest) returns (ListPoolsResponse);
 
@@ -75,6 +78,19 @@ message ListPoolsRequest {
   int64 page_size = 2;
 
   // Token to retrieve the next page of pools.
+  string page_token = 3;
+}
+
+message ListAggregatedPoolsRequest {
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  int64 page_size = 2;
+
   string page_token = 3;
 }
 

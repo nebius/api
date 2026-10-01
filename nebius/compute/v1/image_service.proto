@@ -66,7 +66,7 @@ message GetImageRequest {
 message GetImageLatestByFamilyRequest {
   string image_family = 1;
 
-  // default 'project-{region}public-images'
+  // The default is `project-{region}public-images`.
   string parent_id = 2 [(nid) = {
     resource: ["project"]
   }];
