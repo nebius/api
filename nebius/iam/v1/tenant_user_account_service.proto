@@ -24,7 +24,7 @@ service TenantUserAccountService {
 }
 
 message GetTenantUserAccountRequest {
-  string id = 1; // tenant user account id like 'tenantuseraccount-{region}someuniquesuffix'
+  string id = 1; // Tenant user account ID, such as `tenantuseraccount-{region}someuniquesuffix`.
 }
 
 message ListTenantUserAccountsRequest {

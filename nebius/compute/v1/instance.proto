@@ -242,7 +242,8 @@ message AttachedDiskSpec {
     ManagedDisk managed_disk = 4;
   }
 
-  // Specifies the user-defined identifier, allowing to use '/dev/disk/by-id/virtio-{device_id}' as a device path in mount command.
+  // Specifies the user-defined device identifier.
+  // Use `/dev/disk/by-id/virtio-{device_id}` as the device path in a mount command.
   string device_id = 3 [(buf.validate.field) = {
     string: {max_len: 20}
   }];

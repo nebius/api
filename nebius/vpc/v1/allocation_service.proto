@@ -26,6 +26,9 @@ service AllocationService {
   // Lists allocations within a specified parent.
   rpc List(ListAllocationsRequest) returns (ListAllocationsResponse);
 
+  // Lists allocations across regions for the specified parent.
+  rpc ListAggregated(ListAggregatedAllocationsRequest) returns (ListAllocationsResponse);
+
   // Lists allocations from a specified pool.
   rpc ListByPool(ListAllocationsByPoolRequest) returns (ListAllocationsResponse);
 
@@ -78,6 +81,19 @@ message ListAllocationsRequest {
   int64 page_size = 2;
 
   // Token to retrieve the next page of allocations.
+  string page_token = 3;
+}
+
+message ListAggregatedAllocationsRequest {
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  int64 page_size = 2;
+
   string page_token = 3;
 }
 

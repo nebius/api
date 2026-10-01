@@ -83,6 +83,7 @@ message PricingPolicyStatus {
     STATE_UNSPECIFIED = 0;
 
     // Not ready yet; a VM referencing the policy gets a retryable error.
+    // The state can last while a market price change is applied to the segment.
     STATE_CREATING = 1;
 
     // Ready; whether VMs may start is `scheduling_state`.
@@ -92,6 +93,7 @@ message PricingPolicyStatus {
     STATE_DELETING = 3;
 
     // The bid is being changed; scheduling is blocked until the change lands.
+    // The state can last while a market price change is applied to the segment.
     STATE_UPDATING = 4;
   }
 
@@ -108,8 +110,8 @@ message PricingPolicyStatus {
     // New VMs may start.
     SCHEDULING_STATE_ALLOWED = 1;
 
-    // The max_price limit is below the current market price; VM creation succeeds once
-    // the price falls to it.
+    // The max_price limit is below the market price in force or below a market price
+    // that is being applied; VM creation succeeds once the price falls to it.
     SCHEDULING_STATE_BLOCKED = 2;
   }
 
