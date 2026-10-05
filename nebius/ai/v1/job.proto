@@ -69,19 +69,19 @@ message JobSpec {
   // Registry credentials for private Docker registry.
   RegistryCredentials registry_credentials = 10;
 
-  // Compute platform that the job will be run on.
-  string platform = 20 [(buf.validate.field).required = true];
+  // Compute platform for the job.
+  string platform = 20;
 
-  // Compute preset that the job will be run on.
-  string preset = 21 [(buf.validate.field).required = true];
+  // Compute preset for the job.
+  string preset = 21;
 
   // Shared memory size in bytes for the job's container.
   int64 shm_size_bytes = 22 [(buf.validate.field) = {
     int64: {gte: 0}
   }];
 
-  // Disk spec for the main disk of the job.
-  DiskSpec disk = 23 [(buf.validate.field).required = true];
+  // Main disk for the job.
+  DiskSpec disk = 23;
 
   // Subnet ID where the job will be deployed.
   // If omitted, the service uses the project's default subnet in the workload region.
@@ -186,8 +186,8 @@ message JobSpec {
   message VolumeMount {
     // Source of the volume mount.
     //
-    // Can be a name or an ID of Nebius Storage bucket or filesystem,
-    // or an S3 URI (e.g. "s3://bucket-name") when using external S3 storage.
+    // Use a Nebius Storage bucket ID or Compute filesystem ID for managed storage.
+    // Use an S3 URI (e.g. "s3://bucket-name") with s3_config for external S3 storage.
     string source = 1;
 
     // Path inside the source volume.
