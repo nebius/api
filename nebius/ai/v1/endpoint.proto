@@ -73,10 +73,10 @@ message EndpointSpec {
   RegistryCredentials registry_credentials = 10;
 
   // Compute platform that the endpoint will be run on.
-  string platform = 20 [(buf.validate.field).required = true];
+  string platform = 20;
 
   // Compute preset that the endpoint will be run on.
-  string preset = 21 [(buf.validate.field).required = true];
+  string preset = 21;
 
   // Shared memory size in bytes for the endpoint's container.
   int64 shm_size_bytes = 22 [(buf.validate.field) = {

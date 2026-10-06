@@ -116,16 +116,10 @@ message DevlabSpec {
   RegistryCredentials registry_credentials = 10 [(field_behavior) = IMMUTABLE];
 
   // Compute platform that the Devlab will be run on.
-  string platform = 20 [
-    (buf.validate.field).required = true,
-    (field_behavior) = IMMUTABLE
-  ];
+  string platform = 20 [(field_behavior) = IMMUTABLE];
 
   // Compute preset that the Devlab will be run on.
-  string preset = 21 [
-    (buf.validate.field).required = true,
-    (field_behavior) = IMMUTABLE
-  ];
+  string preset = 21 [(field_behavior) = IMMUTABLE];
 
   // Shared memory size in bytes for the Devlab's container.
   int64 shm_size_bytes = 22 [
