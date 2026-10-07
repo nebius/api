@@ -37,8 +37,8 @@ message JobSpec {
     cel: [
       {
         id: "pricing_model_matches_preemptible"
-        message: "pricing_model.on_demand requires preemptible to be false; other pricing models require preemptible to be true"
-        expression: "!has(this.pricing_model) || (has(this.pricing_model.on_demand) ? !this.preemptible : this.preemptible)"
+        message: "Select pricing_model.follows_spot_price or pricing_model.spot_pricing_policy for a preemptible workload. For a regular workload, select pricing_model.on_demand or omit pricing_model."
+        expression: "(has(this.pricing_model) && !has(this.pricing_model.on_demand)) == this.preemptible"
       }
     ]
   };
@@ -99,8 +99,9 @@ message JobSpec {
   // Preemptible VMs are cheaper but can be stopped by the platform at any time.
   bool preemptible = 27;
 
-  // Pricing model for the VM. Must match the preemptible flag: on_demand for non-preemptible VMs,
-  // follows_spot_price or spot_pricing_policy for preemptible VMs.
+  // Pricing model for the VM. Must match the preemptible flag.
+  // Preemptible VMs require follows_spot_price or spot_pricing_policy.
+  // Regular VMs use on_demand or omit this field.
   PricingModelSpec pricing_model = 28 [(field_behavior) = IMMUTABLE];
 
   // Restart attempts for the job.
