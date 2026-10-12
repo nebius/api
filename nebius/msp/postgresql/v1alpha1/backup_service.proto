@@ -48,7 +48,14 @@ message GetBackupRequest {
 
 message ListBackupsRequest {
   // Identifier of IAM container to list backups from.
-  string parent_id = 1 [(buf.validate.field).required = true];
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  reserved 2, 3;
 }
 
 message ListBackupsByClusterRequest {
