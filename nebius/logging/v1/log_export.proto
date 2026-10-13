@@ -4,6 +4,7 @@ package nebius.logging.v1;
 
 import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
 import "nebius/common/v1/operation.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/logging/v1";
@@ -77,7 +78,9 @@ message NebiusObjectStorageDestination {
   // Destination bucket, specified either by ID or by name within a project.
   oneof bucket {
     // ID of the destination Object Storage bucket.
-    string id = 1;
+    string id = 1 [(nid) = {
+      resource: ["storagebucket"]
+    }];
 
     // Destination bucket.
     NebiusObjectStorageBucketByName by_name = 2;
