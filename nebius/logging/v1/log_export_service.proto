@@ -41,7 +41,12 @@ message ExportLogsRequest {
 
 message CancelExportLogsRequest {
   // ID of the export operation to cancel, as returned by `create` or shown by `list`.
-  string export_operation_id = 1 [(buf.validate.field).required = true];
+  string export_operation_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["oplogexport"]
+    }
+  ];
 }
 
 message ListExportsRequest {
@@ -68,5 +73,10 @@ message ListExportsResponse {
 
 message GetExportInfoRequest {
   // ID of the export operation to look up, as returned by `create` or shown by `list`.
-  string export_operation_id = 1 [(buf.validate.field).required = true];
+  string export_operation_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["oplogexport"]
+    }
+  ];
 }
