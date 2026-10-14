@@ -46,6 +46,18 @@ message RouteTableStatus {
 
     // The route table is configured and operational.
     READY = 10;
+
+    // The route table is being created.
+    CREATING = 1;
+
+    // The route table is reconciling changes after it has been created.
+    RECONCILING = 2;
+
+    // The route table is being deleted.
+    DELETING = 3;
+
+    // Reconciliation stopped because of an error.
+    FAILED = 4;
   }
 
   // Current state of the route table.

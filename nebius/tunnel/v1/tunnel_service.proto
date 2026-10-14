@@ -37,7 +37,12 @@ service TunnelService {
 // Request to get a tunnel by its identifier.
 message GetTunnelRequest {
   // Unique identifier of the tunnel.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["applicationtunnel"]
+    }
+  ];
 }
 
 // Request to list tunnels within a parent resource.
@@ -84,7 +89,12 @@ message CreateTunnelRequest {
 message UpdateTunnelRequest {
   // Metadata identifying the tunnel to update. The `id` field is required;
   // `resource_version`, when non-zero, enables optimistic concurrency control.
-  common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
+  common.v1.ResourceMetadata metadata = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      parent_resource: ["project"]
+    }
+  ];
 
   // New specification for the tunnel.
   TunnelSpec spec = 2 [(buf.validate.field).required = true];
@@ -93,5 +103,10 @@ message UpdateTunnelRequest {
 // Request to delete a tunnel.
 message DeleteTunnelRequest {
   // Unique identifier of the tunnel to delete.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["applicationtunnel"]
+    }
+  ];
 }

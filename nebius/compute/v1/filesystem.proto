@@ -12,9 +12,17 @@ option java_outer_classname = "FilesystemProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 message Filesystem {
-  common.v1.ResourceMetadata metadata = 1 [(nid) = {
-    parent_resource: ["project"]
-  }];
+  common.v1.ResourceMetadata metadata = 1 [
+    (nid) = {
+      parent_resource: ["project"]
+    },
+    (subfield_settings) = {
+      field_path: "id"
+      nid: {
+        resource: ["computefilesystem"]
+      }
+    }
+  ];
 
   FilesystemSpec spec = 2;
 

@@ -13,9 +13,17 @@ option java_outer_classname = "ImageProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 message Image {
-  common.v1.ResourceMetadata metadata = 1 [(nid) = {
-    parent_resource: ["project"]
-  }];
+  common.v1.ResourceMetadata metadata = 1 [
+    (nid) = {
+      parent_resource: ["project"]
+    },
+    (subfield_settings) = {
+      field_path: "id"
+      nid: {
+        resource: ["computeimage"]
+      }
+    }
+  ];
 
   ImageSpec spec = 2;
 
