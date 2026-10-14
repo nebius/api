@@ -12,9 +12,17 @@ option java_outer_classname = "GpuClusterProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 message GpuCluster {
-  common.v1.ResourceMetadata metadata = 1 [(nid) = {
-    parent_resource: ["project"]
-  }];
+  common.v1.ResourceMetadata metadata = 1 [
+    (nid) = {
+      parent_resource: ["project"]
+    },
+    (subfield_settings) = {
+      field_path: "id"
+      nid: {
+        resource: ["computegpucluster"]
+      }
+    }
+  ];
 
   GpuClusterSpec spec = 2;
 

@@ -13,12 +13,20 @@ option java_package = "ai.nebius.pub.compute.v1";
 
 // DiskSnapshot resource
 message DiskSnapshot {
-  common.v1.ResourceMetadata metadata = 1 [(nid) = {
-    parent_resource: [
-      "tenant",
-      "project"
-    ]
-  }];
+  common.v1.ResourceMetadata metadata = 1 [
+    (nid) = {
+      parent_resource: [
+        "tenant",
+        "project"
+      ]
+    },
+    (subfield_settings) = {
+      field_path: "id"
+      nid: {
+        resource: ["computedisksnapshot"]
+      }
+    }
+  ];
 
   DiskSnapshotSpec spec = 2;
 

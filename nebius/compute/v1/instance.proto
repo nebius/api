@@ -14,9 +14,17 @@ option java_outer_classname = "InstanceProto";
 option java_package = "ai.nebius.pub.compute.v1";
 
 message Instance {
-  common.v1.ResourceMetadata metadata = 1 [(nid) = {
-    parent_resource: ["project"]
-  }];
+  common.v1.ResourceMetadata metadata = 1 [
+    (nid) = {
+      parent_resource: ["project"]
+    },
+    (subfield_settings) = {
+      field_path: "id"
+      nid: {
+        resource: ["computeinstance"]
+      }
+    }
+  ];
 
   InstanceSpec spec = 2;
 
@@ -343,7 +351,12 @@ message InstanceStatus {
     InstanceStatusInfinibandTopologyPath infiniband_topology_path = 10;
   }
 
-  string reservation_id = 12;
+  string reservation_id = 12 [(nid) = {
+    resource: [
+      "capacityblock",
+      "capacityblockgroup"
+    ]
+  }];
 
   // Status of the requested disk attachments.
   repeated DiskAttachmentStatus disk_attachments = 13;
@@ -405,7 +418,12 @@ message ReservationPolicy {
   Policy policy = 1;
 
   // Capacity block groups, order matters
-  repeated string reservation_ids = 2;
+  repeated string reservation_ids = 2 [(nid) = {
+    resource: [
+      "capacityblock",
+      "capacityblockgroup"
+    ]
+  }];
 }
 
 message LocalDisksSpec {
@@ -434,5 +452,10 @@ message FollowsSpotPriceSpec {}
 
 message SpotPricingPolicySpec {
   // PricingPolicy ID used as the maximum agreed price for the preemptible VM.
-  string id = 1 [(buf.validate.field).required = true];
+  string id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["pricingpolicy"]
+    }
+  ];
 }
