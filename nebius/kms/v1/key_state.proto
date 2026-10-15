@@ -16,4 +16,6 @@ enum KeyState {
 
   // Key is scheduled for deletion.
   SCHEDULED_FOR_DELETION = 2;
+
+  PENDING_IMPORT = 3;
 }

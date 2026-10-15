@@ -19,7 +19,7 @@ option java_package = "ai.nebius.pub.billing.v1";
 service PricingPolicyService {
   option (api_service_name) = "pricing-policies.billing-cpl";
 
-  // Creates a pricing policy. A bid outside the allowed price range fails
+  // Creates a pricing policy. A max_price outside the allowed price range fails
   // with OUT_OF_RANGE; below the current market price it is accepted but the
   // policy starts SCHEDULING_STATE_BLOCKED. Policies per tenant are
   // quota-limited (RESOURCE_EXHAUSTED past the limit).
@@ -32,7 +32,7 @@ service PricingPolicyService {
 
   rpc List(ListPricingPoliciesRequest) returns (ListPricingPoliciesResponse);
 
-  // Updates a pricing policy. `metadata.name` may change any time; the bid in
+  // Updates a pricing policy. `metadata.name` may change any time; the max_price in
   // `spec.pricing.max_price_v1` only while `status.running_vm_count` is 0
   // (FAILED_PRECONDITION otherwise). Other spec fields are immutable
   // (INVALID_ARGUMENT).
