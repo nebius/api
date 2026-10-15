@@ -27,7 +27,7 @@ enum AsymmetricAlgorithm {
   RSA_4096_ENC_OAEP_SHA_256 = 3;
 }
 
-// An asymmetric KMS key that may contain several versions of the cryptographic material.
+// An asymmetric KMS key that contains at most one key pair.
 message AsymmetricKey {
   common.v1.ResourceMetadata metadata = 1 [(nid) = {
     parent_resource: ["project"]
@@ -58,7 +58,7 @@ message AsymmetricKeySpec {
 }
 
 message AsymmetricKeyStatus {
-  // State (ACTIVE, SCHEDULED_FOR_DELETION)
+  // State (ACTIVE, SCHEDULED_FOR_DELETION).
   KeyState state = 1;
 
   // Time when the key was scheduled for deletion.

@@ -11,7 +11,7 @@ option java_multiple_files = true;
 option java_outer_classname = "PricingPolicyProto";
 option java_package = "ai.nebius.pub.billing.v1";
 
-// How preemptible VMs are priced: a standing per-GPU bid for one (region, platform).
+// How preemptible VMs are priced: a per-GPU maximum price for one (region, platform).
 // One policy backs any number of VMs, referenced by id from the preemptible spec.
 // A VM without a policy is a price-taker and pays the market price.
 message PricingPolicy {
@@ -60,13 +60,13 @@ message PricingMethod {
   oneof versions {
     option (buf.validate.oneof).required = true;
 
-    // Auction bid: the per-GPU `max_price` ranks the policy's VMs for
-    // scheduling and preemption.
+    // Maximum price: the per-GPU `max_price` sets the priority of the policy's
+    // VMs for scheduling and preemption.
     MaxPriceV1 max_price_v1 = 1;
   }
 }
 
-// Auction-bid pricing.
+// Pricing with a per-GPU maximum price.
 message MaxPriceV1 {
   // Per-GPU hourly limit in USD, decimal string 3 digits precision. Example: "3.515".
   // Must be within the allowed price range (OUT_OF_RANGE otherwise);
@@ -92,7 +92,8 @@ message PricingPolicyStatus {
     // Being deleted; does not accept new VMs.
     STATE_DELETING = 3;
 
-    // The bid is being changed; scheduling is blocked until the change lands.
+    // The max_price is being changed; scheduling is blocked until the change
+    // is applied.
     // The state can last while a market price change is applied to the segment.
     STATE_UPDATING = 4;
   }
