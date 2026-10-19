@@ -144,6 +144,11 @@ message BucketSpec {
   }
 
   reserved 14;
+
+  // Specifies which requests are included in Last Access tracking, if Last Access tracking is enabled.
+  // It does not itself enable Last Access tracking.
+  // A non-empty `last_access` overrides `lifecycle_configuration.last_access_filter`.
+  LastAccessConfiguration last_access = 15;
 }
 
 message BucketStatus {
@@ -213,4 +218,67 @@ message BucketStatus {
   }
 
   BucketType bucket_type = 11;
+}
+
+// Specifies which requests are included in Last Access tracking.
+message LastAccessConfiguration {
+  // A request is included in Last Access tracking if:
+  // - The first condition matching the request has `INCLUDE` type.
+  // OR
+  // - The request doesn't match any conditions
+  repeated Condition conditions = 1 [(buf.validate.field) = {
+    repeated: {max_items: 10}
+  }];
+
+  // Specifies conditions to include or exclude request from Last Access tracking.
+  message Condition {
+    Type type = 1 [(buf.validate.field).required = true];
+
+    // The s3 methods to match.
+    // An empty list matches all methods
+    repeated Method methods = 2 [(buf.validate.field) = {
+      repeated: {max_items: 10}
+    }];
+
+    // User agents to match. Condition is satisfied if the request's user agent contains any of these substrings.
+    // An empty list matches all user agents.
+    repeated string user_agents = 3 [(buf.validate.field) = {
+      repeated: {
+        max_items: 10
+        items: {
+          string: {max_len: 200}
+        }
+      }
+    }];
+
+    enum Type {
+      TYPE_UNSPECIFIED = 0;
+
+      // If an include type condition is the first condition that the request match, the request will be included in
+      // `days_since_last_access` calculation.
+      INCLUDE = 1;
+
+      // If an exclude type condition is the first condition that the request match, the request will be ignored in `days_since_last_access`
+      // calculation.
+      EXCLUDE = 2;
+    }
+
+    enum Method {
+      METHOD_UNSPECIFIED = 0;
+
+      GET_OBJECT = 1;
+
+      HEAD_OBJECT = 2;
+
+      GET_OBJECT_TAGGING = 3;
+
+      // Copy object method reads the source object.
+      // We account for those operations as source object accesses when calculating `days_since_last_access` for source object.
+      COPY_OBJECT = 4;
+
+      // Upload part copy method reads the source object.
+      // We account for those operations as source object accesses when calculating `days_since_last_access` for source object.
+      UPLOAD_PART_COPY = 5;
+    }
+  }
 }
