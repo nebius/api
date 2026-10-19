@@ -1,4 +1,4 @@
-name: Dispatch event to PySDK
+name: Dispatch events to dependent repositories
 
 on:
   push:
@@ -10,8 +10,14 @@ jobs:
   dispatch:
     name: Dispatch events to dependent repositories
     runs-on: ubuntu-latest
+    outputs:
+      failed_step: >-
+        ${{ steps.pysdk.outcome == 'failure' && 'Dispatch event to PySDK'
+            || steps.js_sdk.outcome == 'failure' && 'Dispatch event to JS-SDK'
+            || '' }}
     steps:
       - name: Dispatch event to PySDK
+        id: pysdk
         uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4.0.1
         with:
           token: ${{ secrets.TRIGGER_PYSDK_WORKFLOW_PAT }}
@@ -19,6 +25,7 @@ jobs:
           event-type: updated-${{ github.event.repository.name }}
 
       - name: Dispatch event to JS-SDK
+        id: js_sdk
         uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4.0.1
         with:
           token: ${{ secrets.TRIGGER_TSSDK_WORKFLOW_PAT }}
@@ -40,6 +47,7 @@ jobs:
             channel: ${{ secrets.SLACK_CHANNEL }}
             text: |
               🚨 Workflow *${{ github.workflow }}* failed on <${{ github.server_url }}/${{ github.repository }}|${{ github.repository }}>
+              Failed step: *${{ needs.dispatch.outputs.failed_step || 'Job setup or cleanup' }}*
               <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run>
 
         
