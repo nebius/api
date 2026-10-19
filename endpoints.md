@@ -107,6 +107,7 @@
   * [nebius.msp.postgresql.v1alpha1.ClusterService](nebius/msp/postgresql/v1alpha1/cluster_service.proto)
 * pricing-policies.billing-cpl.api.nebius.cloud:443
   * [nebius.billing.v1.PricingPolicyService](nebius/billing/v1/pricing_policy_service.proto)
+  * [nebius.billing.v1alpha1.SpotPriceService](nebius/billing/v1alpha1/spot_price_service.proto)
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
 * quota-dispatcher.billing-cpl.api.nebius.cloud:443
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)

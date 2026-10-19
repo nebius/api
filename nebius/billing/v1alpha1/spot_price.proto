@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package nebius.billing.v1alpha1;
+
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/billing/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "SpotPriceProto";
+option java_package = "ai.nebius.pub.billing.v1alpha1";
+
+// Spot market price of one GPU on a compute platform in a region.
+message SpotPrice {
+  // SKU ID. Example: "sku-e00n3z6y6hl94aqgig8ft".
+  string sku_id = 1 [(nid) = {
+    resource: ["sku"]
+  }];
+
+  // Product title. Example: "Preemptible NVIDIA® B200 NVLink".
+  string product_title = 2;
+
+  // Region name. Example: "eu-north1".
+  string region = 3;
+
+  // Compute instance that the price applies to.
+  SpotPriceComputeInstance compute_instance = 4;
+
+  // Price for one unit.
+  SpotPriceValue price = 5;
+
+  // Time when the price takes effect.
+  google.protobuf.Timestamp effective_time = 6;
+}
+
+// Compute instance of a spot market.
+message SpotPriceComputeInstance {
+  // Compute platform. Example: "gpu-b200-sxm".
+  string platform = 1;
+}
+
+// Price for one unit.
+message SpotPriceValue {
+  // Decimal string. Example: "2.89".
+  string value = 1;
+
+  // Currency code. Example: "usd".
+  string currency = 2;
+
+  // Unit title. Example: "GPU hour".
+  string unit_title = 3;
+}
+
+// Spot market prices of one SKU at regular time steps.
+message SpotPriceSeries {
+  // SKU ID. Example: "sku-e00n3z6y6hl94aqgig8ft".
+  string sku_id = 1 [(nid) = {
+    resource: ["sku"]
+  }];
+
+  // Product title. Example: "Preemptible NVIDIA® B200 NVLink".
+  string product_title = 2;
+
+  // Region name. Example: "eu-north1".
+  string region = 3;
+
+  // Compute instance that the prices apply to.
+  SpotPriceComputeInstance compute_instance = 4;
+
+  // Currency code. Example: "usd".
+  string currency = 5;
+
+  // Unit title. Example: "GPU hour".
+  string unit_title = 6;
+
+  // Prices, oldest first.
+  repeated SpotPricePoint points = 7;
+}
+
+// Spot market price at one time step.
+message SpotPricePoint {
+  // End of the time step. Example: "2026-10-14T13:00:00Z" for the hour from 12:00 to 13:00.
+  google.protobuf.Timestamp timestamp = 1;
+
+  // Decimal string. Example: "2.89".
+  string value = 2;
+}

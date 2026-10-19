@@ -1,0 +1,132 @@
+syntax = "proto3";
+
+package nebius.billing.v1alpha1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "nebius/annotations.proto";
+import "nebius/billing/v1alpha1/spot_price.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/billing/v1alpha1";
+option java_multiple_files = true;
+option java_outer_classname = "SpotPriceServiceProto";
+option java_package = "ai.nebius.pub.billing.v1alpha1";
+
+// Spot market prices of GPU compute platforms.
+service SpotPriceService {
+  option (api_service_name) = "pricing-policies.billing-cpl";
+
+  // Lists the current spot prices, one item for each SKU. Authentication is not required.
+  rpc List(ListSpotPricesRequest) returns (ListSpotPricesResponse);
+
+  // Lists the spot prices at regular time steps, one series for each SKU. Authentication is not required.
+  rpc ListSeries(ListSpotPriceSeriesRequest) returns (ListSpotPriceSeriesResponse) {
+    option (method_behavior) = METHOD_PAGINATED;
+  }
+}
+
+message ListSpotPricesRequest {
+  // Maximum number of items in the response. Default: 100.
+  int64 page_size = 2 [(buf.validate.field) = {
+    int64: {gte: 0}
+  }];
+
+  // Token from next_page_token of the previous response.
+  string page_token = 3;
+}
+
+message ListSpotPricesResponse {
+  // Current spot prices, sorted by region and sku_id.
+  repeated SpotPrice items = 1;
+
+  // Token for the next page. Empty on the last page.
+  string next_page_token = 2;
+
+  // Time when the prices in the response were taken.
+  // If the prices were taken at different times, the field has the earliest time.
+  google.protobuf.Timestamp snapshot_time = 3;
+}
+
+message ListSpotPriceSeriesRequest {
+  // Filters of the series.
+  message Filters {
+    // SKU IDs from List, up to 100. Default: all SKUs.
+    repeated string sku_ids = 1 [
+      (buf.validate.field) = {
+        repeated: {max_items: 100}
+      },
+      (nid) = {
+        resource: ["sku"]
+      }
+    ];
+
+    // Start of the time interval. Must be within the last 30 days.
+    google.protobuf.Timestamp start_time = 2 [(buf.validate.field).required = true];
+
+    // End of the time interval, exclusive. Default: current time.
+    // Example: with HOUR_1, the interval from 12:00 to 15:00 gives the points 13:00, 14:00 and 15:00.
+    google.protobuf.Timestamp end_time = 3;
+  }
+
+  // Aggregation of the prices at each time step.
+  message Aggregation {
+    // Length of a time step.
+    enum Granularity {
+      // Not specified.
+      GRANULARITY_UNSPECIFIED = 0;
+
+      // 15 minutes. Allowed for a time interval of up to 7 days.
+      GRANULARITY_MINUTE_15 = 1;
+
+      // 1 hour.
+      GRANULARITY_HOUR_1 = 2;
+    }
+
+    // Price of a time step.
+    enum Method {
+      // Not specified.
+      METHOD_UNSPECIFIED = 0;
+
+      // First price in the time step.
+      METHOD_FIRST_PRICE = 1;
+
+      // Last price in the time step.
+      METHOD_LAST_PRICE = 2;
+
+      // Mean of the prices in the time step, not weighted by time.
+      METHOD_AVG_PRICE = 3;
+    }
+
+    // Length of a time step.
+    Granularity granularity = 1 [(buf.validate.field).required = true];
+
+    // Price of a time step.
+    Method method = 2 [(buf.validate.field).required = true];
+  }
+
+  // Maximum number of series in the response. Default: 100.
+  int64 page_size = 2 [(buf.validate.field) = {
+    int64: {gte: 0}
+  }];
+
+  // Token from next_page_token of the previous response.
+  string page_token = 3;
+
+  // Filters of the series.
+  Filters filters = 4 [(buf.validate.field).required = true];
+
+  // Aggregation of the prices at each time step.
+  Aggregation aggregation = 5 [(buf.validate.field).required = true];
+}
+
+message ListSpotPriceSeriesResponse {
+  // Price series, sorted by region and sku_id.
+  repeated SpotPriceSeries items = 1;
+
+  // Token for the next page. Empty on the last page.
+  string next_page_token = 2;
+
+  // Time when the prices in the response were taken.
+  // If the prices were taken at different times, the field has the earliest time.
+  google.protobuf.Timestamp snapshot_time = 3;
+}
