@@ -34,7 +34,9 @@ message VmAppTemplateSpec {
     ContainerTemplateDefinition container_template = 1;
   }
 
-  // The template kind: "covm" or "devlab". The default is "covm".
+  // The template kind: "devlab" or legacy "covm".
+  // An empty value represents the legacy "covm" kind.
+  // New templates must use "devlab".
   string kind = 1000 [(field_behavior) = NON_EMPTY_DEFAULT];
 }
 

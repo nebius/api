@@ -55,7 +55,8 @@ message ListVmAppTemplatesRequest {
   // Global catalog reads require authentication but do not require a resource permission.
   bool global_only = 7;
 
-  // The template kind: "covm" or "devlab". The default is "covm".
+  // The template kind filter: "devlab" or legacy "covm".
+  // An empty value selects legacy "covm" templates.
   string kind = 1000;
 }
 
