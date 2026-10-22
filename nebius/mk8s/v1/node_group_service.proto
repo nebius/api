@@ -97,7 +97,10 @@ message GetNodeGroupRequest {
     }
   ];
 
-  string resource_version = 2;
+  string resource_version = 2 [
+    deprecated = true,
+    (field_deprecation_details) = {description: "This field is ignored. Omit it from requests."}
+  ];
 }
 
 message ListNodeGroupsRequest {
