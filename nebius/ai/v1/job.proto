@@ -70,9 +70,11 @@ message JobSpec {
   RegistryCredentials registry_credentials = 10;
 
   // Compute platform for the job.
+  // Reads return the saved platform for an immediate offer-based job.
   string platform = 20;
 
   // Compute preset for the job.
+  // Reads return the saved preset for an immediate offer-based job.
   string preset = 21;
 
   // Shared memory size in bytes for the job's container.
