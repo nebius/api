@@ -116,9 +116,11 @@ message DevlabSpec {
   RegistryCredentials registry_credentials = 10 [(field_behavior) = IMMUTABLE];
 
   // Compute platform that the Devlab will be run on.
+  // Reads return the saved platform for an offer-based Devlab.
   string platform = 20 [(field_behavior) = IMMUTABLE];
 
   // Compute preset that the Devlab will be run on.
+  // Reads return the saved preset for an offer-based Devlab.
   string preset = 21 [(field_behavior) = IMMUTABLE];
 
   // Shared memory size in bytes for the Devlab's container.

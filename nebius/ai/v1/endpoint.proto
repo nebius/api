@@ -73,9 +73,11 @@ message EndpointSpec {
   RegistryCredentials registry_credentials = 10;
 
   // Compute platform that the endpoint will be run on.
+  // Reads return the saved platform for an offer-based endpoint.
   string platform = 20;
 
   // Compute preset that the endpoint will be run on.
+  // Reads return the saved preset for an offer-based endpoint.
   string preset = 21;
 
   // Shared memory size in bytes for the endpoint's container.
