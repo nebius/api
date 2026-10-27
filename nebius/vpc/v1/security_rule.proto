@@ -88,8 +88,8 @@ message RuleIngress {
 
   // CIDR blocks as the source.
   // Optional. Empty list means any address.
-  // Must be a valid IPv4
-  // Maximum of 8 CIDRs can be specified.
+  // Each value must be a valid IPv4 CIDR.
+  // Specify at most 8 CIDRs.
   repeated string source_cidrs = 2 [(buf.validate.field) = {
     repeated: {
       max_items: 8
@@ -131,8 +131,8 @@ message RuleEgress {
 
   // CIDR blocks as the destination.
   // Optional. Empty list means any address.
-  // Must be a valid IPv4.
-  // Maximum of 8 CIDRs can be specified.
+  // Each value must be a valid IPv4 CIDR.
+  // Specify at most 8 CIDRs.
   repeated string destination_cidrs = 2 [(buf.validate.field) = {
     repeated: {
       max_items: 8
