@@ -14,8 +14,6 @@ option java_outer_classname = "AccessKeyProto";
 option java_package = "ai.nebius.pub.iam.v2";
 
 message AccessKey {
-  option (resource_behavior) = UNNAMED;
-
   common.v1.ResourceMetadata metadata = 1 [(buf.validate.field).required = true];
 
   AccessKeySpec spec = 2 [(buf.validate.field).required = true];
