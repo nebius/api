@@ -55,9 +55,10 @@ message ControlPlaneSpec {
   }];
 
   // Nebius VPC Subnet ID where control plane instances will be located.
+  // If it isn't specified default network of the parent container will be used.
   // Also will be default NodeGroup subnet.
   string subnet_id = 2 [
-    (buf.validate.field).required = true,
+    (field_behavior) = NON_EMPTY_DEFAULT,
     (field_behavior) = IMMUTABLE,
     (nid) = {
       resource: ["vpcsubnet"]

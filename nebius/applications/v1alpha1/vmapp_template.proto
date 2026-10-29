@@ -44,7 +44,7 @@ message VmAppTemplateSpec {
 message ContainerTemplateDefinition {
   string description = 1;
 
-  // The URL of the template icon.
+  // The template icon URL for light mode and clients without theme support.
   string icon_url = 2;
 
   // The inputs that configure the template.
@@ -59,6 +59,9 @@ message ContainerTemplateDefinition {
 
   // The substitutions to apply when their conditions match.
   repeated Substitution substitutions = 6;
+
+  // The template icon URL for dark mode. Use icon_url when this value is empty.
+  string dark_icon_url = 7;
 
   message Substitution {
     // The name of the container to modify.
@@ -409,7 +412,7 @@ message TemplateInput {
 message VmAppTemplateStatus {
   string description = 1;
 
-  // The URL of the template icon.
+  // The template icon URL for light mode and clients without theme support.
   string icon_url = 2;
 
   // The fields that accept values for this template.
@@ -421,6 +424,9 @@ message VmAppTemplateStatus {
 
   // Categories that the template belongs to.
   repeated string categories = 5;
+
+  // The template icon URL for dark mode. Use icon_url when this value is empty.
+  string dark_icon_url = 6;
 }
 
 message TemplateInputField {
