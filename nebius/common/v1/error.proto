@@ -179,6 +179,9 @@ message QuotaFailure {
 
     // Requested value.
     string requested = 4;
+
+    // Region for the violation, if known. E.g. "eu-north1".
+    string region = 10;
   }
 }
 
