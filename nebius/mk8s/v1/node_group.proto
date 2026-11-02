@@ -185,6 +185,9 @@ message NodeTemplate {
     // pricing policy. When the spot price exceeds that maximum price, the VM is preempted.
     SpotPricingPolicySpec spot_pricing_policy = 23;
   }
+
+  // Configures container runtime for the node group.
+  ContainerRuntime container_runtime = 24;
 }
 
 message NVLinkSpec {
@@ -591,4 +594,22 @@ message NodeGroupStatus {
 
   // Show that there are changes are in flight.
   bool reconciling = 100;
+}
+
+// Configures container runtime for the node group.
+message ContainerRuntime {
+  // Image pull modes for SOCI Snapshotter
+  enum SOCIPullMode {
+    // Uses the default containerd pull.
+    SOCI_PULL_MODE_UNSPECIFIED = 0;
+
+    // Uses SOCI Snapshotter to fetch image layers on demand.
+    LAZY = 1;
+
+    // Uses SOCI Snapshotter to download and unpack image layers in parallel.
+    PARALLEL = 2;
+  }
+
+  // Uses SOCI Snapshotter to pull images.
+  SOCIPullMode soci_pull_mode = 1;
 }
