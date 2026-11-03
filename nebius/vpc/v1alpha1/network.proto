@@ -61,4 +61,7 @@ message NetworkStatus {
   string scope_id = 2 [(nid) = {
     resource: ["vpcscope"]
   }];
+
+  // Indicates whether this is the project's default network.
+  bool default = 3;
 }

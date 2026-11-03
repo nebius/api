@@ -20,6 +20,8 @@ service AccessKeyService {
 
   rpc Get(GetAccessKeyRequest) returns (AccessKey);
 
+  rpc GetByName(common.v1.GetByNameRequest) returns (AccessKey);
+
   rpc GetSecret(GetAccessKeySecretRequest) returns (GetAccessKeySecretResponse);
 
   rpc List(ListAccessKeysRequest) returns (ListAccessKeysResponse);

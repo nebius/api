@@ -61,7 +61,9 @@ message CreateClusterRequest {
     }
   ];
 
-  ClusterSpec spec = 2 [(buf.validate.field).required = true];
+  // Specification of a cluster to create. If spec is not specified cluster will be created within default network of the specified parent
+  // project.
+  ClusterSpec spec = 2;
 }
 
 message GetClusterRequest {
