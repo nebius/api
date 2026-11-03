@@ -152,6 +152,9 @@ message SubnetStatus {
   // Can be either a custom route table or the network's default route table.
   SubnetAssociatedRouteTable route_table = 5;
 
+  // Indicates whether this is the network's default subnet.
+  bool default = 7;
+
   // Private IPv4 pools available for allocations in this subnet.
   repeated SubnetStatusPool ipv4_private_pools = 8;
 

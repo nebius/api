@@ -111,4 +111,7 @@ message SubnetStatus {
 
   // CIDR blocks.
   repeated string ipv4_cidrs = 2;
+
+  // Indicates whether this is the network's default subnet.
+  bool default = 4;
 }

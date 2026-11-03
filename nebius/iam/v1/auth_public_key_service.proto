@@ -20,6 +20,8 @@ service AuthPublicKeyService {
 
   rpc Get(GetAuthPublicKeyRequest) returns (AuthPublicKey);
 
+  rpc GetByName(common.v1.GetByNameRequest) returns (AuthPublicKey);
+
   rpc List(ListAuthPublicKeyRequest) returns (ListAuthPublicKeyResponse);
 
   rpc ListByAccount(ListAuthPublicKeyByAccountRequest) returns (ListAuthPublicKeyResponse);

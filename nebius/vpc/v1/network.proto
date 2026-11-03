@@ -73,6 +73,9 @@ message NetworkStatus {
   // Current state of the network.
   State state = 1;
 
+  // Indicates whether this is the project's default network.
+  bool default = 4;
+
   // ID of the network's default route table.
   string default_route_table_id = 5 [(nid) = {
     resource: ["vpcroutetable"]
