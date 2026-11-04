@@ -94,6 +94,132 @@ message ControlPlaneSpec {
   // public node groups.
   // By default cluster will be created without it.
   Karpenter karpenter = 6 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
+
+  // Configures customer JWT authentication. Requires Kubernetes 1.34 and a compatible control-plane infra version.
+  AuthenticationSpec authentication = 7;
+}
+
+message AuthenticationSpec {
+  // Configures OIDC providers for Kubernetes user authentication.
+  repeated OIDCProvider oidc = 1 [(buf.validate.field) = {
+    repeated: {max_items: 64}
+  }];
+}
+
+message OIDCProvider {
+  // Identifies this provider within the cluster configuration.
+  string name = 1 [(buf.validate.field) = {
+    string: {min_len: 1}
+  }];
+
+  // Defines the issuer for accepted tokens.
+  OIDCIssuer issuer = 2 [(buf.validate.field).required = true];
+
+  // Maps token claims to Kubernetes user attributes.
+  ClaimMappings claim_mappings = 3 [(buf.validate.field).required = true];
+
+  // Validates token claims before Kubernetes authenticates the user.
+  repeated ClaimValidationRule claim_validation_rules = 4;
+
+  // Validates the mapped Kubernetes user information.
+  repeated CELValidationRule user_validation_rules = 5;
+}
+
+message OIDCIssuer {
+  // Identifies the issuer and must match the token `iss` claim.
+  string url = 1 [(buf.validate.field) = {
+    string: {min_len: 1}
+  }];
+
+  // Lists the token audiences that this issuer accepts, for example, `["kubernetes", "dashboard"]`.
+  repeated string audiences = 2 [(buf.validate.field) = {
+    repeated: {
+      min_items: 1
+      unique: true
+      items: {
+        string: {min_len: 1}
+      }
+    }
+  }];
+
+  // Overrides the OpenID discovery URL. An empty value uses the issuer's standard discovery URL.
+  string discovery_url = 3;
+
+  // PEM CA bundle for discovery and JWKS. Omission uses system trust.
+  string certificate_authority = 4;
+}
+
+message ClaimMappings {
+  // Maps token claims to the Kubernetes username.
+  PrefixedClaimMapping username = 1 [(buf.validate.field).required = true];
+
+  // Maps token claims to Kubernetes groups. Omission disables group mapping.
+  PrefixedClaimMapping groups = 2;
+}
+
+message PrefixedClaimMapping {
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "claim_expression_exclusive"
+        message: "Configure either a claim or an expression"
+        expression: "(this.claim != '') != (this.expression != '')"
+      },
+      {
+        id: "expression_prefix_exclusive"
+        message: "An expression cannot use a prefix"
+        expression: "this.expression == '' || !has(this.prefix)"
+      }
+    ]
+  };
+
+  // Names the token claim to map.
+  string claim = 1;
+
+  // Omission and an empty value disable prefixing for claims. Expressions require omission, including for an empty value.
+  optional string prefix = 2;
+
+  // Maps token claims with a CEL expression.
+  string expression = 3;
+}
+
+message ClaimValidationRule {
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "claim_validation_rule"
+        message: "Configure either an exact claim match or a CEL expression"
+        expression: "(this.claim != '') != (this.expression != '')"
+      },
+      {
+        id: "claim_validation_fields"
+        message: "Exact matches cannot use messages; expressions cannot use required_value"
+        expression: "(this.claim == '' || this.message == '') && (this.expression == '' || this.required_value == '')"
+      }
+    ]
+  };
+
+  // Names the token claim that must match required_value exactly.
+  string claim = 1;
+
+  // An omitted value matches an empty string, following upstream behavior.
+  string required_value = 2;
+
+  // Validates token claims with CEL. The expression must evaluate to true.
+  string expression = 3;
+
+  // Describes a failed CEL validation.
+  string message = 4;
+}
+
+message CELValidationRule {
+  // Validates the mapped Kubernetes user information with CEL.
+  string expression = 1 [(buf.validate.field) = {
+    string: {min_len: 1}
+  }];
+
+  // Describes a failed CEL validation.
+  string message = 2;
 }
 
 message ControlPlaneEndpointsSpec {

@@ -56,9 +56,10 @@ message ClusterSpec {
   ];
 
   // Network ID in which the cluster is created.
+  // If omitted through the public API, the project's default network is used or created.
   string network_id = 6 [
     (field_behavior) = IMMUTABLE,
-    (buf.validate.field).required = true
+    (field_behavior) = NON_EMPTY_DEFAULT
   ];
 
   ConfigSpec config = 3 [(buf.validate.field).required = true];
