@@ -7,6 +7,7 @@ import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/common/v1/operation.proto";
 import "nebius/vpc/v1/network.proto";
+import "nebius/vpc/v1/subnet.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1";
 option java_multiple_files = true;
@@ -22,6 +23,9 @@ service NetworkService {
 
   // Retrieves a network by its name within a specified parent.
   rpc GetByName(GetNetworkByNameRequest) returns (Network);
+
+  // Retrieves the default network and its default subnet for a specified project.
+  rpc GetDefault(GetDefaultNetworkRequest) returns (GetDefaultNetworkResponse);
 
   // Lists networks within a specified parent.
   rpc List(ListNetworksRequest) returns (ListNetworksResponse);
@@ -64,6 +68,22 @@ message GetNetworkByNameRequest {
 
   // Name of the network.
   string name = 2 [(buf.validate.field).required = true];
+}
+
+message GetDefaultNetworkRequest {
+  // ID of the parent project.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+}
+
+message GetDefaultNetworkResponse {
+  Network network = 1;
+
+  Subnet subnet = 2;
 }
 
 message ListNetworksRequest {

@@ -5,6 +5,7 @@ package nebius.vpc.v1alpha1;
 import "buf/validate/validate.proto";
 import "nebius/annotations.proto";
 import "nebius/vpc/v1alpha1/network.proto";
+import "nebius/vpc/v1alpha1/subnet.proto";
 
 option go_package = "github.com/nebius/gosdk/proto/nebius/vpc/v1alpha1";
 option java_multiple_files = true;
@@ -17,6 +18,9 @@ service NetworkService {
   rpc Get(GetNetworkRequest) returns (Network);
 
   rpc GetByName(GetNetworkByNameRequest) returns (Network);
+
+  // Returns the project's default network with its default subnet.
+  rpc GetDefault(GetDefaultNetworkRequest) returns (GetDefaultNetworkResponse);
 
   rpc List(ListNetworksRequest) returns (ListNetworksResponse);
 }
@@ -39,6 +43,21 @@ message GetNetworkByNameRequest {
   ];
 
   string name = 2 [(buf.validate.field).required = true];
+}
+
+message GetDefaultNetworkRequest {
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+}
+
+message GetDefaultNetworkResponse {
+  Network network = 1;
+
+  Subnet subnet = 2;
 }
 
 message ListNetworksRequest {
