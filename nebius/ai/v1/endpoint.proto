@@ -73,11 +73,11 @@ message EndpointSpec {
   RegistryCredentials registry_credentials = 10;
 
   // Compute platform that the endpoint will be run on.
-  // Reads return the saved platform for an offer-based endpoint.
+  // Reads return the saved platform for a selector-based endpoint.
   string platform = 20;
 
   // Compute preset that the endpoint will be run on.
-  // Reads return the saved preset for an offer-based endpoint.
+  // Reads return the saved preset for a selector-based endpoint.
   string preset = 21;
 
   // Shared memory size in bytes for the endpoint's container.
@@ -90,9 +90,12 @@ message EndpointSpec {
 
   // Subnet ID where the endpoint will be deployed.
   // If omitted, the service uses the project's default subnet in the workload region.
-  string subnet_id = 24 [(nid) = {
-    resource: ["vpcsubnet"]
-  }];
+  string subnet_id = 24 [
+    (field_behavior) = NON_EMPTY_DEFAULT,
+    (nid) = {
+      resource: ["vpcsubnet"]
+    }
+  ];
 
   // Whether to assign a public IP to the endpoint.
   bool public_ip = 25;
@@ -126,6 +129,10 @@ message EndpointSpec {
   // starts. Intended for configs, not datasets. Read methods return target
   // paths. File content is returned only by Get with view SECRET.
   repeated FileInjection injected_files = 32 [(field_behavior) = IMMUTABLE];
+
+  reserved 34;
+
+  reserved "offer_id";
 
   // EnvironmentVariable defines an environment variable for the endpoint's container.
   message EnvironmentVariable {

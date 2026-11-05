@@ -24,7 +24,9 @@ service BackupService {
   rpc List(ListBackupsRequest) returns (ListBackupsResponse);
 
   // Retrieves the list of PostgreSQL Cluster backups by cluster.
-  rpc ListByCluster(ListBackupsByClusterRequest) returns (ListBackupsResponse);
+  rpc ListByCluster(ListBackupsByClusterRequest) returns (ListBackupsResponse) {
+    option (method_behavior) = METHOD_PAGINATED;
+  }
 
   // Creates a new on-demand backup.
   rpc Create(CreateBackupRequest) returns (common.v1alpha1.Operation);
@@ -55,7 +57,13 @@ message ListBackupsRequest {
     }
   ];
 
-  reserved 2, 3;
+  // Maximum number of backups to return. Defaults to 100. Values above 1000 are reduced to 1000.
+  int64 page_size = 2 [(buf.validate.field) = {
+    int64: {gte: 0}
+  }];
+
+  // Token from the previous response. Keep the project and region unchanged when continuing.
+  string page_token = 3;
 }
 
 message ListBackupsByClusterRequest {
@@ -66,11 +74,23 @@ message ListBackupsByClusterRequest {
       resource: ["postgresql"]
     }
   ];
+
+  // Maximum number of backups to return. Defaults to 100. Values above 1000 are reduced to 1000.
+  int64 page_size = 2 [(buf.validate.field) = {
+    int64: {gte: 0}
+  }];
+
+  // Token from the previous response. Keep the cluster unchanged when continuing.
+  string page_token = 3;
 }
 
 message ListBackupsResponse {
-  // List of backups.
+  // Backups ordered by creation time descending, then cluster ID and backup ID ascending.
+  // Results reflect the current inventory. Pages do not share a snapshot.
   repeated Backup backups = 1;
+
+  // Token for the next page. Empty when no more backups remain.
+  string next_page_token = 2;
 }
 
 message CreateBackupRequest {
