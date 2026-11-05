@@ -70,11 +70,11 @@ message JobSpec {
   RegistryCredentials registry_credentials = 10;
 
   // Compute platform for the job.
-  // Reads return the saved platform for an immediate offer-based job.
+  // Reads return the saved platform for an immediate selector-based job.
   string platform = 20;
 
   // Compute preset for the job.
-  // Reads return the saved preset for an immediate offer-based job.
+  // Reads return the saved preset for an immediate selector-based job.
   string preset = 21;
 
   // Shared memory size in bytes for the job's container.
@@ -87,9 +87,12 @@ message JobSpec {
 
   // Subnet ID where the job will be deployed.
   // If omitted, the service uses the project's default subnet in the workload region.
-  string subnet_id = 24 [(nid) = {
-    resource: ["vpcsubnet"]
-  }];
+  string subnet_id = 24 [
+    (field_behavior) = NON_EMPTY_DEFAULT,
+    (nid) = {
+      resource: ["vpcsubnet"]
+    }
+  ];
 
   // Whether to assign a public IP to the job.
   bool public_ip = 25;
@@ -118,6 +121,10 @@ message JobSpec {
   // starts. Intended for configs, not datasets. Read methods return target
   // paths. File content is returned only by Get with view SECRET.
   repeated FileInjection injected_files = 32 [(field_behavior) = IMMUTABLE];
+
+  reserved 34;
+
+  reserved "offer_id";
 
   // EnvironmentVariable defines an environment variable for the endpoint's container.
   message EnvironmentVariable {
