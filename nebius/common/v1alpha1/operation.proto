@@ -22,7 +22,7 @@ message Operation {
   // ID of the operation.
   string id = 1;
 
-  // Human readable description of the operation. 0-256 characters long.
+  // Human-readable description of the operation. 0-256 characters long.
   string description = 2;
 
   // Creation timestamp.

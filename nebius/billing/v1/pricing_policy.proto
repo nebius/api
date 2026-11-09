@@ -68,7 +68,7 @@ message PricingMethod {
 
 // Pricing with a per-GPU maximum price.
 message MaxPriceV1 {
-  // Per-GPU hourly limit in USD, decimal string 3 digits precision. Example: "3.515".
+  // Per-GPU hourly limit in USD, as a string with three decimal places. Example: "3.515".
   // Must be within the allowed price range (OUT_OF_RANGE otherwise);
   // a value below the current market price is accepted but blocks scheduling.
   // Mutable only while `status.running_vm_count` is 0

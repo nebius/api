@@ -79,7 +79,7 @@ message ImageSpec {
   // CPU architecture supported by the image
   CPUArchitecture cpu_architecture = 6 [(field_behavior) = IMMUTABLE];
 
-  // human readable name for image family
+  // human-readable name for image family
   string image_family_human_readable = 7 [(field_behavior) = IMMUTABLE];
 
   // list of platforms where this image is recommended to use
