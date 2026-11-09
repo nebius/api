@@ -109,7 +109,8 @@ message JobSpec {
   // Regular VMs use on_demand or omit this field.
   PricingModelSpec pricing_model = 28 [(field_behavior) = IMMUTABLE];
 
-  // Restart attempts for the job.
+  // Container restart attempts on the same VM. Zero disables retries. -1 allows unlimited retries.
+  // Successful completion never triggers a restart. This field does not count VM preemptions.
   int64 restart_attempts = 30 [(buf.validate.field) = {
     int64: {gte: -1}
   }];

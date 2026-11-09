@@ -19,7 +19,7 @@ message ResourceMetadata {
   // Identifier of the parent resource to which the resource belongs.
   string parent_id = 2 [(buf.validate.field).required = true];
 
-  // Human readable name for the resource.
+  // Human-readable name for the resource.
   string name = 3 [(buf.validate.field) = {
     string: {max_bytes: 1024}
   }];
