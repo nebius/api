@@ -27,7 +27,7 @@ message GetProfileResponse {
 
     ServiceAccountProfile service_account_profile = 2;
 
-    AnonymousAccount anonymous_profile = 3;
+    AnonymousAccount anonymous_profile = 3 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
   }
 }
 

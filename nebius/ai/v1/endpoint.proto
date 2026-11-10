@@ -130,6 +130,10 @@ message EndpointSpec {
   // paths. File content is returned only by Get with view SECRET.
   repeated FileInjection injected_files = 32 [(field_behavior) = IMMUTABLE];
 
+  reserved 34;
+
+  reserved "offer_id";
+
   // EnvironmentVariable defines an environment variable for the endpoint's container.
   message EnvironmentVariable {
     option (buf.validate.message) = {
