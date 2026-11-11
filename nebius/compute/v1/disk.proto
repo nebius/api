@@ -30,8 +30,6 @@ message Disk {
 }
 
 message DiskSpec {
-  reserved 7, 9;
-
   // the list of available types will be clarified later, it is not final version
   enum DiskType {
     UNSPECIFIED = 0;

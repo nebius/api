@@ -27,8 +27,6 @@ message FederationSpec {
   // and user accounts for them must be pre-created by a federation administrator.
   bool user_account_auto_creation = 1;
 
-  reserved 3;
-
   // Specifies if the federation in active state
   bool active = 4 [
     deprecated = true,

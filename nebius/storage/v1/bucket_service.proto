@@ -49,8 +49,6 @@ message GetBucketRequest {
       resource: ["storagebucket"]
     }
   ];
-
-  reserved 2;
 }
 
 message GetBucketByNameRequest {
@@ -59,8 +57,6 @@ message GetBucketByNameRequest {
   }];
 
   string name = 2 [(buf.validate.field).required = true];
-
-  reserved 3;
 }
 
 message CreateBucketRequest {
@@ -92,8 +88,6 @@ message DeleteBucketRequest {
       resource: ["storagebucket"]
     }
   ];
-
-  reserved 2;
 
   // You can provide purge_at or ttl after which the bucket will be purged automatically.
   // Otherwise, default ttl of 7 days will be applied.
@@ -141,8 +135,6 @@ message ListBucketsRequest {
 
   // A filter to narrow down the results based on specific criteria.
   string filter = 4;
-
-  reserved 5;
 }
 
 message ListBucketsResponse {

@@ -123,10 +123,6 @@ message JobSpec {
   // paths. File content is returned only by Get with view SECRET.
   repeated FileInjection injected_files = 32 [(field_behavior) = IMMUTABLE];
 
-  reserved 34;
-
-  reserved "offer_id";
-
   // EnvironmentVariable defines an environment variable for the endpoint's container.
   message EnvironmentVariable {
     option (buf.validate.message) = {
@@ -247,10 +243,6 @@ message JobSpec {
       // S3-compatible endpoint URL (e.g. "https://s3.amazonaws.com").
       string endpoint = 1 [(buf.validate.field).required = true];
 
-      reserved 2;
-
-      reserved "bucket";
-
       // S3 region.
       string region = 3 [(buf.validate.field).required = true];
 
@@ -354,10 +346,6 @@ message JobSpec {
     string version_id = 2 [(nid) = {
       resource: ["mbsecver"]
     }];
-
-    reserved 3;
-
-    reserved "key";
   }
 }
 

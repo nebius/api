@@ -55,8 +55,6 @@ message NVLInstanceGroupSpec {
 }
 
 message NVLInstanceGroupStatus {
-  reserved 2;
-
   message InstanceInfo {
     // Current state of the instance.
     InstanceStatus.InstanceState instance_state = 1 [(buf.validate.field).required = true];

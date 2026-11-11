@@ -28,8 +28,6 @@ message ClusterSpec {
   // Either make cluster public accessible or accessible only via private VPC.
   bool public_access = 2;
 
-  reserved 3;
-
   // MLflow admin username.
   string admin_username = 4 [(buf.validate.field).required = true];
 
@@ -53,8 +51,8 @@ message ClusterSpec {
 
   // ID of the vpc network.
   string network_id = 8 [
-    (buf.validate.field).required = true,
     (field_behavior) = IMMUTABLE,
+    (field_behavior) = NON_EMPTY_DEFAULT,
     (nid) = {
       resource: ["vpcnetwork"]
     }

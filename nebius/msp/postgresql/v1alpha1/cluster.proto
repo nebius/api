@@ -108,8 +108,6 @@ message ConfigSpec {
   // Configuration of the connection pooler.
   ConnectionPoolerConfig pooler_config = 2;
 
-  reserved 3;
-
   // Config of the PostgreSQL cluster.
   oneof config {
     // Configuration parameters for postgres
