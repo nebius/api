@@ -18,10 +18,6 @@ option java_outer_classname = "AuditEventProto";
 option java_package = "ai.nebius.pub.audit.v2";
 
 message AuditEvent {
-  reserved 17;
-
-  reserved "project_region";
-
   // Unique event id.
   string id = 1 [(buf.validate.field).required = true];
 

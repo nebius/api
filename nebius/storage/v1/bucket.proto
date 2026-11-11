@@ -40,8 +40,6 @@ message BucketSpec {
   //  * enabled <-> suspended
   VersioningPolicy versioning_policy = 2 [(field_behavior) = NON_EMPTY_DEFAULT];
 
-  reserved 3;
-
   // Maximum bucket size.
   // Zero means unlimited.
   // Actual limit can be lower if customer doesn't have enough quota.
@@ -56,8 +54,6 @@ message BucketSpec {
   // Storage class to use by default for uploads to the bucket. It may be overridden by `x-amz-storage-class` header.
   // If not set - STANDARD is used as a default storage class.
   StorageClass default_storage_class = 9;
-
-  reserved 10;
 
   // Flag to force usage of default_storage_class, ignoring `x-amz-storage-class` header.
   bool force_storage_class = 11;
@@ -142,8 +138,6 @@ message BucketSpec {
       ]
     }];
   }
-
-  reserved 14;
 
   // Specifies which requests are included in Last Access tracking, if Last Access tracking is enabled.
   // It does not itself enable Last Access tracking.

@@ -22,8 +22,6 @@ enum SymmetricAlgorithm {
   // AES algorithm with 128-bit keys.
   AES_128 = 1;
 
-  reserved 2;
-
   // AES algorithm with 256-bit keys.
   AES_256 = 3;
 }

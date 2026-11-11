@@ -313,8 +313,6 @@ message AttachedFilesystemSpec {
 }
 
 message InstanceStatus {
-  reserved 6;
-
   enum InstanceState {
     UNSPECIFIED = 0;
 

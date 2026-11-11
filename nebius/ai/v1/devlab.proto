@@ -193,10 +193,6 @@ message DevlabSpec {
   // If absent, Serverless does not add this bearer-token check.
   MysteryBoxSecretRef auth_token_mysterybox_secret = 34 [(field_behavior) = IMMUTABLE];
 
-  reserved 35;
-
-  reserved "offer_id";
-
   // EnvironmentVariable defines an environment variable for the Devlab's container.
   message EnvironmentVariable {
     option (buf.validate.message) = {
@@ -373,10 +369,6 @@ message DevlabSpec {
   }
 
   message Workspace {
-    reserved 2;
-
-    reserved "size_bytes";
-
     option (buf.validate.message) = {
       cel: [
         {

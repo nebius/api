@@ -29,8 +29,6 @@ message BucketPolicy {
     // A set of roles which a subject will have. All `storage.*` roles are supported.
     repeated string roles = 2;
 
-    reserved 3;
-
     // A subject of a rule.
     oneof subject {
       // Group ID to grant access to.
