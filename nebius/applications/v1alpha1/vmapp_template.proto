@@ -427,6 +427,13 @@ message VmAppTemplateStatus {
 
   // The template icon URL for dark mode. Use icon_url when this value is empty.
   string dark_icon_url = 6;
+
+  // The minimum Devlab disk size in bytes, shared by the container and persistent workspace.
+  // If absent, the template does not declare a disk minimum.
+  // Model downloads and user data can require additional disk space.
+  optional int64 min_disk_size_bytes = 7 [(buf.validate.field) = {
+    int64: {gte: 0}
+  }];
 }
 
 message TemplateInputField {
