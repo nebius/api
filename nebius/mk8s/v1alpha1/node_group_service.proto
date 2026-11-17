@@ -46,6 +46,16 @@ message CreateNodeGroupRequest {
   ];
 
   NodeGroupSpec spec = 2 [(buf.validate.field).required = true];
+
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "node_group_create.initial_node_count"
+        message: "initial_node_count must be between min_node_count and max_node_count"
+        expression: "!has(this.spec) || !has(this.spec.autoscaling) || !has(this.spec.autoscaling.initial_node_count) || (this.spec.autoscaling.min_node_count <= this.spec.autoscaling.initial_node_count && this.spec.autoscaling.initial_node_count <= this.spec.autoscaling.max_node_count)"
+      }
+    ]
+  };
 }
 
 message GetNodeGroupRequest {
