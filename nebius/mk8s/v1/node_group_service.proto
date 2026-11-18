@@ -182,8 +182,8 @@ message UpgradeNodeGroupRequest {
   oneof upgrade_type {
     option (buf.validate.oneof).required = true;
 
-    // Upgrades to the latest infra version, which includes latest supported kubernetes patch version. Kubernetes minor version remain the
-    // same.
+    // Upgrades to the latest node image version for the current Kubernetes minor version.
+    // This includes the latest supported Kubernetes patch version.
     google.protobuf.Empty latest_infra_version = 2 [(field_behavior) = MEANINGFUL_EMPTY_VALUE];
   }
 }
