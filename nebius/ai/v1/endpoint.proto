@@ -42,6 +42,21 @@ message EndpointSpec {
         id: "auth_token_mysterybox_secret_if_set"
         message: "auth_token_mysterybox_secret must set secret_id or version_id"
         expression: "!has(this.auth_token_mysterybox_secret) || this.auth_token_mysterybox_secret.secret_id != '' || this.auth_token_mysterybox_secret.version_id != ''"
+      },
+      {
+        id: "platform_required"
+        message: "platform is required"
+        expression: "size(this.gpu) != 0 || size(this.cpu) != 0 || this.platform != ''"
+      },
+      {
+        id: "preset_required"
+        message: "preset is required"
+        expression: "size(this.gpu) != 0 || size(this.cpu) != 0 || this.preset != ''"
+      },
+      {
+        id: "hardware_selector_exclusive"
+        message: "Select either gpu or cpu"
+        expression: "size(this.gpu) == 0 || size(this.cpu) == 0"
       }
     ]
   };
@@ -129,6 +144,36 @@ message EndpointSpec {
   // starts. Intended for configs, not datasets. Read methods return target
   // paths. File content is returned only by Get with view SECRET.
   repeated FileInjection injected_files = 32 [(field_behavior) = IMMUTABLE];
+
+  // GPU model and optional count, such as ["H100:8"]. An omitted count means one GPU.
+  // Endpoints accept one entry. Mutually exclusive with cpu. Omit platform and preset in Create.
+  // Reads include the saved platform and preset. The caller still selects the disk and pricing model.
+  repeated string gpu = 35 [
+    (field_behavior) = IMMUTABLE,
+    (buf.validate.field) = {
+      repeated: {
+        max_items: 1
+        items: {
+          string: {min_len: 1}
+        }
+      }
+    }
+  ];
+
+  // CPU family and vCPU count, such as ["amd:16"].
+  // Endpoints accept one entry. Mutually exclusive with gpu. Omit platform and preset in Create.
+  // Reads include the saved platform and preset. The caller still selects the disk and pricing model.
+  repeated string cpu = 36 [
+    (field_behavior) = IMMUTABLE,
+    (buf.validate.field) = {
+      repeated: {
+        max_items: 1
+        items: {
+          string: {min_len: 1}
+        }
+      }
+    }
+  ];
 
   // EnvironmentVariable defines an environment variable for the endpoint's container.
   message EnvironmentVariable {

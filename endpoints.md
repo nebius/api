@@ -12,6 +12,7 @@
 * apps.msp.api.nebius.cloud:443
   * [nebius.ai.v1.DevlabService](nebius/ai/v1/devlab_service.proto)
   * [nebius.ai.v1.EndpointService](nebius/ai/v1/endpoint_service.proto)
+  * [nebius.ai.v1.HardwareService](nebius/ai/v1/hardware_service.proto)
   * [nebius.ai.v1.JobService](nebius/ai/v1/job_service.proto)
   * [nebius.applications.v1alpha1.VmAppTemplateService](nebius/applications/v1alpha1/vmapp_template_service.proto)
   * [nebius.common.v1.OperationService](nebius/common/v1/operation_service.proto)
