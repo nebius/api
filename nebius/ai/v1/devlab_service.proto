@@ -89,6 +89,11 @@ message CreateDevlabRequest {
   option (buf.validate.message) = {
     cel: [
       {
+        id: "selector_hardware_exclusive"
+        message: "Devlabs cannot combine gpu or cpu with platform or preset"
+        expression: "!has(this.spec) || (size(this.spec.gpu) == 0 && size(this.spec.cpu) == 0) || (this.spec.platform == '' && this.spec.preset == '')"
+      },
+      {
         id: "injected_file_content_required"
         message: "injected file content must not be empty"
         expression: "!has(this.spec) || this.spec.injected_files.all(f, f.content.size() > 0)"

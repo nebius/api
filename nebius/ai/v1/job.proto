@@ -39,6 +39,11 @@ message JobSpec {
         id: "pricing_model_matches_preemptible"
         message: "Select pricing_model.follows_spot_price or pricing_model.spot_pricing_policy for a preemptible workload. For a regular workload, select pricing_model.on_demand or omit pricing_model."
         expression: "(has(this.pricing_model) && !has(this.pricing_model.on_demand)) == this.preemptible"
+      },
+      {
+        id: "hardware_selector_exclusive"
+        message: "Select either gpu or cpu"
+        expression: "size(this.gpu) == 0 || size(this.cpu) == 0"
       }
     ]
   };
@@ -122,6 +127,34 @@ message JobSpec {
   // starts. Intended for configs, not datasets. Read methods return target
   // paths. File content is returned only by Get with view SECRET.
   repeated FileInjection injected_files = 32 [(field_behavior) = IMMUTABLE];
+
+  // GPU model and optional count, such as ["h100:8"]. An omitted count means one GPU.
+  // Mutually exclusive with cpu. Immediate jobs accept one entry and still require disk.
+  // Omit platform and preset in Create.
+  // Immediate reads include the saved platform and preset.
+  repeated string gpu = 35 [
+    (field_behavior) = IMMUTABLE,
+    (buf.validate.field) = {
+      repeated: {
+        items: {
+          string: {min_len: 1}
+        }
+      }
+    }
+  ];
+
+  // CPU family and vCPU count, such as ["amd:16"]. Mutually exclusive with gpu.
+  // Immediate jobs accept one entry and still require disk. Omit platform and preset in Create. Immediate reads include them.
+  repeated string cpu = 36 [
+    (field_behavior) = IMMUTABLE,
+    (buf.validate.field) = {
+      repeated: {
+        items: {
+          string: {min_len: 1}
+        }
+      }
+    }
+  ];
 
   // EnvironmentVariable defines an environment variable for the endpoint's container.
   message EnvironmentVariable {

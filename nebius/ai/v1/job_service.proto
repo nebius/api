@@ -86,6 +86,16 @@ message ListJobsRequest {
 }
 
 message CreateJobRequest {
+  option (buf.validate.message) = {
+    cel: [
+      {
+        id: "selector_hardware_exclusive"
+        message: "Jobs cannot combine gpu or cpu with platform or preset"
+        expression: "!has(this.spec) || (size(this.spec.gpu) == 0 && size(this.spec.cpu) == 0) || (this.spec.platform == '' && this.spec.preset == '')"
+      }
+    ]
+  };
+
   common.v1.ResourceMetadata metadata = 1 [
     (buf.validate.field).required = true,
     (nid) = {

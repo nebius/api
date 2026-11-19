@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package nebius.ai.v1;
+
+import "buf/validate/validate.proto";
+import "nebius/annotations.proto";
+
+option go_package = "github.com/nebius/gosdk/proto/nebius/ai/v1";
+option java_multiple_files = true;
+option java_outer_classname = "HardwareServiceProto";
+option java_package = "ai.nebius.pub.ai.v1";
+
+// Discovers hardware for static Serverless workloads.
+service HardwareService {
+  option (api_service_name) = "apps.msp";
+
+  // Lists canonical selectors and their supported purchasing modes.
+  // Omits PricingPolicy mode when Billing discovery is unavailable.
+  rpc List(ListHardwareRequest) returns (ListHardwareResponse);
+}
+
+// A request for eligible hardware in a customer project and region.
+message ListHardwareRequest {
+  // The customer project used to discover eligible offers.
+  string parent_id = 1 [
+    (buf.validate.field).required = true,
+    (nid) = {
+      resource: ["project"]
+    }
+  ];
+
+  // Discovery region. Use the region selected by existing workload creation routing.
+  // This field does not change the routing of subsequent workload creation requests.
+  string region = 2 [(buf.validate.field).required = true];
+}
+
+// Eligible canonical selectors.
+message ListHardwareResponse {
+  // Selectors with at least one available purchasing mode.
+  repeated Hardware items = 1;
+}
+
+// One canonical selector and its preferred PAYG resource sizes.
+message Hardware {
+  // Purchasing modes supported by an eligible Compute offer.
+  enum PurchasingMode {
+    // No purchasing mode specified.
+    PURCHASING_MODE_UNSPECIFIED = 0;
+
+    // Pay as you go.
+    PAYG = 1;
+
+    // Preemptible VM at the market price.
+    PVM_MARKET = 2;
+
+    // Preemptible VM with an existing PricingPolicy.
+    PVM_PRICING_POLICY = 3;
+  }
+
+  // Canonical selector, including its GPU or vCPU count.
+  string selector = 1;
+
+  // Canonical GPU model. Empty for CPU selectors.
+  string gpu_model = 2;
+
+  // Exact GPU count. Zero for CPU selectors.
+  uint32 gpu_count = 3;
+
+  // Canonical CPU family. Empty for GPU selectors.
+  string cpu_family = 4;
+
+  // Resource sizes of the preferred PAYG preset. Zero when PAYG is unavailable.
+  // Other purchasing modes and existing PricingPolicies can select different resource sizes.
+  uint32 payg_vcpu = 5;
+
+  // Memory of the preferred PAYG preset, in GiB. Zero when PAYG is unavailable.
+  uint64 payg_memory_gib = 6;
+
+  // Available purchasing modes for this selector.
+  repeated PurchasingMode purchasing_modes = 7;
+}
