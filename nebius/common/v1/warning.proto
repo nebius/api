@@ -93,5 +93,8 @@ message Warning {
 
     // ListAggregated returned incomplete results because one or more regions could not be queried.
     CODE_LIST_AGGREGATED_PARTIAL = 10;
+
+    // The service ignored a filter value in the request.
+    CODE_IGNORED_FILTER_VALUE_REQUEST = 11;
   }
 }
