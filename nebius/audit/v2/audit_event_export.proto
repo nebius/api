@@ -44,8 +44,9 @@ message NebiusObjectStorageDestination {
   // The bucket into which events will be exported.
   oneof bucket {
     option (buf.validate.oneof).required = true;
+    option (oneof_behavior) = IMMUTABLE;
 
-    BucketById bucket_by_id = 2;
+    BucketById bucket_by_id = 2 [(field_behavior) = IMMUTABLE];
   }
 }
 

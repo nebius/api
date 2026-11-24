@@ -66,7 +66,7 @@ message ClusterSpec {
 
   BootstrapSpec bootstrap = 4 [(buf.validate.field).required = true];
 
-  BackupSpec backup = 5 [(field_behavior) = IMMUTABLE];
+  BackupSpec backup = 5;
 }
 
 message ClusterStatus {
@@ -181,8 +181,8 @@ message BootstrapSpec {
 
 message BackupSpec {
   // Backup window start in "HH:MM:SS" format (UTC Time)
-  string backup_window_start = 1;
+  string backup_window_start = 1 [(field_behavior) = IMMUTABLE];
 
   // Retention policy to be used for backups and WALs (i.e. '7d')
-  string retention_policy = 2;
+  string retention_policy = 2 [(field_behavior) = IMMUTABLE];
 }

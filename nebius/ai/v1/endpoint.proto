@@ -301,7 +301,7 @@ message EndpointSpec {
       // Authentication method.
       oneof auth {
         // Inline S3 credentials.
-        // Unmasked values are returned only by Get with view SECRET.
+        // Get returns the values only with view SECRET.
         S3Credentials credentials = 4;
 
         // Reference to a MysteryBox secret containing S3 credentials.
@@ -313,30 +313,43 @@ message EndpointSpec {
         // Access key ID.
         string access_key_id = 1 [
           (buf.validate.field).required = true,
+          (field_behavior) = INPUT_ONLY,
           (sensitive) = true
         ];
 
         // Secret access key.
         string secret_access_key = 2 [
           (buf.validate.field).required = true,
+          (field_behavior) = INPUT_ONLY,
           (sensitive) = true
         ];
 
         // Session token (optional, for temporary credentials).
-        string session_token = 3 [(sensitive) = true];
+        string session_token = 3 [
+          (field_behavior) = INPUT_ONLY,
+          (sensitive) = true
+        ];
       }
 
       // Reference to a MysteryBox secret.
       message MysteryBoxSecretRef {
         // MysteryBox secret ID.
-        string secret_id = 1 [(nid) = {
-          resource: ["mbsec"]
-        }];
+        // If you omit it, the service sets it from version_id.
+        string secret_id = 1 [
+          (field_behavior) = NON_EMPTY_DEFAULT,
+          (nid) = {
+            resource: ["mbsec"]
+          }
+        ];
 
         // MysteryBox secret version ID.
-        string version_id = 2 [(nid) = {
-          resource: ["mbsecver"]
-        }];
+        // If you omit it, the service sets the primary version of the secret at create time.
+        string version_id = 2 [
+          (field_behavior) = NON_EMPTY_DEFAULT,
+          (nid) = {
+            resource: ["mbsecver"]
+          }
+        ];
       }
     }
   }
@@ -354,7 +367,11 @@ message EndpointSpec {
     string username = 1;
 
     // Registry password for private Docker registry.
-    string password = 2 [(sensitive) = true];
+    // Get returns the password only with view SECRET.
+    string password = 2 [
+      (field_behavior) = INPUT_ONLY,
+      (sensitive) = true
+    ];
 
     // Secret version storing the registry credentials.
     // Must have keys "REGISTRY_USERNAME" and "REGISTRY_PASSWORD".
@@ -383,6 +400,7 @@ message EndpointSpec {
         }
         ignore: IGNORE_IF_ZERO_VALUE
       },
+      (field_behavior) = INPUT_ONLY,
       (sensitive) = true
     ];
   }
@@ -390,14 +408,22 @@ message EndpointSpec {
   // Reference to a MysteryBox secret.
   message MysteryBoxSecretRef {
     // MysteryBox secret ID.
-    string secret_id = 1 [(nid) = {
-      resource: ["mbsec"]
-    }];
+    // If you omit it, the service sets it from version_id.
+    string secret_id = 1 [
+      (field_behavior) = NON_EMPTY_DEFAULT,
+      (nid) = {
+        resource: ["mbsec"]
+      }
+    ];
 
     // MysteryBox secret version ID.
-    string version_id = 2 [(nid) = {
-      resource: ["mbsecver"]
-    }];
+    // If you omit it, the service sets the primary version of the secret at create time.
+    string version_id = 2 [
+      (field_behavior) = NON_EMPTY_DEFAULT,
+      (nid) = {
+        resource: ["mbsecver"]
+      }
+    ];
   }
 }
 
