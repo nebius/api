@@ -43,7 +43,7 @@ service EndpointService {
 }
 
 message GetEndpointRequest {
-  // Controls whether injected-file content and unmasked inline S3 credential values are included.
+  // Controls whether Get returns the secret values of the endpoint.
   enum View {
     VIEW_UNSPECIFIED = 0;
 
@@ -57,8 +57,8 @@ message GetEndpointRequest {
     }
   ];
 
-  // SECRET includes injected-file content and unmasked inline S3 credentials and requires
-  // resource.aiendpoint.getSensitiveData.
+  // With SECRET, Get returns injected-file content, inline S3 credentials and the
+  // inline registry password. SECRET requires resource.aiendpoint.getSensitiveData.
   View view = 101 [(buf.validate.field) = {
     enum: {defined_only: true}
   }];
