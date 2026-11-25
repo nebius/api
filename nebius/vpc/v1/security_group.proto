@@ -44,6 +44,14 @@ message SecurityGroupStatus {
     STATE_UNSPECIFIED = 0; // Default state, unspecified.
 
     READY = 2; // Security group is ready for use.
+
+    CREATING = 1; // Security group is being created.
+
+    RECONCILING = 3; // Security group is reconciling changes after it has been created.
+
+    DELETING = 4; // Security group is being deleted.
+
+    FAILED = 5; // Reconciliation stopped because of an error.
   }
 
   // Current state of the security group.

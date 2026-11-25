@@ -3,6 +3,7 @@ syntax = "proto3";
 package nebius.msp.postgresql.v1alpha1;
 
 import "buf/validate/validate.proto";
+import "google/protobuf/duration.proto";
 import "nebius/annotations.proto";
 import "nebius/common/v1/metadata.proto";
 import "nebius/msp/postgresql/v1alpha1/config/postgresql.proto";
@@ -185,4 +186,18 @@ message BackupSpec {
 
   // Retention policy to be used for backups and WALs (i.e. '7d')
   string retention_policy = 2 [(field_behavior) = IMMUTABLE];
+
+  // Regions that receive copies of the backups. Example: "eu-west1".
+  // The list cannot contain the region of the cluster.
+  repeated string replication_regions = 3 [(buf.validate.field) = {
+    repeated: {unique: true}
+  }];
+
+  // Time between two replication iterations.
+  // The minimum value is 1 minute. The default value is 15 minutes.
+  google.protobuf.Duration replication_interval = 4 [(buf.validate.field) = {
+    duration: {
+      gte: {seconds: 60}
+    }
+  }];
 }
